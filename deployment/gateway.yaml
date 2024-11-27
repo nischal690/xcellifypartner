@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: xcellify-partner-gateway
+  namespace: xcellify-partner
+spec:
+  selector:
+    istio: aks-istio-ingressgateway-internal # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "dev-partner.xcellify.com"
+
