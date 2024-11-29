@@ -4,6 +4,9 @@ import PrimaryLogo from "../assets/logo-primary.png";
 import { FiCheckCircle } from "react-icons/fi";
 
 export default function ProfilePage1() {
+  const [isEditing, setIsEditing] = useState(false);
+  const toggleEditMode = () => setIsEditing(!isEditing);
+
   const {
     profile,
     errors,
@@ -15,11 +18,7 @@ export default function ProfilePage1() {
     countries,
     states,
     cities,
-  } = useVendorProfile();
-
-  const [isEditing, setIsEditing] = useState(false);
-
-  const toggleEditMode = () => setIsEditing(!isEditing);
+  } = useVendorProfile(toggleEditMode);
 
   const renderField = (field) => {
     const value = profile[field.name] || ""; // Default to empty string for missing values
@@ -160,7 +159,7 @@ export default function ProfilePage1() {
       {isEditing && (
         <div className="text-right mt-8">
           <button
-            onClick={(e)=>{handleSubmit(e); console.log("CLICKED")}}
+            onClick={(e)=>{handleSubmit(e);}}
             className="px-8 py-3 bg-green-600 text-white font-medium rounded-md shadow hover:bg-green-500 transition-colors"
           >
             Save Changes <FiCheckCircle className="inline ml-2 text-lg" />

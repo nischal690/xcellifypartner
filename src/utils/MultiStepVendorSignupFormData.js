@@ -61,20 +61,20 @@ const steps = [
         heading: "Bank details",
         fields: [
           { label: "Bank name", name: "bank_name", type: "text", required: false },
-          { label: "Account type", name: "account_type", type: "text", required: false },
+          { label: "Account type", name: "bank_account_type", type: "text", required: false },
           { label: "Bank account number", name: "bank_account_number", type: "text", required: true },
-          { label: "IFSC number", name: "ifsc_number", type: "text", required: true },
+          { label: "IFSC number", name: "bank_ifcs", type: "text", required: true },
         ],
       },
       {
         heading: "Other details",
         fields: [
-          { label: "PAN", name: "pan", type: "text", required: false },
-          { label: "CIN", name: "cin", type: "text", required: false },
-          { label: "GST", name: "gst", type: "text", required: false },
+          { label: "PAN", name: "PAN", type: "text", required: false },
+          { label: "CIN", name: "CIN", type: "text", required: false },
+          { label: "GST", name: "GST", type: "text", required: false },
           {
             label: "Are you registered under MSME?",
-            name: "msme_registered",
+            name: "MSME_registered",
             type: "select",
             options: ["Yes", "No"],
             required: true,

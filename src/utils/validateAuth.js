@@ -31,11 +31,11 @@ export const validateAndSetAuthStatus = async (appStore, navigate) => {
         ];
         const hasIncompleteProfile = requiredDetails.some((field) => !partnerInfo[field]);
 
-        if (hasIncompleteProfile) {
+        /*if (hasIncompleteProfile) {
             appStore.setAppProperty('authStatus', AuthStatuses.INCOMPLETE_PROFILE);
             navigate && navigate('/onboarding');
             return;
-        }
+        }*/
 
         // Step 3: Check if admin has approved the account
         if (!partnerInfo.is_active) {

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { toast } from 'react-toastify';
+
 import { Country, State, City } from "country-state-city";
 import apiRequest from "../../utils/apiRequest";
 import vendorValidField from "../../utils/HelperFunction";
@@ -6,7 +8,7 @@ import vendorValidField from "../../utils/HelperFunction";
 let countryCodeMap = new Map();
 let stateCodeMap = new Map();
 let phoneNumberCodes = [];
-const useVendorProfile = () => {
+const useVendorProfile = (toggleEditMode) => {
   const [profile, setProfile] = useState({
     company_name: "",
     website: "",
@@ -110,7 +112,6 @@ const useVendorProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("EXECUTED")
 
     const newErrors = {};
     Object.keys(profile).forEach((key) => {
@@ -128,19 +129,18 @@ const useVendorProfile = () => {
     }
 
     try {
-      console.log("TRY")
       const response = await apiRequest({
         url: "/mic-login/partnerProfileInfo",
         method: "post",
         data: profile,
       });
-      console.log("API")
       if (response.status === 200) {
-        alert("Profile updated successfully!");
+        toast.success("Profile updated successfully!", { position: "top-right" });
+        toggleEditMode();
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile. Please try again.");
+      toast.error("Failed to update profile. Please try again.", { position: "top-right" });
     }
   };
 
