@@ -1,13 +1,27 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Xcellify Partner Portal</title>
+  <script>
+    const XcellifyURLConfig = {
+      api_domain_url: 'https://xcellify.com/',
+    };
+    if (['dev-admin.xcellify.com', 'localhost'].includes(window.location.hostname)) {
+      XcellifyURLConfig.api_domain_url = 'https://dev.xcellify.com/';
+    } else if (window.location.hostname === 'test-admin.xcellify.com') {
+      XcellifyURLConfig.api_domain_url = 'https://test.xcellify.com/';
+    }
+    window.XcellifyURLConfig = XcellifyURLConfig;
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

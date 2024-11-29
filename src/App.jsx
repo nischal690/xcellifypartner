@@ -1,35 +1,124 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useEffect, useState } from "react";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import HomePage from "./pages/HomePage";
+import NotFoundPage from "./pages/NotFoundPage";
+import VerificationSentPage from "./pages/VerificationSentPage";
+import EmailVerifiedPage from "./pages/EmailVerifiedPage";
+import ResetPassword from "./pages/ResetPassword";
+import EmailVerificationPwd from "./pages/EmailVerificationPwd";
+import MultiStepVendorSignupPage from "./pages/MultiStepVendorSignupPage";
+import AdminApprovalRequestSentPage from "./pages/AdminApprovalRequestSentPage";
+import UnderReviewPage from "./pages/UnderReviewPage";
+import DashboardPage from "./pages/DashboardPage";
+import ProductDetail from "./pages/ProductPage";
+import AddNewProductPage from "./pages/AddNewProductPage";
+import LessonPreviewPage from "./pages/LessonsPreviewPage";
+import ProfilePage1 from "./pages/ProfilePage1";
+import { observer } from "mobx-react";
+import { useStore } from "./stores";
+import apiRequest from './utils/apiRequest';
+import { AuthStatuses } from "./utils/constants";
+import { toJS } from 'mobx';
+import AllProductsPage from "./pages/AllProductsPage";
+import AddNewProductPage1 from './pages/AddNewProductPage1';
+import VerifyEmailPage from "./pages/VerifyEmailPage";
+import { validateAndSetAuthStatus } from './utils/validateAuth';
 
-function App() {
-  const [count, setCount] = useState(0)
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <HomePage />,
+  },
+  {
+    path: '/login',
+    element: <LoginPage />,
+  },
+  {
+    path: '/verify-email',
+    element: <VerifyEmailPage />
+  },
+  {
+    path: '/signup',
+    element: <SignUpPage />,
+  },
+  {
+    path: '/onboarding',
+    element: <MultiStepVendorSignupPage />,
+  },
+  {
+    path: '/application-sent',
+    element: <AdminApprovalRequestSentPage />,
+  },
+  {
+    path: '/under-verification',
+    element: <UnderReviewPage />,
+  },
+  {
+    path: '/email-sent/:type',
+    element: <VerificationSentPage />,
+  },
+  {
+    path: '/email-verified',
+    element: <EmailVerifiedPage />,
+  },
+  {
+    path: 'changepassword-email',
+    element: <EmailVerificationPwd />,
+  },
+  {
+    path: '/reset-password',
+    element: <ResetPassword />,
+  },
+  {
+    path: '/profile',
+    element: <ProfilePage1 />,
+  },
+  {
+    path: '/dashboard',
+    element: <DashboardPage />,
+  },
+  {
+    path: '/products',
+    element: <AllProductsPage />
+  },
+  {
+    path: '/product/:id',
+    element: <ProductDetail />,
+  },
+  {
+    path: '/addNewProduct',
+    element: <AddNewProductPage1 />,
+  },
+  {
+    path: '/lessons/:id',
+    element: <LessonPreviewPage />,
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
+  },
+]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+const App = () => {
+  const { appStore } = useStore();
+  const [loading, setLoading] = useState(true); // Add loading state
 
-export default App
+  useEffect(() => {
+    const initializeAuth = async () => {
+        if (localStorage.getItem('token') !== '') {
+            await validateAndSetAuthStatus(appStore);
+        } else {
+            appStore.setAppProperty('authStatus', AuthStatuses.UNAUTHENTICATED);
+        }
+        setLoading(false); // Only hide loading spinner after initialization
+    };
+
+    initializeAuth();
+}, [appStore]);
+
+  return loading ? null : <RouterProvider router={router} />; // Render nothing until loading is false
+};
+
+export default observer(App);
