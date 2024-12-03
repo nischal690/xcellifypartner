@@ -63,7 +63,7 @@ const steps = [
           { label: "Bank name", name: "bank_name", type: "text", required: false },
           { label: "Account type", name: "bank_account_type", type: "text", required: false },
           { label: "Bank account number", name: "bank_account_number", type: "text", required: true },
-          { label: "IFSC number", name: "bank_ifcs", type: "text", required: true },
+          { label: "IFSC number", name: "bank_ifsc", type: "text", required: true },
         ],
       },
       {
