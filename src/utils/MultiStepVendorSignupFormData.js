@@ -32,7 +32,7 @@ const steps = [
           { label: "CEO/Owner name", name: "owner_name", type: "text", required: true },
           { label: "CEO/Owner's Email ID", name: "owner_email", type: "email", required: true },
           {
-            label: "Contact person's mobile number",
+            label: "CEO/Owner's mobile number",
             name: "owner_mobile",
             type: "mobile",
             required: true,
@@ -79,6 +79,11 @@ const steps = [
             options: ["Yes", "No"],
             required: true,
           },
+          {
+            label: "Upload MSME Certificate",
+            name: "msme_certificate",
+            type:"file",
+          }
         ],
       },
     ],

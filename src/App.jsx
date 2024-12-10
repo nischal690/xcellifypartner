@@ -25,6 +25,7 @@ import AllProductsPage from "./pages/AllProductsPage";
 import AddNewProductPage1 from './pages/AddNewProductPage1';
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import { validateAndSetAuthStatus } from './utils/validateAuth';
+import NewProfilePage from "./pages/NewProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -64,7 +65,7 @@ const router = createBrowserRouter([
     element: <EmailVerifiedPage />,
   },
   {
-    path: 'changepassword-email',
+    path: '/changepassword-email',
     element: <EmailVerificationPwd />,
   },
   {
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
   {
     path: '/lessons/:id',
     element: <LessonPreviewPage />,
+  },
+  {
+    path:'/test',
+    element: <NewProfilePage/>
   },
   {
     path: '*',

@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+
+import rightArrowIcon from '../assets/right-arrow.svg'
 import PrimaryLogo from "../assets/logo-primary.png";
 import { useNavigate } from "react-router-dom";
 import steps from "../utils/MultiStepVendorSignupFormData"; // Updated data
 import { useStore } from "../stores";
 import { AuthStatuses } from "../utils/constants";
 import apiRequest from "../utils/apiRequest";
+import { validateStep } from "../utils/signupDetailsValidations";
+
 
 const MultiStepVendorSignupPage = () => {
   const navigate = useNavigate();
@@ -38,10 +42,17 @@ const MultiStepVendorSignupPage = () => {
   //   return Object.keys(newErrors).length === 0;
   // };
 
-  const handleNext = () => {
-    // if (validate()) {
+  const validate = async () => {
+    const newErrors = await validateStep(formData, currentStep);
+    console.log(newErrors)
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+  
+  const handleNext = async () => {
+    if (await validate()) {
       setCurrentStep((prev) => prev + 1);
-    // }
+    }
   };
 
   const handleBack = () => {
@@ -54,7 +65,7 @@ const MultiStepVendorSignupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (validate()) {
+    if (await validate()) {
       try {
         const response = await apiRequest({
           url: "/mic-login/partnerProfileInfo",
@@ -66,7 +77,7 @@ const MultiStepVendorSignupPage = () => {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    // }
+    }
   };
 
   return (
@@ -80,32 +91,24 @@ const MultiStepVendorSignupPage = () => {
       <div className="flex items-center justify-center space-x-5 mb-6">
         {steps.map((step, index) => (
           <React.Fragment key={step.title}>
-            <div className="flex items-center">
+            <div className="flex items-center" style={{marginLeft: "5px"}}>
               <div
-                className={`flex items-center justify-center w-6 h-6 rounded-full ${
-                  index <= currentStep
+                className={`flex items-center justify-center w-6 h-6 rounded-full ${index <= currentStep
                     ? "bg-purple-primary text-white"
                     : "bg-gray-200 text-gray-500"
-                } mx-auto`}
+                  } mx-auto`}
               >
                 {index + 1}
               </div>
               <p
-                className={`text-center ms-2 ${
-                  index <= currentStep ? "text-purple-primary" : "text-gray-500"
-                }`}
+                className={`text-center ms-2 ${index <= currentStep ? "text-purple-primary" : "text-gray-500"
+                  }`}
               >
                 {step.title}
               </p>
             </div>
             {index < steps.length - 1 && (
-              <div
-                className={`w-28 h-0.5 ${
-                  index <= currentStep - 1
-                    ? "bg-purple-primary"
-                    : "bg-gray-500"
-                } transition-colors duration-500 left-0`}
-              ></div>
+              <img src={rightArrowIcon} style={{ marginLeft: "5px", height: "15px", width: "15px" }} />
             )}
           </React.Fragment>
         ))}
