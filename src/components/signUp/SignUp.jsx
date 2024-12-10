@@ -13,7 +13,7 @@ import GoogleAuthIcon from "../../assets/loginPageAssets/authIcons/google-auth-i
 import FacebookAuthIcon from "../../assets/loginPageAssets/authIcons/facebook-auth-icon.png";
 import Icon from "../../assets/logo-primary.png";
 import { SignUpData } from "./SignUpPageData";
-import LoginLeftItems from "../Login/LoginLeftItems";
+import LoginLeftItems from "../login/LoginLeftItems";
 import { useSignUp } from "../../hooks/auth/useSignUp";
 import { useStore} from '../../stores'
 import { AuthStatuses } from "../../utils/constants"
