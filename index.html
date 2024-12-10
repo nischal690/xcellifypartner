@@ -10,9 +10,9 @@
     const XcellifyURLConfig = {
       api_domain_url: 'https://xcellify.com/',
     };
-    if (['dev-admin.xcellify.com', 'localhost'].includes(window.location.hostname)) {
+    if (['dev-partner.xcellify.com', 'localhost'].includes(window.location.hostname)) {
       XcellifyURLConfig.api_domain_url = 'https://dev.xcellify.com/';
-    } else if (window.location.hostname === 'test-admin.xcellify.com') {
+    } else if (window.location.hostname === 'test-partner.xcellify.com') {
       XcellifyURLConfig.api_domain_url = 'https://test.xcellify.com/';
     }
     window.XcellifyURLConfig = XcellifyURLConfig;
