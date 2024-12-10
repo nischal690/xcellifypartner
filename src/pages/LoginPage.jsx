@@ -1,4 +1,4 @@
-import Login from '../components/Login/Login';
+import Login from '../components/login/Login';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useStore } from '../stores';
