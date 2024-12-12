@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import rightArrowIcon from '../assets/right-arrow.svg'
 import PrimaryLogo from "../assets/logo-primary.png";
@@ -8,7 +8,23 @@ import { useStore } from "../stores";
 import { AuthStatuses } from "../utils/constants";
 import apiRequest from "../utils/apiRequest";
 import { validateStep } from "../utils/signupDetailsValidations";
+import Dropdown from '../components/commonComponents/Dropdown'
+import { getPincodeLocationDetails, loadCities, loadCountries, loadStates } from "../utils/geocoding";
 
+const useDebouncedValue = (inputValue, delay) => {
+  const [debouncedValue, setDebouncedValue] = useState(inputValue);
+  useEffect(() => {
+      const handler = setTimeout(() => {
+          setDebouncedValue(inputValue);
+      }, delay);
+
+      return () => {
+          clearTimeout(handler);
+      };
+  }, [inputValue, delay]);
+
+  return debouncedValue;
+};
 
 const MultiStepVendorSignupPage = () => {
   const navigate = useNavigate();
@@ -25,6 +41,80 @@ const MultiStepVendorSignupPage = () => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
+  //geoCoding
+  const [countryOptions, setcountryOptions] = useState([]);
+  const [stateOptions, setStateOptions] = useState([]);
+  const [cityOptions, setCityOptions] = useState([])
+  const [disableCountrySelction, setDisableCountrySelection] = useState(false);
+  const debouncedPincode = useDebouncedValue(formData.pincode || '', 500)
+
+  useEffect(() => {
+    const getPincodeLocationDetails1 = async (pincode) => {
+        const pincodeLocationDetails = await getPincodeLocationDetails(pincode);
+        if (!!pincodeLocationDetails) {
+            setFormData(prev => ({ ...prev, country: pincodeLocationDetails.country }))
+            if (!!pincodeLocationDetails?.state && !!pincodeLocationDetails?.city) {
+                setFormData(prev => ({
+                    ...prev, country: pincodeLocationDetails.country,
+                    state: pincodeLocationDetails.state,
+                    city: pincodeLocationDetails.city,
+                }))
+                setDisableCountrySelection(true) // when there are all fields
+            }
+            else//when one of state or city is missing
+                setDisableCountrySelection(false)
+        }
+        //when do data available
+        else {
+            setDisableCountrySelection(false)
+            loadCountries()
+        }
+    }
+    getPincodeLocationDetails1(debouncedPincode)
+  }, [debouncedPincode])
+
+  useEffect(() => {
+    let { countriesList} = loadCountries();
+    if (!!countriesList) {
+        setcountryOptions(converToOptions(countriesList))
+    }
+  }, []);
+
+  useEffect(() => {
+    if (formData.country) {
+        const states = loadStates(formData.country);
+        if (!!states) {
+            setStateOptions(converToOptions(states))
+        }
+    }
+  }, [formData.country])
+
+  useEffect(() => {
+      if (formData.state) {
+          let cities = loadCities(formData.state);
+          setCityOptions(converToOptions(cities))
+      }
+  }, [formData.state])
+
+  const handleDisable = (name) => {
+    if (name === 'country' || name === 'state' || name === 'city')
+        return disableCountrySelction;
+    return false;
+  }
+
+  const handleOptions = (name) => {
+      let options;
+      switch (name) {
+          case 'country': options = countryOptions; break;
+          case 'state': options = stateOptions; break;
+          case 'city': options = cityOptions; break;
+      }
+      return options;
+  }
+
+  const converToOptions = (list) => {
+      return list.map((value) => { return { label: value, value: value } })
+  }
 
   // const validate = () => {
   //   const newErrors = {};
@@ -129,19 +219,29 @@ const MultiStepVendorSignupPage = () => {
                 <div key={idx} className={`col-span-${field.type === "textarea" ? "2" : "1"}`}>
                   <label className="block text-gray-700 mb-2">{field.label}</label>
                   {field.type === "select" ? (
-                    <select
-                      name={field.name}
-                      value={formData[field.name]}
-                      onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
-                    >
-                      <option value="">Choose {field.label.toLowerCase()}</option>
-                      {field.options?.map((option, idx) => (
-                        <option key={idx} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
+                    <Dropdown
+                    id={field.name}
+                    name={field.name}
+                    options={handleOptions(field.name) || field.options}
+                    handleChange={handleChange}
+                    selectedValue={formData[field.name]}
+                    defaultValueText={(!!formData[field.name])?formData[field.name]:`Select ${field.label}`}
+                    disabled = {handleDisable(field.name)}
+                    inputStyle="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
+                    />
+                    // <select
+                    //   name={field.name}
+                    //   value={formData[field.name]}
+                    //   onChange={handleChange}
+                    //   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
+                    // >
+                    //   <option value="">Choose {field.label.toLowerCase()}</option>
+                    //   {field.options?.map((option, idx) => (
+                    //     <option key={idx} value={option}>
+                    //       {option}
+                    //     </option>
+                    //   ))}
+                    // </select>
                   ) : field.type === "textarea" ? (
                     <textarea
                       name={field.name}

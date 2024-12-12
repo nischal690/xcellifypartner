@@ -7,7 +7,16 @@ const steps = [
         heading: "Company details",
         fields: [
           { label: "Company name", name: "company_name", type: "text", required: true },
-          { label: "Company type", name: "company_type", type: "select", options: ["Individual","Tutoring"], required: false },
+          {
+            label: "Company type", name: "company_type", type: "select", required: false,
+            options: [
+              { label: "Individual", value: 'Individual' },
+              { label: "Sole Proprietorship", value: 'sole_proprietership' },
+              { label: "Limited Liability Partnership (LLP)", value: 'llp' },
+              { label: "Private limited company", value: 'privateltd' },
+              { label: "Public limited company", value: 'publicltd' },
+            ],
+          },
           { label: "Website", name: "website", type: "url", required: false },
           { label: "Landline number", name: "landline_number", type: "text", required: false },
         ],
@@ -43,10 +52,10 @@ const steps = [
       {
         heading: "Address",
         fields: [
-          { label: "Country", name: "country", type: "select", options:["India"], required: true },
+          { label: "Country", name: "country", type: "select", required: true, options: [], },
           { label: "Pin code/ZIP code", name: "pincode", type: "text", required: true, pattern: /^\d{6}$/ },
-          { label: "State", name: "state", type: "text", required: true },
-          { label: "City", name: "city", type: "text", required: true },
+          { label: "State", name: "state", type: "select", required: true, options: [] },
+          { label: "City", name: "city", type: "select", required: true, options: [] },
           { label: "Address line 1", name: "address_line_1", type: "text", required: true },
           { label: "Address line 2", name: "address_line_2", type: "text", required: false },
         ],
@@ -61,7 +70,14 @@ const steps = [
         heading: "Bank details",
         fields: [
           { label: "Bank name", name: "bank_name", type: "text", required: false },
-          { label: "Account type", name: "bank_account_type", type: "text", required: false },
+          {
+            label: "Account type", name: "bank_account_type", type: "select",
+            options: [
+              { label: "Current", value: 'current' },
+              { label: "Savings", value: 'savings' }
+            ],
+            required: false
+          },
           { label: "Bank account number", name: "bank_account_number", type: "text", required: true },
           { label: "IFSC number", name: "bank_ifsc", type: "text", required: true },
         ],
@@ -76,13 +92,13 @@ const steps = [
             label: "Are you registered under MSME?",
             name: "MSME_registered",
             type: "select",
-            options: ["Yes", "No"],
+            options: [{ label: "Yes", value: 'Yes' }, { label: "No", value: 'No' }],
             required: true,
           },
           {
             label: "Upload MSME Certificate",
             name: "msme_certificate",
-            type:"file",
+            type: "file",
           }
         ],
       },
@@ -122,8 +138,12 @@ const steps = [
             label: "Currency",
             name: "currency",
             type: "select",
-            options: ["USD", "INR", "EUR"],
             required: true,
+            options: [
+              { label: "USD", value: "USD" },
+              { label: "INR", value: "INR" },
+              { label: "EUR", value: "EUR" }
+            ],
           },
           { label: "Discount", name: "discount", type: "number", required: false },
           { label: "Final Price", name: "final_price", type: "number", required: true },
