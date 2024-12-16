@@ -47,7 +47,7 @@ export const validateAndSetAuthStatus = async (appStore, navigate) => {
         // Step 4: All checks pass
         appStore.updatePartnerInfo({ ...userInfo, ...partnerInfo });
         appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
-        navigate && navigate('/dashboard');
+        navigate && navigate('/');
     } else {
         appStore.setAppProperty('authStatus', AuthStatuses.UNAUTHENTICATED);
         navigate && navigate('/login');

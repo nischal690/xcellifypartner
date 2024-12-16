@@ -52,6 +52,7 @@ const useVendorProfile = (toggleEditMode) => {
           ...response?.data?.user_info,
           ...response?.data?.partner_info,
         };
+        profile_info.MSME_registered = profile_info.MSME_registered?'Yes':'No';
         setProfile(profile_info);
       }
     };

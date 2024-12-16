@@ -26,7 +26,6 @@ export const getPincodeLocationDetails = async (debouncedPincode) => {
         }
         if (types.includes('locality')) {
             locationObj['city'] = addObj.long_name
-            console.log("City>>> "+addObj.long_name)
         }
     });
     //locationObj.localities = postcode_localities;

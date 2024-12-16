@@ -26,6 +26,7 @@ import AddNewProductPage1 from './pages/AddNewProductPage1';
 import VerifyEmailPage from "./pages/VerifyEmailPage";
 import { validateAndSetAuthStatus } from './utils/validateAuth';
 import NewProfilePage from "./pages/NewProfilePage";
+import { ToastContainer } from "react-toastify";
 
 const router = createBrowserRouter([
   {
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/profile',
-    element: <ProfilePage1 />,
+    element: <NewProfilePage/>,
   },
   {
     path: '/dashboard',
@@ -95,10 +96,6 @@ const router = createBrowserRouter([
   {
     path: '/lessons/:id',
     element: <LessonPreviewPage />,
-  },
-  {
-    path:'/test',
-    element: <NewProfilePage/>
   },
   {
     path: '*',
@@ -123,7 +120,16 @@ const App = () => {
     initializeAuth();
 }, [appStore]);
 
-  return loading ? null : <RouterProvider router={router} />; // Render nothing until loading is false
+  return loading ? null : 
+  <>
+    <RouterProvider router={router} />;
+    <ToastContainer
+    autoClose={1500}
+    pauseOnFocusLoss={false}
+    pauseOnHover={false}
+    position="top-right"/>
+  </>
+   // Render nothing until loading is false
 };
 
 export default observer(App);
