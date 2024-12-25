@@ -5,7 +5,9 @@ const signupValidationSchemas = [
   yup.object().shape({
     company_name: yup.string().required("Company name is required."),
     company_type: yup.string().nullable(), // Optional
-    website: yup.string().url("Website must be a valid URL.").nullable(),
+    website: yup.string()
+      .matches(/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/,"Website must be a valid URL.")
+      .nullable(),
     landline_number: yup
     .string()
     .nullable()
@@ -38,7 +40,7 @@ const signupValidationSchemas = [
     pincode: yup
       .string()
       .required("Pin code is required.")
-      .matches(/^\d{6}$/, "Pin code must be 6 digits."),
+      .matches(/^\d+$/, "Invalid pincode"),
     state: yup.string().required("State is required."),
     city: yup.string().required("City is required."),
     address_line_1: yup.string().required("Address line 1 is required."),
