@@ -14,7 +14,7 @@ spec:
         app: xcellify-partner
     spec:
       containers:
-        - image: xcellifyrepo.azurecr.io/xcellify/partner:1.0.5
+        - image: xcellifyrepo.azurecr.io/xcellify/partner:2.10
           imagePullPolicy: Always
           name: xcellify-partner
           ports:
