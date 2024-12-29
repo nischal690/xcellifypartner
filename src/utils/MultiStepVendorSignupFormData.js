@@ -6,26 +6,49 @@ const steps = [
       {
         heading: "Company details",
         fields: [
-          { label: "Company name", name: "company_name", type: "text", required: true },
           {
-            label: "Company type", name: "company_type", type: "select", required: false,
+            label: "Company name",
+            name: "company_name",
+            type: "text",
+            required: true,
+          },
+          {
+            label: "Company type",
+            name: "company_type",
+            type: "select",
+            required: false,
             options: [
-              { label: "Individual", value: 'Individual' },
-              { label: "Sole Proprietorship", value: 'sole_proprietership' },
-              { label: "Limited Liability Partnership (LLP)", value: 'llp' },
-              { label: "Private limited company", value: 'privateltd' },
-              { label: "Public limited company", value: 'publicltd' },
+              { label: "Individual", value: "Individual" },
+              { label: "Sole Proprietorship", value: "sole_proprietership" },
+              { label: "Limited Liability Partnership (LLP)", value: "llp" },
+              { label: "Private limited company", value: "privateltd" },
+              { label: "Public limited company", value: "publicltd" },
             ],
           },
           { label: "Website", name: "website", type: "url", required: false },
-          { label: "Landline number", name: "landline_number", type: "text", required: false },
+          {
+            label: "Landline number",
+            name: "landline_number",
+            type: "text",
+            required: false,
+          },
         ],
       },
       {
         heading: "Contact person's details",
         fields: [
-          { label: "Contact person name", name: "contact_person_name", type: "text", required: true },
-          { label: "Contact person's Email ID", name: "contact_person_email", type: "email", required: true },
+          {
+            label: "Contact person name",
+            name: "contact_person_name",
+            type: "text",
+            required: true,
+          },
+          {
+            label: "Contact person's Email ID",
+            name: "contact_person_email",
+            type: "email",
+            required: true,
+          },
           {
             label: "Contact person's mobile number",
             name: "contact_person_mobile",
@@ -38,8 +61,18 @@ const steps = [
       {
         heading: "CEO/Owner details",
         fields: [
-          { label: "CEO/Owner name", name: "owner_name", type: "text", required: true },
-          { label: "CEO/Owner's Email ID", name: "owner_email", type: "email", required: true },
+          {
+            label: "CEO/Owner name",
+            name: "owner_name",
+            type: "text",
+            required: true,
+          },
+          {
+            label: "CEO/Owner's Email ID",
+            name: "owner_email",
+            type: "email",
+            required: true,
+          },
           {
             label: "CEO/Owner's mobile number",
             name: "owner_mobile",
@@ -52,12 +85,46 @@ const steps = [
       {
         heading: "Address",
         fields: [
-          { label: "Country", name: "country", type: "select", required: true, options: [], },
-          { label: "Pin code/ZIP code", name: "pincode", type: "text", required: true, pattern: /^\d{6}$/ },
-          { label: "State", name: "state", type: "select", required: true, options: [] },
-          { label: "City", name: "city", type: "select", required: true, options: [] },
-          { label: "Address line 1", name: "address_line_1", type: "text", required: true },
-          { label: "Address line 2", name: "address_line_2", type: "text", required: false },
+          {
+            label: "Country",
+            name: "country",
+            type: "select",
+            required: true,
+            options: [],
+          },
+          {
+            label: "Pin code/ZIP code",
+            name: "pincode",
+            type: "text",
+            required: true,
+            pattern: /^\d{6}$/,
+          },
+          {
+            label: "State",
+            name: "state",
+            type: "select",
+            required: true,
+            options: [],
+          },
+          {
+            label: "City",
+            name: "city",
+            type: "select",
+            required: true,
+            options: [],
+          },
+          {
+            label: "Address line 1",
+            name: "address_line_1",
+            type: "text",
+            required: true,
+          },
+          {
+            label: "Address line 2",
+            name: "address_line_2",
+            type: "text",
+            required: false,
+          },
         ],
       },
     ],
@@ -69,17 +136,34 @@ const steps = [
       {
         heading: "Bank details",
         fields: [
-          { label: "Bank name", name: "bank_name", type: "text", required: false },
           {
-            label: "Account type", name: "bank_account_type", type: "select",
-            options: [
-              { label: "Current", value: 'current' },
-              { label: "Savings", value: 'savings' }
-            ],
-            required: false
+            label: "Bank name",
+            name: "bank_name",
+            type: "text",
+            required: false,
           },
-          { label: "Bank account number", name: "bank_account_number", type: "text", required: true },
-          { label: "IFSC number", name: "bank_ifsc", type: "text", required: true },
+          {
+            label: "Account type",
+            name: "bank_account_type",
+            type: "select",
+            options: [
+              { label: "Current", value: "current" },
+              { label: "Savings", value: "savings" },
+            ],
+            required: false,
+          },
+          {
+            label: "Bank account number",
+            name: "bank_account_number",
+            type: "text",
+            required: true,
+          },
+          {
+            label: "IFSC number",
+            name: "bank_ifsc",
+            type: "text",
+            required: true,
+          },
         ],
       },
       {
@@ -92,14 +176,17 @@ const steps = [
             label: "Are you registered under MSME?",
             name: "MSME_registered",
             type: "select",
-            options: [{ label: "Yes", value: 'Yes' }, { label: "No", value: 'No' }],
+            options: [
+              { label: "Yes", value: "Yes" },
+              { label: "No", value: "No" },
+            ],
             required: true,
           },
           {
             label: "Upload MSME Certificate",
             name: "msme_certificate",
             type: "file",
-          }
+          },
         ],
       },
     ],
@@ -111,23 +198,58 @@ const steps = [
       {
         heading: "Basic details",
         fields: [
-          { label: "Product Title", name: "product_title", type: "text", required: true },
-          { label: "Service provided since", name: "service_since", type: "date", required: false },
-          { label: "Courses level", name: "courses_level", type: "text", required: false },
+          {
+            label: "Product Title",
+            name: "product_title",
+            type: "text",
+            required: true,
+          },
+          {
+            label: "Service provided since",
+            name: "service_since",
+            type: "date",
+            required: false,
+          },
+          {
+            label: "Courses level",
+            name: "courses_level",
+            type: "text",
+            required: false,
+          },
         ],
       },
       {
         heading: "Service locations",
         fields: [
-          { label: "Countries serviced", name: "countries_serviced", type: "text", required: false },
-          { label: "Cities serviced", name: "cities_serviced", type: "text", required: false },
+          {
+            label: "Countries serviced",
+            name: "countries_serviced",
+            type: "text",
+            required: false,
+          },
+          {
+            label: "Cities serviced",
+            name: "cities_serviced",
+            type: "text",
+            required: false,
+          },
         ],
       },
       {
         heading: "Additional details",
         fields: [
-          { label: "Product description", name: "product_description", type: "textarea", required: false },
-          { label: "Product unique selling point", name: "product_usp", type: "textarea", required: false },
+          {
+            label: "Product description",
+            name: "product_description",
+            type: "textarea",
+            required: false,
+          },
+          {
+            label: "Product unique selling point",
+            name: "product_usp",
+            type: "textarea",
+            required: false,
+          },
         ],
       },
       {
@@ -142,19 +264,32 @@ const steps = [
             options: [
               { label: "USD", value: "USD" },
               { label: "INR", value: "INR" },
-              { label: "EUR", value: "EUR" }
+              { label: "EUR", value: "EUR" },
             ],
           },
-          { label: "Discount", name: "discount", type: "number", required: false },
-          { label: "Final Price", name: "final_price", type: "number", required: true },
         ],
       },
       {
         heading: "Marketing materials",
         fields: [
-          { label: "Google reviews/rating", name: "google_reviews", type: "text", required: false },
-          { label: "Upload brand logo", name: "brand_logo", type: "file", required: false },
-          { label: "Upload product image/video", name: "product_media", type: "file", required: false },
+          {
+            label: "Google reviews/rating",
+            name: "google_reviews",
+            type: "text",
+            required: false,
+          },
+          {
+            label: "Upload brand logo",
+            name: "brand_logo",
+            type: "file",
+            required: false,
+          },
+          {
+            label: "Upload product image/video",
+            name: "product_media",
+            type: "file",
+            required: false,
+          },
         ],
       },
     ],

@@ -9,14 +9,16 @@ const signupValidationSchemas = [
       .matches(/^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/,"Website must be a valid URL.")
       .nullable(),
     landline_number: yup
-    .string()
-    .nullable()
-    .test(
-      "is-valid-landline",
-      "Landline number must contain only numbers.",
-      (value) => !value || /^\d+$/.test(value) // Validates only if value is not empty
-    ),
-    contact_person_name: yup.string().required("Contact person name is required."),
+      .string()
+      .nullable()
+      .test(
+        "is-valid-landline",
+        "Landline number must contain only numbers.",
+        (value) => !value || /^\d+$/.test(value) // Validates only if value is not empty
+      ),
+    contact_person_name: yup
+      .string()
+      .required("Contact person name is required."),
     contact_person_email: yup
       .string()
       .email("Contact person's email must be valid.")
@@ -24,7 +26,9 @@ const signupValidationSchemas = [
     contact_person_mobile: yup
       .number()
       .nullable()
-      .transform((value, originalValue) => (originalValue === "" ? null : value))
+      .transform((value, originalValue) =>
+        originalValue === "" ? null : value
+      )
       .required("Contact person's mobile number is required."),
     owner_name: yup.string().required("CEO/Owner name is required."),
     owner_email: yup
@@ -34,7 +38,9 @@ const signupValidationSchemas = [
     owner_mobile: yup
       .number()
       .nullable()
-      .transform((value, originalValue) => (originalValue === "" ? null : value))
+      .transform((value, originalValue) =>
+        originalValue === "" ? null : value
+      )
       .required("CEO/Owner's mobile number is required."),
     country: yup.string().required("Country is required."),
     pincode: yup
@@ -57,16 +63,10 @@ const signupValidationSchemas = [
     bank_ifsc: yup
       .string()
       .required("IFSC number is required.")
-      .matches(/^[A-Za-z]{4}\d{7}$/, "Invalid IFSC number."),
-    PAN: yup
-      .string()
-      .nullable()
-      .matches(/^[A-Z]{5}\d{4}[A-Z]{1}$/, "Invalid PAN format."),
+      .matches(/^/, "Invalid IFSC number."),
+    PAN: yup.string().nullable().matches(/^/, "Invalid PAN format."),
     CIN: yup.string().nullable(),
-    GST: yup
-      .string()
-      .nullable()
-      .matches(/^\d{2}[A-Z]{5}\d{4}[A-Z]{1}[A-Z\d]{1}[Z]{1}[A-Z\d]{1}$/, "Invalid GST format."),
+    GST: yup.string().nullable().matches(/^/, "Invalid GST format."),
     MSME_registered: yup.string().required("Please specify MSME registration."),
     msme_certificate: yup.mixed().nullable(),
   }),
@@ -74,35 +74,43 @@ const signupValidationSchemas = [
   yup.object().shape({
     product_title: yup.string().required("Product title is required."),
     service_since: yup
-    .date()
-    .required()
-    .nullable() // Allow null
-    .transform((value, originalValue) => (originalValue === "" ? null : value)) 
-    .typeError("Service since must be a valid date."),
+      .date()
+      .required()
+      .nullable() // Allow null
+      .transform((value, originalValue) =>
+        originalValue === "" ? null : value
+      )
+      .typeError("Service since must be a valid date."),
     courses_level: yup.string().nullable(),
     countries_serviced: yup.string().nullable(),
     cities_serviced: yup.string().nullable(),
     product_description: yup.string().nullable(),
     product_usp: yup.string().nullable(),
     price: yup
-    .number()
-    .nullable()
-    .transform((value, originalValue) => (originalValue === "" ? null : value)) // Convert empty string to null
-    .required("Price is required.")
-    .min(0, "Price cannot be negative.")
-    .typeError("Price must be a valid number."),
+      .number()
+      .nullable()
+      .transform((value, originalValue) =>
+        originalValue === "" ? null : value
+      ) // Convert empty string to null
+      .required("Price is required.")
+      .min(0, "Price cannot be negative.")
+      .typeError("Price must be a valid number."),
     currency: yup.string().required("Currency is required."),
     discount: yup
       .number()
       .nullable()
-      .transform((value, originalValue) => (originalValue === "" ? null : value))
+      .transform((value, originalValue) =>
+        originalValue === "" ? null : value
+      )
       .min(0, "Discount cannot be negative.")
       .max(100, "Discount cannot exceed 100%.")
       .typeError("Discount must be a valid number."),
     final_price: yup
       .number()
       .nullable()
-      .transform((value, originalValue) => (originalValue === "" ? null : value))
+      .transform((value, originalValue) =>
+        originalValue === "" ? null : value
+      )
       .required("Final price is required.")
       .min(0, "Final price cannot be negative.")
       .typeError("Final price must be a valid number."),
@@ -114,7 +122,9 @@ const signupValidationSchemas = [
 
 export const validateStep = async (formData, currentStep) => {
   try {
-    await signupValidationSchemas[currentStep].validate(formData, { abortEarly: false });
+    await signupValidationSchemas[currentStep].validate(formData, {
+      abortEarly: false,
+    });
     return {}; // No errors
   } catch (validationError) {
     return validationError.inner.reduce((errors, err) => {
