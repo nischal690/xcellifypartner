@@ -1,32 +1,40 @@
-import { BrowserRouter as Router, Routes, Route, createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useEffect, useState } from "react";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import HomePage from "./pages/HomePage";
-import NotFoundPage from "./pages/NotFoundPage";
-import VerificationSentPage from "./pages/VerificationSentPage";
-import EmailVerifiedPage from "./pages/EmailVerifiedPage";
-import ResetPassword from "./pages/ResetPassword";
-import EmailVerificationPwd from "./pages/EmailVerificationPwd";
-import MultiStepVendorSignupPage from "./pages/MultiStepVendorSignupPage";
-import AdminApprovalRequestSentPage from "./pages/AdminApprovalRequestSentPage";
-import UnderReviewPage from "./pages/UnderReviewPage";
-import DashboardPage from "./pages/DashboardPage";
-import ProductDetail from "./pages/ProductPage";
-import AddNewProductPage from "./pages/AddNewProductPage";
-import LessonPreviewPage from "./pages/LessonsPreviewPage";
-import ProfilePage1 from "./pages/ProfilePage1";
-import { observer } from "mobx-react";
-import { useStore } from "./stores";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
+import SellerLandingPage from './pages/SellerLandingPage';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/NotFoundPage';
+import VerificationSentPage from './pages/VerificationSentPage';
+import EmailVerifiedPage from './pages/EmailVerifiedPage';
+import ResetPassword from './pages/ResetPassword';
+import EmailVerificationPwd from './pages/EmailVerificationPwd';
+import MultiStepVendorSignupPage from './pages/MultiStepVendorSignupPage';
+import AdminApprovalRequestSentPage from './pages/AdminApprovalRequestSentPage';
+import UnderReviewPage from './pages/UnderReviewPage';
+import DashboardPage from './pages/DashboardPage';
+import ProductDetail from './pages/ProductPage';
+import AddNewProductPage from './pages/AddNewProductPage';
+import LessonPreviewPage from './pages/LessonsPreviewPage';
+import ProfilePage1 from './pages/ProfilePage1';
+import { observer } from 'mobx-react';
+import { useStore } from './stores';
 import apiRequest from './utils/apiRequest';
-import { AuthStatuses } from "./utils/constants";
+import { AuthStatuses } from './utils/constants';
 import { toJS } from 'mobx';
-import AllProductsPage from "./pages/AllProductsPage";
+import AllProductsPage from './pages/AllProductsPage';
 import AddNewProductPage1 from './pages/AddNewProductPage1';
-import VerifyEmailPage from "./pages/VerifyEmailPage";
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import { validateAndSetAuthStatus } from './utils/validateAuth';
-import NewProfilePage from "./pages/NewProfilePage";
-import { ToastContainer } from "react-toastify";
+import NewProfilePage from './pages/NewProfilePage';
+import { ToastContainer } from 'react-toastify';
 
 const router = createBrowserRouter([
   {
@@ -34,12 +42,16 @@ const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
+    path: '/partner-landing-page',
+    element: <SellerLandingPage />,
+  },
+  {
     path: '/login',
     element: <LoginPage />,
   },
   {
     path: '/verify-email',
-    element: <VerifyEmailPage />
+    element: <VerifyEmailPage />,
   },
   {
     path: '/signup',
@@ -75,7 +87,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/profile',
-    element: <NewProfilePage/>,
+    element: <NewProfilePage />,
   },
   {
     path: '/dashboard',
@@ -83,7 +95,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/products',
-    element: <AllProductsPage />
+    element: <AllProductsPage />,
   },
   {
     path: '/product/:id',
@@ -109,27 +121,29 @@ const App = () => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-        if (localStorage.getItem('token') !== '') {
-            await validateAndSetAuthStatus(appStore);
-        } else {
-            appStore.setAppProperty('authStatus', AuthStatuses.UNAUTHENTICATED);
-        }
-        setLoading(false); // Only hide loading spinner after initialization
+      if (localStorage.getItem('token') !== '') {
+        await validateAndSetAuthStatus(appStore);
+      } else {
+        appStore.setAppProperty('authStatus', AuthStatuses.UNAUTHENTICATED);
+      }
+      setLoading(false); // Only hide loading spinner after initialization
     };
 
     initializeAuth();
-}, [appStore]);
+  }, [appStore]);
 
-  return loading ? null : 
-  <>
-    <RouterProvider router={router} />;
-    <ToastContainer
-    autoClose={1500}
-    pauseOnFocusLoss={false}
-    pauseOnHover={false}
-    position="top-right"/>
-  </>
-   // Render nothing until loading is false
+  return loading ? null : (
+    <>
+      <RouterProvider router={router} />
+      <ToastContainer
+        autoClose={1500}
+        pauseOnFocusLoss={false}
+        pauseOnHover={false}
+        position="top-right"
+      />
+    </>
+  );
+  // Render nothing until loading is false
 };
 
 export default observer(App);

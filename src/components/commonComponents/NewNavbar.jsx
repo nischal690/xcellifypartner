@@ -1,0 +1,169 @@
+import React, { useState } from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
+const NewNavbar = () => {
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const handleLoginClick = () => {
+    navigate('/login');
+    setIsMenuOpen(false);
+  };
+
+  const handleSignupClick = () => {
+    navigate('/signup');
+    setIsMenuOpen(false);
+  };
+
+  return (
+    <nav className="bg-purple-primary sticky top-0 z-50">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center py-2">
+          {/* Logo or Brand */}
+          <div className="text-white text-lg font-bold">Xcellify</div>
+
+          {/* Hamburger Menu for Mobile */}
+          <div className="sm:hidden">
+            <button
+              onClick={toggleMenu}
+              aria-label="Toggle navigation"
+              className="text-white focus:outline-none"
+            >
+              {isMenuOpen ? (
+                // Close Icon (Cross SVG)
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M4 6h16M4 12h16m-7 6h7"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="hidden sm:flex flex-1 justify-center items-center space-x-8">
+            <a
+              href="#why-partner"
+              className="text-white text-m font-medium hover:underline"
+            >
+              Why partner?
+            </a>
+            <a
+              href="#what-to-sell"
+              className="text-white text-m font-medium hover:underline"
+            >
+              What to Sell?
+            </a>
+            <a
+              href="#how-to-start"
+              className="text-white text-m font-medium hover:underline"
+            >
+              How to Start?
+            </a>
+            <a
+              href="#faqs"
+              className="text-white text-m font-medium hover:underline"
+            >
+              FAQs
+            </a>
+          </div>
+
+          {/* Buttons */}
+          <div className="hidden sm:flex space-x-4">
+            <button
+              className="bg-[#E7E2FF] text-[#000000] font-dmsans px-4 py-1.5 rounded-lg hover:bg-gray-200"
+              onClick={handleSignupClick}
+            >
+              Sign up
+            </button>
+            <button
+              className="bg-white text-purple-primary font-dmsans px-4 py-1.5 rounded-lg"
+              onClick={handleLoginClick}
+            >
+              Login
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        <div
+          className={`sm:hidden mt-2 flex-col space-y-4 bg-purple-primary px-4 py-4 rounded-lg ${
+            isMenuOpen ? 'flex' : 'hidden'
+          }`}
+        >
+          <a
+            href="#why-partner"
+            className="text-white text-m font-medium hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Why partner?
+          </a>
+          <a
+            href="#what-to-sell"
+            className="text-white text-m font-medium hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            What to Sell?
+          </a>
+          <a
+            href="#how-to-start"
+            className="text-white text-m font-medium hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            How to Start?
+          </a>
+          <a
+            href="#faqs"
+            className="text-white text-m font-medium hover:underline"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            FAQs
+          </a>
+          <button
+            className="bg-[#E7E2FF] text-[#000000] font-dmsans px-4 py-2 rounded-lg hover:bg-gray-200"
+            onClick={handleSignupClick}
+          >
+            Sign up
+          </button>
+          <button
+            className="bg-white text-purple-primary font-dmsans px-4 py-2 rounded-lg"
+            onClick={handleLoginClick}
+          >
+            Login
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default NewNavbar;

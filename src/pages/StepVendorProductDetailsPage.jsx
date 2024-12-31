@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-import { ProductDetailsData } from "../utils/StepVendorProductDetails";
+import { ProductDetailsData } from '../utils/StepVendorProductDetails';
 
-import ImageCropper from "../components/commonComponents/ImageCropper";
+import ImageCropper from '../components/commonComponents/ImageCropper';
 import {
   validateField,
   validateForm,
@@ -13,9 +13,9 @@ import {
   MAX_FILE_SIZE,
   ALLOWED_IMAGE_TYPES,
   MAX_MEDIA_SIZE,
-} from "../utils/StepVendorProductDetails";
-import { useStore } from "../stores";
-import { toJS } from "mobx";
+} from '../utils/StepVendorProductDetails';
+import { useStore } from '../stores';
+import { toJS } from 'mobx';
 
 const StepVendorProductDetailsPage = () => {
   const { appStore } = useStore();
@@ -24,9 +24,11 @@ const StepVendorProductDetailsPage = () => {
 
   console.log(partnerInfo.id);
 
+  const fileInputRef = useRef(null);
+
   const [categories, setCategories] = useState([]);
   const [currentForm, setCurrentForm] = useState({
-    category: "",
+    category: '',
     formData: {},
     errors: {},
     isOpen: true,
@@ -50,32 +52,32 @@ const StepVendorProductDetailsPage = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest(".relative")) {
+      if (!event.target.closest('.relative')) {
         setShowMenu(null);
       }
     };
 
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside);
     };
   }, []);
 
   const handlePreview = (file, fieldName) => {
     if (file.id) {
       const previewUrl =
-        fieldName === "product_images"
+        fieldName === 'product_images'
           ? filePreviewMap.images[file.id]
           : filePreviewMap.videos[file.id];
 
       setPreviewMedia({
         url: previewUrl,
-        type: fieldName === "product_images" ? "image" : "video",
+        type: fieldName === 'product_images' ? 'image' : 'video',
       });
     } else {
       setPreviewMedia({
         url: URL.createObjectURL(file),
-        type: file.type.startsWith("image/") ? "image" : "video",
+        type: file.type.startsWith('image/') ? 'image' : 'video',
       });
     }
   };
@@ -98,15 +100,15 @@ const StepVendorProductDetailsPage = () => {
       const updatedCategories = [...categories];
       const product = updatedCategories[categoryIndex].products[productIndex];
 
-      product.formData[name] = type === "file" ? files[0] : value;
+      product.formData[name] = type === 'file' ? files[0] : value;
 
       const { isValid, error } = await validateField(
         product.category || currentForm.category,
         name,
-        type === "file" ? files[0] : value
+        type === 'file' ? files[0] : value
       );
 
-      product.errors[name] = !isValid ? error : "";
+      product.errors[name] = !isValid ? error : '';
 
       updatedCategories[categoryIndex].products[productIndex] = product;
       setCategories(updatedCategories);
@@ -114,18 +116,18 @@ const StepVendorProductDetailsPage = () => {
       const { isValid, error } = await validateField(
         currentForm.category,
         name,
-        type === "file" ? files[0] : value
+        type === 'file' ? files[0] : value
       );
 
       setCurrentForm((prev) => ({
         ...prev,
         formData: {
           ...prev.formData,
-          [name]: type === "file" ? files[0] : value,
+          [name]: type === 'file' ? files[0] : value,
         },
         errors: {
           ...prev.errors,
-          [name]: !isValid ? error : "",
+          [name]: !isValid ? error : '',
         },
       }));
     }
@@ -158,7 +160,7 @@ const StepVendorProductDetailsPage = () => {
                 file: file instanceof File ? file : null,
                 name: file.name || `Image ${Date.now()}`,
                 size: file.size,
-                type: file instanceof File ? file.type : "image",
+                type: file instanceof File ? file.type : 'image',
               };
             }) || [],
           product_videos: product.formData.product_videos
@@ -175,7 +177,7 @@ const StepVendorProductDetailsPage = () => {
                 name:
                   product.formData.product_videos.name || `Video ${Date.now()}`,
                 size: product.formData.product_videos.size,
-                type: "video",
+                type: 'video',
               }
             : null,
         };
@@ -206,7 +208,7 @@ const StepVendorProductDetailsPage = () => {
         product.isOpen = false;
         setCategories(updatedCategories);
 
-        toast.success("Product saved successfully!");
+        toast.success('Product saved successfully!');
       }
     );
   };
@@ -219,7 +221,7 @@ const StepVendorProductDetailsPage = () => {
     if (!files.length) return;
 
     const validFiles = Array.from(files).filter((file) => {
-      if (fieldName === "product_images") {
+      if (fieldName === 'product_images') {
         if (file.size > MAX_FILE_SIZE) {
           toast.error(`Image ${file.name} exceeds 5MB limit`);
           return false;
@@ -228,12 +230,12 @@ const StepVendorProductDetailsPage = () => {
           toast.error(`${file.name} must be JPG, JPEG or PNG`);
           return false;
         }
-      } else if (fieldName === "product_videos") {
+      } else if (fieldName === 'product_videos') {
         if (file.size > MAX_MEDIA_SIZE) {
           toast.error(`Video ${file.name} exceeds 20MB limit`);
           return false;
         }
-        if (file.type !== "video/mp4") {
+        if (file.type !== 'video/mp4') {
           toast.error(`${file.name} must be MP4 format`);
           return false;
         }
@@ -243,7 +245,7 @@ const StepVendorProductDetailsPage = () => {
 
     if (validFiles.length === 0) return;
 
-    if (fieldName === "product_images") {
+    if (fieldName === 'product_images') {
       if (categoryIndex !== undefined) {
         const updatedCategories = [...categories];
         const product = updatedCategories[categoryIndex].products[productIndex];
@@ -267,7 +269,7 @@ const StepVendorProductDetailsPage = () => {
       return;
     }
 
-    if (fieldName === "product_videos") {
+    if (fieldName === 'product_videos') {
       if (categoryIndex !== undefined) {
         const updatedCategories = [...categories];
         const product = updatedCategories[categoryIndex].products[productIndex];
@@ -295,6 +297,9 @@ const StepVendorProductDetailsPage = () => {
     }
 
     handleFileUpload(validFiles, fieldName, categoryIndex, productIndex);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
+    }
   };
 
   const handleFileUpload = async (
@@ -317,64 +322,81 @@ const StepVendorProductDetailsPage = () => {
         appStore.uploadFile(file)
       );
       const uploadResponses = await Promise.all(uploadPromises);
+
       const uploadedFiles = uploadResponses
         .filter((response) => response.success)
         .map((response, index) => ({
-          id: response.id,
+          id: response.id, // The `id` from the server
           preview: URL.createObjectURL(validFiles[index]),
         }));
 
       if (!uploadedFiles.length) {
-        toast.error("Failed to upload files.");
+        toast.error('Failed to upload files.');
         return;
       }
 
       setFilePreviewMap((prev) => {
         const newMap = { ...prev };
         uploadedFiles.forEach((file) => {
-          if (fieldName === "product_images") {
+          if (fieldName === 'product_images') {
             newMap.images[file.id] = file.preview;
-          } else if (fieldName === "product_videos") {
+          } else if (fieldName === 'product_videos') {
             newMap.videos[file.id] = file.preview;
           }
         });
         return newMap;
       });
 
-      if (categoryIndex !== undefined) {
-        const updatedCategories = [...categories];
-        const product = updatedCategories[categoryIndex].products[productIndex];
+      if (fieldName === 'product_videos') {
+        if (categoryIndex !== undefined) {
+          const updatedCategories = [...categories];
+          const product =
+            updatedCategories[categoryIndex].products[productIndex];
 
-        if (fieldName === "product_images") {
-          product.formData[fieldName] = [
-            ...(product.formData[fieldName] || []),
-            ...uploadedFiles.map((f) => ({ id: f.id })),
-          ];
-        } else if (fieldName === "product_videos") {
-          product.formData[fieldName] = { id: uploadedFiles[0].id };
+          product.formData[fieldName] = {
+            id: uploadedFiles[0].id,
+          };
+          setCategories(updatedCategories);
+        } else {
+          setCurrentForm((prev) => ({
+            ...prev,
+            formData: {
+              ...prev.formData,
+              [fieldName]: { id: uploadedFiles[0].id },
+            },
+          }));
         }
-
-        setCategories(updatedCategories);
-      } else {
-        setCurrentForm((prev) => ({
-          ...prev,
-          formData: {
-            ...prev.formData,
-            [fieldName]:
-              fieldName === "product_images"
-                ? [
-                    ...(prev.formData[fieldName] || []),
-                    ...uploadedFiles.map((f) => ({ id: f.id })),
-                  ]
-                : { id: uploadedFiles[0].id },
-          },
-        }));
       }
 
-      toast.success("Files uploaded successfully!");
+      if (fieldName === 'product_images') {
+        if (categoryIndex !== undefined) {
+          const updatedCategories = [...categories];
+          const product =
+            updatedCategories[categoryIndex].products[productIndex];
+
+          product.formData[fieldName] = [
+            ...(product.formData[fieldName] || []),
+            ...uploadedFiles.map((f) => ({ id: f.id })), // Assign image IDs
+          ];
+          setCategories(updatedCategories);
+        } else {
+          setCurrentForm((prev) => ({
+            ...prev,
+            formData: {
+              ...prev.formData,
+              [fieldName]: [
+                ...(prev.formData[fieldName] || []),
+                ...uploadedFiles.map((f) => ({ id: f.id })), // Assign image IDs
+              ],
+            },
+          }));
+        }
+      }
+
+      toast.success('Files uploaded successfully!');
     } catch (error) {
-      console.error("File upload failed:", error);
-      toast.error("Failed to upload files. Please try again.");
+      console.error('File upload failed:', error);
+      toast.error('Failed to upload files. Please try again.');
     } finally {
       setUploadingFiles((prev) => {
         const newState = { ...prev };
@@ -396,10 +418,10 @@ const StepVendorProductDetailsPage = () => {
       );
       setCropperImage(null);
       setCurrentFileInfo(null);
-      console.log("Crop complete and file uploaded successfully!");
+      console.log('Crop complete and file uploaded successfully!');
     } catch (error) {
-      console.error("Error during cropping/upload process:", error);
-      toast.error("Failed to upload cropped image. Please try again.");
+      console.error('Error during cropping/upload process:', error);
+      toast.error('Failed to upload cropped image. Please try again.');
     }
   };
 
@@ -410,34 +432,46 @@ const StepVendorProductDetailsPage = () => {
     productIndex
   ) => {
     try {
-      const fileToDelete =
-        categoryIndex !== undefined
-          ? categories[categoryIndex].products[productIndex].formData[
-              fieldName
-            ][index]
-          : currentForm.formData[fieldName][index];
+      let fileToDelete;
+
+      if (categoryIndex !== undefined) {
+        const product =
+          categories[categoryIndex].products[productIndex].formData;
+
+        fileToDelete =
+          fieldName === 'product_videos'
+            ? product[fieldName]
+            : product[fieldName][index];
+      } else {
+        const formData = currentForm.formData;
+
+        fileToDelete =
+          fieldName === 'product_videos'
+            ? formData[fieldName]
+            : formData[fieldName][index];
+      }
 
       if (!fileToDelete?.id) {
-        throw new Error("File ID not found for deletion.");
+        throw new Error('File ID not found for deletion.');
       }
 
       const deleteResponse = await appStore.deleteFile(fileToDelete.id);
 
       if (!deleteResponse.success) {
-        throw new Error(deleteResponse.error || "Failed to delete file.");
+        throw new Error(deleteResponse.error || 'Failed to delete file.');
       }
 
-      toast.success(deleteResponse.message || "File deleted successfully!");
+      toast.success(deleteResponse.message || 'File deleted successfully!');
 
       if (categoryIndex !== undefined) {
         const updatedCategories = [...categories];
         const product = updatedCategories[categoryIndex].products[productIndex];
 
-        if (fieldName === "product_images") {
+        if (fieldName === 'product_images') {
           const images = [...product.formData[fieldName]];
           images.splice(index, 1);
           product.formData[fieldName] = images;
-        } else if (fieldName === "product_videos") {
+        } else if (fieldName === 'product_videos') {
           product.formData[fieldName] = null;
         }
 
@@ -445,11 +479,11 @@ const StepVendorProductDetailsPage = () => {
       } else {
         setCurrentForm((prev) => {
           const updatedForm = { ...prev };
-          if (fieldName === "product_images") {
+          if (fieldName === 'product_images') {
             const images = [...updatedForm.formData[fieldName]];
             images.splice(index, 1);
             updatedForm.formData[fieldName] = images;
-          } else if (fieldName === "product_videos") {
+          } else if (fieldName === 'product_videos') {
             updatedForm.formData[fieldName] = null;
           }
           return updatedForm;
@@ -458,18 +492,18 @@ const StepVendorProductDetailsPage = () => {
 
       URL.revokeObjectURL(fileToDelete.preview || fileToDelete.file);
     } catch (error) {
-      console.error("Error deleting file:", error.message);
-      toast.error(error.message || "Failed to delete file.");
+      console.error('Error deleting file:', error.message);
+      toast.error(error.message || 'Failed to delete file.');
     }
   };
 
   const handleAddProductForm = async () => {
     try {
       console.log(
-        "Adding new product form for category:",
+        'Adding new product form for category:',
         currentForm.category
       );
-      console.log("Form data:", currentForm.formData);
+      console.log('Form data:', currentForm.formData);
 
       const validationResult = await validateForm(
         currentForm.category,
@@ -477,7 +511,7 @@ const StepVendorProductDetailsPage = () => {
       );
 
       if (!validationResult.isValid) {
-        console.log("Validation failed:", validationResult.errors);
+        console.log('Validation failed:', validationResult.errors);
         setCurrentForm({ ...currentForm, errors: validationResult.errors });
         return;
       }
@@ -506,15 +540,15 @@ const StepVendorProductDetailsPage = () => {
 
       setCategories(updatedCategories);
       setCurrentForm({
-        category: "",
+        category: '',
         formData: {},
         errors: {},
         isOpen: true,
       });
 
-      console.log("Product added successfully!");
+      console.log('Product added successfully!');
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error('Error adding product:', error);
     }
   };
 
@@ -565,13 +599,13 @@ const StepVendorProductDetailsPage = () => {
               ...processedData,
               subcategory: formData.subcategory,
               full_financing_available:
-                formData.full_financing_available === "Yes",
+                formData.full_financing_available === 'Yes',
             };
           }
 
           Object.keys(processedData).forEach((key) => {
             if (
-              processedData[key] === "" ||
+              processedData[key] === '' ||
               processedData[key] === undefined ||
               processedData[key] === null
             ) {
@@ -585,7 +619,7 @@ const StepVendorProductDetailsPage = () => {
       .filter(validateProduct);
 
     if (!productsDetails.length) {
-      toast.error("No valid products to submit");
+      toast.error('No valid products to submit');
       return null;
     }
 
@@ -594,19 +628,19 @@ const StepVendorProductDetailsPage = () => {
       products_details: productsDetails,
     };
 
-    console.log("Final request body:", requestBody);
+    console.log('Final request body:', requestBody);
     return requestBody;
   };
 
   const normalizeFields = (product) => {
     const normalizedProduct = { ...product };
     const numberFields = [
-      "price",
-      "discount",
-      "final_price",
-      "google_reviews",
-      "service_provided_since",
-      "counselling_duration",
+      'price',
+      'discount',
+      'final_price',
+      'google_reviews',
+      'service_provided_since',
+      'counselling_duration',
     ];
 
     numberFields.forEach((field) => {
@@ -614,13 +648,13 @@ const StepVendorProductDetailsPage = () => {
         normalizedProduct[field] = Number(normalizedProduct[field]);
       }
     });
-    if ("scholarship_available" in normalizedProduct) {
+    if ('scholarship_available' in normalizedProduct) {
       normalizedProduct.scholarship_available =
-        normalizedProduct.scholarship_available === "Yes";
+        normalizedProduct.scholarship_available === 'Yes';
     }
-    if ("full_financing_available" in normalizedProduct) {
+    if ('full_financing_available' in normalizedProduct) {
       normalizedProduct.full_financing_available =
-        normalizedProduct.full_financing_available === "Yes";
+        normalizedProduct.full_financing_available === 'Yes';
     }
 
     return normalizedProduct;
@@ -631,7 +665,7 @@ const StepVendorProductDetailsPage = () => {
       if (
         product[key] === null ||
         product[key] === undefined ||
-        product[key] === ""
+        product[key] === ''
       ) {
         console.error(`Validation failed for product: ${key}`);
         return false;
@@ -641,27 +675,27 @@ const StepVendorProductDetailsPage = () => {
   };
 
   const logFormData = (data) => {
-    console.log("Request Data:", JSON.stringify(data, null, 2));
+    console.log('Request Data:', JSON.stringify(data, null, 2));
   };
 
   const handleSuccess = (response) => {
-    toast.success("Products submitted successfully!", {
-      position: "top-right",
+    toast.success('Products submitted successfully!', {
+      position: 'top-right',
     });
-    console.log("API Response:", response);
+    console.log('API Response:', response);
     setCategories([]);
   };
 
   const handleFailure = (response, error) => {
-    console.error("API Submission Error:", response, error);
-    toast.error("Submission failed. Please try again.", {
-      position: "top-right",
+    console.error('API Submission Error:', response, error);
+    toast.error('Submission failed. Please try again.', {
+      position: 'top-right',
     });
   };
 
   const handleUnexpectedError = (error) => {
-    console.error("Unexpected error:", error);
-    toast.error("An unexpected error occurred.", { position: "top-right" });
+    console.error('Unexpected error:', error);
+    toast.error('An unexpected error occurred.', { position: 'top-right' });
   };
 
   const renderErrorMessage = (errors, fieldName) => {
@@ -699,7 +733,7 @@ const StepVendorProductDetailsPage = () => {
     return (
       <div className="relative border border-gray-300 rounded-md p-2 shadow-sm w-60">
         <div className="flex items-center gap-2">
-          {fieldName === "product_images" ? (
+          {fieldName === 'product_images' ? (
             <img
               src={
                 file instanceof File
@@ -798,7 +832,7 @@ const StepVendorProductDetailsPage = () => {
           <h4 className="text-md font-medium">
             {product.formData.product_title || `Product ${productIndex + 1}`}
           </h4>
-          <span>{product.isOpen ? "-" : "+"}</span>
+          <span>{product.isOpen ? '-' : '+'}</span>
         </div>
         {product.isOpen && (
           <div className="p-4">
@@ -817,12 +851,12 @@ const StepVendorProductDetailsPage = () => {
                             <span className="text-red-500">*</span>
                           )}
                         </label>
-                        {field.type === "textarea" ? (
+                        {field.type === 'textarea' ? (
                           <>
                             <textarea
                               name={field.name}
                               placeholder={`Enter ${field.label}`}
-                              value={product.formData[field.name] || ""}
+                              value={product.formData[field.name] || ''}
                               onChange={(e) =>
                                 handleProductChange(
                                   e,
@@ -832,17 +866,17 @@ const StepVendorProductDetailsPage = () => {
                               }
                               className={`w-full p-2 border rounded-md ${
                                 product.errors[field.name]
-                                  ? "border-red-500"
-                                  : ""
+                                  ? 'border-red-500'
+                                  : ''
                               }`}
                             ></textarea>
                             {renderErrorMessage(product.errors, field.name)}
                           </>
-                        ) : field.type === "select" ? (
+                        ) : field.type === 'select' ? (
                           <>
                             <select
                               name={field.name}
-                              value={product.formData[field.name] || ""}
+                              value={product.formData[field.name] || ''}
                               onChange={(e) =>
                                 handleProductChange(
                                   e,
@@ -852,8 +886,8 @@ const StepVendorProductDetailsPage = () => {
                               }
                               className={`w-full p-2 border rounded-md ${
                                 product.errors[field.name]
-                                  ? "border-red-500"
-                                  : ""
+                                  ? 'border-red-500'
+                                  : ''
                               }`}
                             >
                               <option value="">Select {field.label}</option>
@@ -865,17 +899,18 @@ const StepVendorProductDetailsPage = () => {
                             </select>
                             {renderErrorMessage(product.errors, field.name)}
                           </>
-                        ) : field.type === "file" ? (
+                        ) : field.type === 'file' ? (
                           <>
                             <div className="flex flex-col gap-2">
                               <div
                                 className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md ${
                                   product.errors[field.name]
-                                    ? "border-red-500"
-                                    : "border-purple-300"
+                                    ? 'border-red-500'
+                                    : 'border-purple-300'
                                 }`}
                               >
                                 <input
+                                  ref={fileInputRef}
                                   type="file"
                                   name={field.name}
                                   id={`${field.name}-upload-${categoryIndex}-${productIndex}`} // Unique ID
@@ -888,11 +923,11 @@ const StepVendorProductDetailsPage = () => {
                                     )
                                   }
                                   accept={
-                                    field.name === "product_images"
-                                      ? "image/*"
-                                      : "video/*"
+                                    field.name === 'product_images'
+                                      ? 'image/*'
+                                      : 'video/*'
                                   }
-                                  multiple={field.name === "product_images"}
+                                  multiple={field.name === 'product_images'}
                                   className="hidden"
                                 />
                                 <label
@@ -917,16 +952,16 @@ const StepVendorProductDetailsPage = () => {
                                     Drag & Drop or Click to upload
                                   </p>
                                   <p className="text-gray-400 text-xs">
-                                    Max{" "}
-                                    {field.name === "product_images"
-                                      ? "5MB"
-                                      : "20MB"}
+                                    Max{' '}
+                                    {field.name === 'product_images'
+                                      ? '5MB'
+                                      : '20MB'}
                                   </p>
                                 </label>
                               </div>
                               {/* Preview section */}
                               <div className="flex flex-wrap gap-2 mt-2">
-                                {field.name === "product_images" &&
+                                {field.name === 'product_images' &&
                                   (product.formData[field.name] || []).map(
                                     (file, idx) => (
                                       <FilePreviewCard
@@ -955,7 +990,7 @@ const StepVendorProductDetailsPage = () => {
                                     )
                                   )}
 
-                                {field.name === "product_videos" &&
+                                {field.name === 'product_videos' &&
                                   product.formData[field.name] && (
                                     <FilePreviewCard
                                       file={product.formData[field.name]}
@@ -994,7 +1029,7 @@ const StepVendorProductDetailsPage = () => {
                               type={field.type}
                               name={field.name}
                               placeholder={`Enter ${field.label}`}
-                              value={product.formData[field.name] || ""}
+                              value={product.formData[field.name] || ''}
                               onChange={(e) =>
                                 handleProductChange(
                                   e,
@@ -1004,8 +1039,8 @@ const StepVendorProductDetailsPage = () => {
                               }
                               className={`w-full p-2 border rounded-md ${
                                 product.errors[field.name]
-                                  ? "border-red-500"
-                                  : ""
+                                  ? 'border-red-500'
+                                  : ''
                               }`}
                             />
                             {renderErrorMessage(product.errors, field.name)}
@@ -1055,9 +1090,9 @@ const StepVendorProductDetailsPage = () => {
             onClick={() => toggleAccordion(categoryIndex)}
           >
             <h3 className="text-lg font-medium">
-              {category.name || "Select Category"}
+              {category.name || 'Select Category'}
             </h3>
-            <span>{category.isOpen ? "-" : "+"}</span>
+            <span>{category.isOpen ? '-' : '+'}</span>
           </div>
           {category.isOpen && (
             <div className="p-4">
@@ -1086,7 +1121,7 @@ const StepVendorProductDetailsPage = () => {
         {currentForm.category && (
           <div>
             {ProductDetailsData[0].categoryFields[currentForm.category]?.some(
-              (section) => section.heading === "Subcategory"
+              (section) => section.heading === 'Subcategory'
             ) && !currentForm.formData.subcategory ? (
               <div className="mb-4">
                 <label className="block text-gray-700 mb-2">
@@ -1094,20 +1129,20 @@ const StepVendorProductDetailsPage = () => {
                 </label>
                 <select
                   name="subcategory"
-                  value={currentForm.formData.subcategory || ""}
+                  value={currentForm.formData.subcategory || ''}
                   onChange={handleProductChange}
                   className="w-full p-2 border rounded-md"
                 >
                   <option value="">Select Subcategory</option>
                   {ProductDetailsData[0].categoryFields[currentForm.category]
-                    .find((section) => section.heading === "Subcategory")
+                    .find((section) => section.heading === 'Subcategory')
                     ?.fields[0].options.map((option, index) => (
                       <option key={index} value={option}>
                         {option}
                       </option>
                     ))}
                 </select>
-                {renderErrorMessage(currentForm.errors, "subcategory")}
+                {renderErrorMessage(currentForm.errors, 'subcategory')}
               </div>
             ) : (
               <div>
@@ -1134,17 +1169,17 @@ const StepVendorProductDetailsPage = () => {
                                 <span className="text-red-500">*</span>
                               )}
                             </label>
-                            {field.type === "textarea" ? (
+                            {field.type === 'textarea' ? (
                               <>
                                 <textarea
                                   name={field.name}
                                   placeholder={`Enter ${field.label}`}
-                                  value={currentForm.formData[field.name] || ""}
+                                  value={currentForm.formData[field.name] || ''}
                                   onChange={handleProductChange}
                                   className={`w-full p-2 border rounded-md ${
                                     currentForm.errors[field.name]
-                                      ? "border-red-500"
-                                      : ""
+                                      ? 'border-red-500'
+                                      : ''
                                   }`}
                                 />
                                 {renderErrorMessage(
@@ -1152,16 +1187,16 @@ const StepVendorProductDetailsPage = () => {
                                   field.name
                                 )}
                               </>
-                            ) : field.type === "select" ? (
+                            ) : field.type === 'select' ? (
                               <>
                                 <select
                                   name={field.name}
-                                  value={currentForm.formData[field.name] || ""}
+                                  value={currentForm.formData[field.name] || ''}
                                   onChange={handleProductChange}
                                   className={`w-full p-2 border rounded-md ${
                                     currentForm.errors[field.name]
-                                      ? "border-red-500"
-                                      : ""
+                                      ? 'border-red-500'
+                                      : ''
                                   }`}
                                 >
                                   <option value="">Select {field.label}</option>
@@ -1176,14 +1211,14 @@ const StepVendorProductDetailsPage = () => {
                                   field.name
                                 )}
                               </>
-                            ) : field.type === "file" ? (
+                            ) : field.type === 'file' ? (
                               <>
                                 <div className="flex flex-col gap-2">
                                   <div
                                     className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md ${
                                       currentForm.errors[field.name]
-                                        ? "border-red-500"
-                                        : "border-purple-300"
+                                        ? 'border-red-500'
+                                        : 'border-purple-300'
                                     }`}
                                   >
                                     <input
@@ -1194,11 +1229,11 @@ const StepVendorProductDetailsPage = () => {
                                         handleFileChange(e, field.name)
                                       }
                                       accept={
-                                        field.name === "product_images"
-                                          ? "image/*"
-                                          : "video/*"
+                                        field.name === 'product_images'
+                                          ? 'image/*'
+                                          : 'video/*'
                                       }
-                                      multiple={field.name === "product_images"}
+                                      multiple={field.name === 'product_images'}
                                       className="hidden"
                                     />
                                     <label
@@ -1230,7 +1265,7 @@ const StepVendorProductDetailsPage = () => {
 
                                   {/* Preview section */}
                                   <div className="flex flex-wrap gap-2 mt-2">
-                                    {field.name === "product_images" &&
+                                    {field.name === 'product_images' &&
                                       (
                                         currentForm.formData[field.name] || []
                                       ).map((file, idx) => (
@@ -1254,7 +1289,7 @@ const StepVendorProductDetailsPage = () => {
                                         />
                                       ))}
 
-                                    {field.name === "product_videos" &&
+                                    {field.name === 'product_videos' &&
                                       currentForm.formData[field.name] && (
                                         <FilePreviewCard
                                           file={
@@ -1293,12 +1328,12 @@ const StepVendorProductDetailsPage = () => {
                                   type={field.type}
                                   name={field.name}
                                   placeholder={`Enter ${field.label}`}
-                                  value={currentForm.formData[field.name] || ""}
+                                  value={currentForm.formData[field.name] || ''}
                                   onChange={handleProductChange}
                                   className={`w-full p-2 border rounded-md ${
                                     currentForm.errors[field.name]
-                                      ? "border-red-500"
-                                      : ""
+                                      ? 'border-red-500'
+                                      : ''
                                   }`}
                                 />
                                 {renderErrorMessage(
@@ -1330,7 +1365,7 @@ const StepVendorProductDetailsPage = () => {
           type="button"
           className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md"
           style={{
-            background: "linear-gradient(to right, #876FFD, #6C59CA)",
+            background: 'linear-gradient(to right, #876FFD, #6C59CA)',
           }}
           onClick={handleSubmit}
         >
@@ -1347,8 +1382,8 @@ const StepVendorProductDetailsPage = () => {
             >
               Close
             </button>
-            {previewMedia.type === "image" ||
-            previewMedia.url?.includes("image") ? (
+            {previewMedia.type === 'image' ||
+            previewMedia.url?.includes('image') ? (
               <img
                 src={previewMedia.url}
                 alt="Preview"

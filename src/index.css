@@ -4,10 +4,10 @@
 @tailwind utilities;
 
 @layer components {
-    .border-light {
-      @apply  border-[1.5px] border-slate-700;
-    }
+  .border-light {
+    @apply border-[1.5px] border-slate-700;
   }
+}
 
 /*----- To remove the background color fill on autofilling an input field -----*/
 input:-webkit-autofill,
@@ -15,14 +15,19 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
-  -webkit-box-shadow: 0 0 0px 1000px var(--input-box-shadow-color, #ffffff00) inset;
+  -webkit-box-shadow: 0 0 0px 1000px var(--input-box-shadow-color, #ffffff00)
+    inset;
+}
+html {
+  scroll-behavior: smooth;
+  font-family: 'DM Sans', sans-serif;
 }
 
-body{
+body {
   scroll-behavior: smooth;
 }
 
-body::-webkit-scrollbar{
+body::-webkit-scrollbar {
   display: none;
 }
 
@@ -33,7 +38,7 @@ body::-webkit-scrollbar{
   user-select: none; /* Standard syntax */
 }
 
-.hero{
+.hero {
   background-image: url('./assets/homePageAssets/coverImg.png');
   background-repeat: no-repeat;
   background-position: 100% 80%;

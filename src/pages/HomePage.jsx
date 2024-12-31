@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../stores';
-import { AuthStatuses } from "../utils/constants";
+import { AuthStatuses } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 import Home from '../components/Home';
 
@@ -11,7 +11,7 @@ export default function HomePage() {
   useEffect(() => {
     // Once auth status is updated, navigate accordingly
     const authState = appStore.authStatus;
-    console.log(appStore.authStatus)
+    console.log(appStore.authStatus);
 
     if (authState === AuthStatuses.UNVERIFIED) {
       navigate('/verify-email');
@@ -20,7 +20,7 @@ export default function HomePage() {
     } else if (authState === AuthStatuses.UNDER_REVIEW) {
       navigate('/under-verification');
     } else if (authState === AuthStatuses.UNAUTHENTICATED) {
-      navigate('/login');
+      navigate('/partner-landing-page');
     }
   }, [appStore.authStatus, navigate]);
 
