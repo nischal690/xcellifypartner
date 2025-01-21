@@ -2,7 +2,7 @@ import React from "react";
 import { FaUserCircle } from "react-icons/fa";
 import PrimaryLogo from '../assets/logo-primary.png'
 
-const Navbar = () => {
+const OldNavbar = () => {
   return (
     <nav className="shadow-lg px-2 py-5">
       <div className="container mx-auto px-4 flex justify-between items-center h-16">
@@ -34,4 +34,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default OldNavbar;

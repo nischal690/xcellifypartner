@@ -13,6 +13,8 @@ import { HTTP_CODE } from "../utils/constants";
 import vendorValidField, { validateForm } from "../utils/HelperFunction";
 import { getPincodeLocationDetails, loadCities, loadCountries, loadStates } from '../utils/geocoding'
 import { toast } from "react-toastify";
+import Products from "./products";
+import Sidebar from "../components/sidebar";
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -43,11 +45,6 @@ export default function ProfilePage() {
   } = useVendorProfile();
 
   const [activeTab, setActiveTab] = useState("companyDetails");
-  const [breadcrumbs, setBreadcrumbs] = useState([
-    { label: "Dashboard", step: "dashboard" },
-    { label: "Profile", step: "Profile" },
-    { label: "Company Details", step: "companyDetails" },
-  ]);
 
   const [editingCard, setEditingCard] = useState(false); // Track the editing card
   const [editSubSection, setEditSubSection] = useState(0)
@@ -123,10 +120,6 @@ export default function ProfilePage() {
           ],
         },
       ],
-    },
-    productDetails: {
-      title: "Product Details",
-      subSections: [],
     },
   };
 
@@ -214,7 +207,7 @@ export default function ProfilePage() {
       return;
     }
     if(step==='dashboard')
-      navigate('/dashboard')
+      navigate('/home/dashboard')
 
     setActiveTab(step);
     setBreadcrumbs((prev) =>
@@ -275,40 +268,6 @@ export default function ProfilePage() {
     setEditProfileData(prev=>({...prev, [e.target.name]:value}))
   }
 
-  const renderBreadcrumbs = () => (
-    <nav className="text-gray-600 text-xl mb-10 font-semibold ms-5">
-      {breadcrumbs.map((crumb, index) => (
-        <span key={index}>
-          <span
-            className={`cursor-pointer ${
-              crumb.step === activeTab ? "text-indigo-500" : ""
-            }`}
-            onClick={() => handleBreadcrumbClick(crumb.step)}
-          >
-            {crumb.label}
-          </span>
-          {index < breadcrumbs.length - 1 && " > "}
-        </span>
-      ))}
-    </nav>
-  );
-
-  // const renderField = (field, isEditing) => {
-  //   const value = profile[field.name] || "";
-
-  //   return isEditing ? (
-  //     <input
-  //       type="text"
-  //       name={field.name}
-  //       value={value}
-  //       onChange={handleInputChange}
-  //       className="w-full px-4 py-2 border rounded-lg bg-gray-100"
-  //       placeholder={`Enter ${field.label}`}
-  //     />
-  //   ) : (
-  //     <p className="text-gray-800">{value || "Not Provided"}</p>
-  //   );
-  // };
   const GetSection = ({subSection,index,})=>{
     
     return(
@@ -321,7 +280,7 @@ export default function ProfilePage() {
                 <MdOutlineModeEdit />
             </button>
         </div>
-        <div key={index} className="mb-10 rounded-lg shadow p-6">
+        <div key={index} className="mb-10 rounded-lg shadow p-6 bg-white">
             {subSection.fields.map((field, index) => (
               <div key={field.name} className="flex flex-row justify-between mb-3">
                 <label className="block text-sm font-medium text-gray-700 ">
@@ -334,24 +293,6 @@ export default function ProfilePage() {
       </div>
     )
   }
-
-//   const renderTabContent = () => {
-//     const currentSection = sections[activeTab];
-//     return currentSection.subSections.map((subSection, index) => (
-//         <div key={index}>
-//             <div className="flex items-center justify-between">
-//                 <h3 className="text-md font-semibold text-gray-700 mb-4">
-//                     {subSection.subSectionTitle}
-//                 </h3>
-//                 <button onClick={() => toggleEditMode(index)} className="border-2 p-0.5 text-purple-primary rounded-full border-purple-primary ">
-//                     <MdOutlineModeEdit />
-//                 </button>
-//             </div>
-//             <div key={index} className="mb-10 rounded-lg shadow p-6 h-[80%]">
-//                 <div className="grid grid-cols-2 gap-4">
-//                 {subSection.fields.map((field) => (
-//                     <div key={field.name} className="col-span-2 sm:col-span-1">
-//                     <label className="block text-sm font-medium text-gray-700 mb-1">
 
   const renderTabContent = () => {
     const currentSection = sections[activeTab];
@@ -378,14 +319,9 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="w-full py-10 px-14 bg-white ">
-      <header className="flex justify-between items-center mb-6">
-        <img src={PrimaryLogo} alt="Logo" className="w-20" />
-      </header>
-
-      <main className="max-w-8xl md:max-w-6xl w-full mx-auto">
-        {renderBreadcrumbs()}
-
+    <div className="w-full">
+      <h2 className="text-3xl font-bold text-gray-800 mb-5">Partner Profile</h2>
+      <main className="w-full bg-gray-50">
         {!editingCard && <><div className="flex border-b mb-10">
           {Object.keys(sections).map((key) => (
             <button
@@ -401,7 +337,7 @@ export default function ProfilePage() {
             </button>
           ))}
         </div>
-        <div className="bg-white flex flex-row justify-between">
+        <div className="flex flex-row justify-between">
           {renderTabContent()}
         </div></>}
         {editingCard &&
@@ -454,7 +390,7 @@ export default function ProfilePage() {
               >Save and Update</button>
           </div>
         </div>}
-        </main>  
+      </main>  
     </div>
   );
 }

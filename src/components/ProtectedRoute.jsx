@@ -1,13 +1,16 @@
-import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { Navigate } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import { useStore } from "../stores";
+import { AuthStatuses } from "../utils/constants";
 
-const ProtectedRoute = ({ children }) => {
-  const isSignedIn = useSelector((state) => state.user.isSignedIn);
+const ProtectedRoute = observer(({ children }) => {
+  const { appStore } = useStore();
+  if (appStore.authStatus !== AuthStatuses.LOGIN_SUCCESS) {
+    return <Navigate to="/login" />;
+  }
 
-  // if (loading) return <p>Loading...</p>
-
-  return isSignedIn ? children : <Navigate to="/login" />;
-};
+  return <>{children}</>;
+});
 
 export default ProtectedRoute;
-

@@ -36,10 +36,26 @@ import { validateAndSetAuthStatus } from './utils/validateAuth';
 import NewProfilePage from './pages/NewProfilePage';
 import { ToastContainer } from 'react-toastify';
 
+import ProtectedRoute from './components/ProtectedRoute'
+import Products from './pages/products/index';
+import ProductDetailedView from './pages/productDetail/ProductDetailedView';
+
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <HomePage />,
+    path: "/",
+    element: (
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/home/*",
+    element: (
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/partner-landing-page',
@@ -84,22 +100,6 @@ const router = createBrowserRouter([
   {
     path: '/reset-password',
     element: <ResetPassword />,
-  },
-  {
-    path: '/profile',
-    element: <NewProfilePage />,
-  },
-  {
-    path: '/dashboard',
-    element: <DashboardPage />,
-  },
-  {
-    path: '/products',
-    element: <AllProductsPage />,
-  },
-  {
-    path: '/product/:id',
-    element: <ProductDetail />,
   },
   {
     path: '/addNewProduct',

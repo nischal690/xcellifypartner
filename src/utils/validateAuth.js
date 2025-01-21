@@ -30,6 +30,7 @@ export const validateAndSetAuthStatus = async (appStore, navigate) => {
             'pincode',
         ];
         const hasIncompleteProfile = requiredDetails.some((field) => !partnerInfo[field]);
+        //const hasIncompleteProfile = false;
 
         if (hasIncompleteProfile) {
             appStore.setAppProperty('authStatus', AuthStatuses.INCOMPLETE_PROFILE);

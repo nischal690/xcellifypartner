@@ -1,15 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+import { useNavigate } from 'react-router-dom';
+
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Select from 'react-select';
 
 import { ProductDetailsData } from '../utils/StepVendorProductDetails';
+import {
+  loadCountries,
+  loadAllIndianCities,
+  loadIndianStates,
+} from '../utils/geocoding';
+
+import { AuthStatuses } from '../utils/constants';
 
 import ImageCropper from '../components/commonComponents/ImageCropper';
 import {
   validateField,
   validateForm,
-  validateFileUpload,
   MAX_FILE_SIZE,
   ALLOWED_IMAGE_TYPES,
   MAX_MEDIA_SIZE,
@@ -19,8 +28,9 @@ import { toJS } from 'mobx';
 
 const StepVendorProductDetailsPage = () => {
   const { appStore } = useStore();
+  const navigate = useNavigate();
   const partnerInfo = toJS(appStore.getPartnerInfo);
-  // console.log("partnerInfo: from product", partnerInfo);
+  // console.log('partnerInfo: from product', partnerInfo);
 
   console.log(partnerInfo.id);
 
@@ -46,8 +56,65 @@ const StepVendorProductDetailsPage = () => {
 
   const [uploadingFiles, setUploadingFiles] = useState({});
 
+  const [cropperImage, setCropperImage] = useState(null);
+  const [currentFileInfo, setCurrentFileInfo] = useState(null);
+
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+
+  const fetchStates = () => {
+    const states = loadIndianStates();
+    setStates(states);
+  };
+
+  const fetchCities = () => {
+    const indianCities = loadAllIndianCities();
+    setCities(indianCities);
+  };
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      const { countriesList } = loadCountries();
+      setCountries(
+        countriesList.map((country) => ({ value: country, label: country }))
+      );
+    };
+
+    fetchCountries();
+    fetchStates();
+    fetchCities();
+  }, []);
+
   const toggleMenu = (fieldName) => {
     setShowMenu(showMenu === fieldName ? null : fieldName);
+  };
+
+  const handleMultiSelectChange = (
+    selectedOptions,
+    fieldName,
+    categoryIndex,
+    productIndex
+  ) => {
+    const values = selectedOptions
+      ? selectedOptions.map((option) => option.value).join(', ')
+      : '';
+
+    if (categoryIndex !== undefined) {
+      const updatedCategories = [...categories];
+      updatedCategories[categoryIndex].products[productIndex].formData[
+        fieldName
+      ] = values;
+      setCategories(updatedCategories);
+    } else {
+      setCurrentForm((prev) => ({
+        ...prev,
+        formData: {
+          ...prev.formData,
+          [fieldName]: values,
+        },
+      }));
+    }
   };
 
   useEffect(() => {
@@ -96,11 +163,35 @@ const StepVendorProductDetailsPage = () => {
   const handleProductChange = async (e, categoryIndex, productIndex) => {
     const { name, value, type, files } = e.target;
 
+    if (name === 'study_destination_countries' && value) {
+      fetchStates(value);
+    }
+
+    if (name === 'study_destination_states' && value) {
+      fetchCities(value);
+    }
+    if (name === 'service_available_cities' && value) {
+      fetchCities(value);
+    }
+    if (name === 'event_location' && value) {
+      fetchCities(value);
+    }
+    if (name === 'loan_available_countries' && value) {
+      fetchStates(value);
+    }
+
     if (categoryIndex !== undefined) {
       const updatedCategories = [...categories];
       const product = updatedCategories[categoryIndex].products[productIndex];
 
       product.formData[name] = type === 'file' ? files[0] : value;
+
+      if (name === 'price' || name === 'discount') {
+        const price = parseFloat(product.formData['price']) || 0;
+        const discount = parseFloat(product.formData['discount']) || 0;
+        const finalPrice = price - (price * discount) / 100;
+        product.formData['final_price'] = finalPrice >= 0 ? finalPrice : 0;
+      }
 
       const { isValid, error } = await validateField(
         product.category || currentForm.category,
@@ -113,18 +204,25 @@ const StepVendorProductDetailsPage = () => {
       updatedCategories[categoryIndex].products[productIndex] = product;
       setCategories(updatedCategories);
     } else {
+      const updatedFormData = { ...currentForm.formData };
+      updatedFormData[name] = type === 'file' ? files[0] : value;
+
+      if (name === 'price' || name === 'discount') {
+        const price = parseFloat(updatedFormData['price']) || 0;
+        const discount = parseFloat(updatedFormData['discount']) || 0;
+        const finalPrice = price - (price * discount) / 100;
+        updatedFormData['final_price'] = finalPrice >= 0 ? finalPrice : 0;
+      }
+
       const { isValid, error } = await validateField(
         currentForm.category,
         name,
-        type === 'file' ? files[0] : value
+        updatedFormData[name]
       );
 
       setCurrentForm((prev) => ({
         ...prev,
-        formData: {
-          ...prev.formData,
-          [name]: type === 'file' ? files[0] : value,
-        },
+        formData: updatedFormData,
         errors: {
           ...prev.errors,
           [name]: !isValid ? error : '',
@@ -212,9 +310,6 @@ const StepVendorProductDetailsPage = () => {
       }
     );
   };
-
-  const [cropperImage, setCropperImage] = useState(null);
-  const [currentFileInfo, setCurrentFileInfo] = useState(null);
 
   const handleFileChange = (e, fieldName, categoryIndex, productIndex) => {
     const files = e.target.files;
@@ -310,6 +405,16 @@ const StepVendorProductDetailsPage = () => {
   ) => {
     if (!validFiles.length) return;
 
+    const category =
+      categoryIndex !== undefined
+        ? categories[categoryIndex].name
+        : currentForm.category;
+
+    if (!category) {
+      toast.error('Category is missing for file upload.');
+      return;
+    }
+
     const uploadKey =
       categoryIndex !== undefined
         ? `${fieldName}-${categoryIndex}-${productIndex}`
@@ -319,7 +424,7 @@ const StepVendorProductDetailsPage = () => {
 
     try {
       const uploadPromises = validFiles.map((file) =>
-        appStore.uploadFile(file)
+        appStore.uploadFile(category, file)
       );
       const uploadResponses = await Promise.all(uploadPromises);
 
@@ -376,7 +481,7 @@ const StepVendorProductDetailsPage = () => {
 
           product.formData[fieldName] = [
             ...(product.formData[fieldName] || []),
-            ...uploadedFiles.map((f) => ({ id: f.id })), // Assign image IDs
+            ...uploadedFiles.map((f) => ({ id: f.id })),
           ];
           setCategories(updatedCategories);
         } else {
@@ -386,7 +491,7 @@ const StepVendorProductDetailsPage = () => {
               ...prev.formData,
               [fieldName]: [
                 ...(prev.formData[fieldName] || []),
-                ...uploadedFiles.map((f) => ({ id: f.id })), // Assign image IDs
+                ...uploadedFiles.map((f) => ({ id: f.id })),
               ],
             },
           }));
@@ -433,18 +538,19 @@ const StepVendorProductDetailsPage = () => {
   ) => {
     try {
       let fileToDelete;
+      let category;
 
       if (categoryIndex !== undefined) {
         const product =
           categories[categoryIndex].products[productIndex].formData;
-
+        category = categories[categoryIndex].name;
         fileToDelete =
           fieldName === 'product_videos'
             ? product[fieldName]
             : product[fieldName][index];
       } else {
         const formData = currentForm.formData;
-
+        category = currentForm.category;
         fileToDelete =
           fieldName === 'product_videos'
             ? formData[fieldName]
@@ -455,7 +561,10 @@ const StepVendorProductDetailsPage = () => {
         throw new Error('File ID not found for deletion.');
       }
 
-      const deleteResponse = await appStore.deleteFile(fileToDelete.id);
+      const deleteResponse = await appStore.deleteFile(
+        category,
+        fileToDelete.id
+      );
 
       if (!deleteResponse.success) {
         throw new Error(deleteResponse.error || 'Failed to delete file.');
@@ -488,6 +597,15 @@ const StepVendorProductDetailsPage = () => {
           }
           return updatedForm;
         });
+      }
+
+      const fileInputId =
+        categoryIndex !== undefined
+          ? `${fieldName}-upload-${categoryIndex}-${productIndex}`
+          : `${fieldName}-upload`;
+      const fileInput = document.getElementById(fileInputId);
+      if (fileInput) {
+        fileInput.value = '';
       }
 
       URL.revokeObjectURL(fileToDelete.preview || fileToDelete.file);
@@ -558,19 +676,32 @@ const StepVendorProductDetailsPage = () => {
 
       if (!formData) return;
 
-      logFormData(formData);
+      console.log('Submitting with formData:', formData);
+
+      const category = formData.products_details[0]?.category;
+      console.log('Category extracted for submission:', category);
 
       const { success, response, error } = await appStore.submitProducts(
+        category,
         formData
       );
 
       if (success) {
         handleSuccess(response);
+        appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
+        navigate('/home/*');
+        toast.success('Submission successful!');
       } else {
-        handleFailure(response, error);
+        console.error('API Submission Error:', response, error);
+        toast.error(
+          response?.data?.message ||
+            error ||
+            'Submission failed. Please try again.'
+        );
       }
     } catch (error) {
-      handleUnexpectedError(error);
+      console.error('Unexpected error during submission:', error);
+      toast.error(`Unexpected error: ${error.message || 'Unknown error'}`);
     }
   };
 
@@ -584,34 +715,20 @@ const StepVendorProductDetailsPage = () => {
           let processedData = {
             ...normalizedData,
             category: category.name,
-
             product_images: formData.product_images
               ? formData.product_images.map((img) => ({ id: img.id }))
               : [],
-
             product_videos: formData.product_videos?.id
               ? { id: formData.product_videos.id }
               : null,
           };
 
-          if (formData.subcategory) {
-            processedData = {
-              ...processedData,
-              subcategory: formData.subcategory,
-              full_financing_available:
-                formData.full_financing_available === 'Yes',
-            };
+          if (!processedData.product_images.length) {
+            delete processedData.product_images;
           }
-
-          Object.keys(processedData).forEach((key) => {
-            if (
-              processedData[key] === '' ||
-              processedData[key] === undefined ||
-              processedData[key] === null
-            ) {
-              delete processedData[key];
-            }
-          });
+          if (!processedData.product_videos) {
+            delete processedData.product_videos;
+          }
 
           return processedData;
         })
@@ -619,16 +736,16 @@ const StepVendorProductDetailsPage = () => {
       .filter(validateProduct);
 
     if (!productsDetails.length) {
-      toast.error('No valid products to submit');
+      toast.error('No valid products to submit add atleat one');
       return null;
     }
 
     const requestBody = {
-      partner_id: appStore.getPartnerInfo.id,
+      partner_id: partnerInfo.id,
       products_details: productsDetails,
     };
 
-    console.log('Final request body:', requestBody);
+    console.log('Final Request Body:', JSON.stringify(requestBody, null, 2));
     return requestBody;
   };
 
@@ -641,6 +758,7 @@ const StepVendorProductDetailsPage = () => {
       'google_reviews',
       'service_provided_since',
       'counselling_duration',
+      'travel_upto',
     ];
 
     numberFields.forEach((field) => {
@@ -667,6 +785,9 @@ const StepVendorProductDetailsPage = () => {
         product[key] === undefined ||
         product[key] === ''
       ) {
+        if (key === 'product_images' || key === 'product_videos') {
+          continue;
+        }
         console.error(`Validation failed for product: ${key}`);
         return false;
       }
@@ -684,18 +805,6 @@ const StepVendorProductDetailsPage = () => {
     });
     console.log('API Response:', response);
     setCategories([]);
-  };
-
-  const handleFailure = (response, error) => {
-    console.error('API Submission Error:', response, error);
-    toast.error('Submission failed. Please try again.', {
-      position: 'top-right',
-    });
-  };
-
-  const handleUnexpectedError = (error) => {
-    console.error('Unexpected error:', error);
-    toast.error('An unexpected error occurred.', { position: 'top-right' });
   };
 
   const renderErrorMessage = (errors, fieldName) => {
@@ -1023,6 +1132,40 @@ const StepVendorProductDetailsPage = () => {
                               {renderErrorMessage(product.errors, field.name)}
                             </div>
                           </>
+                        ) : field.type === 'multiselect' ? (
+                          <Select
+                            isMulti
+                            name={field.name}
+                            options={
+                              field.name === 'study_destination_countries'
+                                ? countries
+                                : field.name === 'study_destination_states'
+                                ? states
+                                : field.name === 'service_available_cities'
+                                ? cities
+                                : field.name === 'event_location'
+                                ? cities
+                                : field.name === 'loan_available_countries'
+                                ? countries
+                                : []
+                            }
+                            value={(product.formData[field.name] || '')
+                              .split(', ')
+                              .filter(Boolean)
+                              .map((value) => ({ value, label: value }))}
+                            onChange={(selectedOptions) =>
+                              handleMultiSelectChange(
+                                selectedOptions,
+                                field.name,
+                                categoryIndex,
+                                productIndex
+                              )
+                            }
+                            placeholder={`Select ${field.label}`}
+                            className={`w-full ${
+                              product.errors[field.name] ? 'border-red-500' : ''
+                            }`}
+                          />
                         ) : (
                           <>
                             <input
@@ -1069,7 +1212,7 @@ const StepVendorProductDetailsPage = () => {
           currentFileInfo?.productIndex === productIndex && (
             <ImageCropper
               image={cropperImage}
-              aspect={16 / 9}
+              aspect={4 / 3}
               onCropComplete={handleCropComplete}
               onCancel={() => {
                 setCropperImage(null);
@@ -1101,7 +1244,6 @@ const StepVendorProductDetailsPage = () => {
           )}
         </div>
       ))}
-      <hr className="border-t-1 border-black mt-4" />
 
       <div className="mb-6 border rounded-md p-4 mt-8">
         <label className="block text-gray-700 mb-2">Choose Category</label>
@@ -1322,6 +1464,40 @@ const StepVendorProductDetailsPage = () => {
                                   )}
                                 </div>
                               </>
+                            ) : field.type === 'multiselect' ? (
+                              <Select
+                                isMulti
+                                name={field.name}
+                                options={
+                                  field.name === 'study_destination_countries'
+                                    ? countries
+                                    : field.name === 'study_destination_states'
+                                    ? states
+                                    : field.name === 'service_available_cities'
+                                    ? cities
+                                    : field.name === 'event_location'
+                                    ? cities
+                                    : field.name === 'loan_available_countries'
+                                    ? countries
+                                    : []
+                                }
+                                value={(currentForm.formData[field.name] || '')
+                                  .split(', ')
+                                  .filter(Boolean)
+                                  .map((value) => ({ value, label: value }))}
+                                onChange={(selectedOptions) =>
+                                  handleMultiSelectChange(
+                                    selectedOptions,
+                                    field.name
+                                  )
+                                }
+                                placeholder={`Select ${field.label}`}
+                                className={`w-full ${
+                                  currentForm.errors[field.name]
+                                    ? 'border-red-500'
+                                    : ''
+                                }`}
+                              />
                             ) : (
                               <>
                                 <input
