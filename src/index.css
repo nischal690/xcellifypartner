@@ -38,9 +38,3 @@ body::-webkit-scrollbar {
   user-select: none; /* Standard syntax */
 }
 
-.hero {
-  background-image: url('./assets/homePageAssets/coverImg.png');
-  background-repeat: no-repeat;
-  background-position: 100% 80%;
-  background-size: cover;
-}
