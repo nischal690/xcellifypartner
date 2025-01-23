@@ -7,7 +7,7 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend
+    Legend,
 } from "recharts";
 
 const sampleData = [
@@ -29,11 +29,18 @@ const sampleData = [
 ];
 
 export default function SalesGraph({isLoading, data}) {
+
+    console.log(data)
+    const modifiedData = data?.map(item => {
+        let tempDate = new Date(item.date)
+        return {...item, date: tempDate.toLocaleString('en-US', { month: 'short', day: 'numeric' })}
+        })
+    console.log(modifiedData)
     return (
         <ComposedChart
             width={1000}
             height={400}
-            data={sampleData}
+            data={modifiedData}
             margin={{
                 top: 20,
                 right: 20,
@@ -42,12 +49,12 @@ export default function SalesGraph({isLoading, data}) {
             }}
         >
             <CartesianGrid stroke="#f5f5f5" />
-            <XAxis dataKey="name" scale="band" />
+            <XAxis dataKey="date" scale="band" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="units_sold" barSize={20} fill="#413ea0" />
-            <Line type="monotone" dataKey="total_transaction" stroke="#ff7300" />
+            <Bar dataKey="orderCount" barSize={20} fill="#413ea0" />
+            <Line type="monotone" dataKey="totalTransaction" stroke="#ff7300" />
         </ComposedChart>
     );
 }

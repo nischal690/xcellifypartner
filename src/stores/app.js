@@ -1,9 +1,12 @@
-import { makeAutoObservable } from 'mobx';
-import { AuthStatuses } from '../utils/constants';
-import apiRequest from '../utils/apiRequest';
+import { makeAutoObservable } from "mobx";
+import { AuthStatuses, ProfileStatuses } from "../utils/constants";
+
+import apiRequest from "../utils/apiRequest";
+
 //import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage';
 class AppStore {
   authStatus = AuthStatuses.UNAUTHENTICATED;
+  profileStatus = ProfileStatuses.UNVERIFIED;
   partnerInfo = {};
   products = [];
   loading = false;

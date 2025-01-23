@@ -32,7 +32,7 @@ const StepVendorProductDetailsPage = () => {
   const partnerInfo = toJS(appStore.getPartnerInfo);
   // console.log('partnerInfo: from product', partnerInfo);
 
-  console.log(partnerInfo.id);
+  // console.log(partnerInfo.id);
 
   const fileInputRef = useRef(null);
 
@@ -162,10 +162,6 @@ const StepVendorProductDetailsPage = () => {
 
   const handleProductChange = async (e, categoryIndex, productIndex) => {
     const { name, value, type, files } = e.target;
-
-    if (name === 'study_destination_countries' && value) {
-      fetchStates(value);
-    }
 
     if (name === 'study_destination_states' && value) {
       fetchCities(value);
@@ -678,26 +674,73 @@ const StepVendorProductDetailsPage = () => {
 
       console.log('Submitting with formData:', formData);
 
-      const category = formData.products_details[0]?.category;
-      console.log('Category extracted for submission:', category);
-
-      const { success, response, error } = await appStore.submitProducts(
-        category,
-        formData
+      const groupedProducts = formData.products_details.reduce(
+        (acc, product) => {
+          const { category } = product;
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(product);
+          return acc;
+        },
+        {}
       );
 
-      if (success) {
-        handleSuccess(response);
-        appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
-        navigate('/home/*');
-        toast.success('Submission successful!');
-      } else {
-        console.error('API Submission Error:', response, error);
+      console.log('Grouped Products by Category:', groupedProducts);
+
+      const submissionPromises = Object.entries(groupedProducts).map(
+        async ([category, categoryProducts]) => {
+          const categoryFormData = {
+            partner_id: formData.partner_id,
+            products_details: categoryProducts,
+          };
+
+          console.log(
+            `Submitting products for category ${category}:`,
+            categoryFormData
+          );
+
+          try {
+            const { success, response, error } = await appStore.submitProducts(
+              category,
+              categoryFormData
+            );
+
+            if (success) {
+              console.log(
+                `Products for category ${category} submitted successfully.`
+              );
+              return { success: true, category };
+            } else {
+              console.error(
+                `Failed to submit products for category ${category}:`,
+                error || response
+              );
+              return { success: false, category, error };
+            }
+          } catch (error) {
+            console.error(
+              `Error submitting products for category ${category}:`,
+              error.message
+            );
+            return { success: false, category, error: error.message };
+          }
+        }
+      );
+
+      const results = await Promise.all(submissionPromises);
+
+      // Handle results
+      const failedSubmissions = results.filter((result) => !result.success);
+      if (failedSubmissions.length > 0) {
         toast.error(
-          response?.data?.message ||
-            error ||
-            'Submission failed. Please try again.'
+          `Submission failed for categories: ${failedSubmissions
+            .map((result) => result.category)
+            .join(', ')}`
         );
+      } else {
+        toast.success('All products submitted successfully!');
+        navigate('/application-sent');
       }
     } catch (error) {
       console.error('Unexpected error during submission:', error);
@@ -1015,7 +1058,7 @@ const StepVendorProductDetailsPage = () => {
                                 className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md ${
                                   product.errors[field.name]
                                     ? 'border-red-500'
-                                    : 'border-purple-300'
+                                    : 'border-purple-primary'
                                 }`}
                               >
                                 <input
@@ -1045,7 +1088,7 @@ const StepVendorProductDetailsPage = () => {
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
-                                    className="h-10 w-10 text-purple-500"
+                                    className="h-10 w-10 text-purple-primary"
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
@@ -1057,14 +1100,15 @@ const StepVendorProductDetailsPage = () => {
                                       d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-5-4l-3-3m0 0l-3 3m3-3v12"
                                     />
                                   </svg>
-                                  <p className="text-purple-500 mt-2 text-sm">
-                                    Drag & Drop or Click to upload
+                                  <p className="text-purple-primary mt-2 text-sm">
+                                    Click to upload
                                   </p>
-                                  <p className="text-gray-400 text-xs">
-                                    Max{' '}
+                                  <p className="text-purple-primary text-xs">
+                                    (Max{' '}
                                     {field.name === 'product_images'
                                       ? '5MB'
                                       : '20MB'}
+                                    )
                                   </p>
                                 </label>
                               </div>
@@ -1137,9 +1181,7 @@ const StepVendorProductDetailsPage = () => {
                             isMulti
                             name={field.name}
                             options={
-                              field.name === 'study_destination_countries'
-                                ? countries
-                                : field.name === 'study_destination_states'
+                              field.name === 'study_destination_states'
                                 ? states
                                 : field.name === 'service_available_cities'
                                 ? cities
@@ -1227,7 +1269,7 @@ const StepVendorProductDetailsPage = () => {
   return (
     <div>
       {categories.map((category, categoryIndex) => (
-        <div key={categoryIndex} className="mb-6 border rounded-md">
+        <div key={categoryIndex} className="mb-6 border rounded-md m-10">
           <div
             className="cursor-pointer bg-purple-100 p-3 flex justify-between items-center"
             onClick={() => toggleAccordion(categoryIndex)}
@@ -1245,12 +1287,12 @@ const StepVendorProductDetailsPage = () => {
         </div>
       ))}
 
-      <div className="mb-6 border rounded-md p-4 mt-8">
+      <div className="mb-6 border rounded-md p-4 mt-8 m-10">
         <label className="block text-gray-700 mb-2">Choose Category</label>
         <select
           value={currentForm.category}
           onChange={handleProductCategoryChange}
-          className="w-full p-2 border rounded-md mb-4"
+          className="w-1/3 p-2 border rounded-md mb-4"
         >
           <option value="">Select Category</option>
           {Object.keys(ProductDetailsData[0].categoryFields).map((cat) => (
@@ -1273,7 +1315,7 @@ const StepVendorProductDetailsPage = () => {
                   name="subcategory"
                   value={currentForm.formData.subcategory || ''}
                   onChange={handleProductChange}
-                  className="w-full p-2 border rounded-md"
+                  className="w-1/3 p-2 border rounded-md"
                 >
                   <option value="">Select Subcategory</option>
                   {ProductDetailsData[0].categoryFields[currentForm.category]
@@ -1360,7 +1402,7 @@ const StepVendorProductDetailsPage = () => {
                                     className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md ${
                                       currentForm.errors[field.name]
                                         ? 'border-red-500'
-                                        : 'border-purple-300'
+                                        : 'border-purple-primary'
                                     }`}
                                   >
                                     <input
@@ -1384,7 +1426,7 @@ const StepVendorProductDetailsPage = () => {
                                     >
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        className="h-10 w-10 text-purple-500"
+                                        className="h-10 w-10 text-purple-primary"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -1396,11 +1438,11 @@ const StepVendorProductDetailsPage = () => {
                                           d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-5-4l-3-3m0 0l-3 3m3-3v12"
                                         />
                                       </svg>
-                                      <p className="text-purple-500 mt-2 text-sm">
-                                        Drag & Drop or Click to upload
+                                      <p className="text-purple-primary mt-2 text-sm">
+                                        Click to upload
                                       </p>
-                                      <p className="text-gray-400 text-xs">
-                                        Max 20MB
+                                      <p className="text-purple-primary text-xs">
+                                        (Max 20mb)
                                       </p>
                                     </label>
                                   </div>
@@ -1469,9 +1511,7 @@ const StepVendorProductDetailsPage = () => {
                                 isMulti
                                 name={field.name}
                                 options={
-                                  field.name === 'study_destination_countries'
-                                    ? countries
-                                    : field.name === 'study_destination_states'
+                                  field.name === 'study_destination_states'
                                     ? states
                                     : field.name === 'service_available_cities'
                                     ? cities

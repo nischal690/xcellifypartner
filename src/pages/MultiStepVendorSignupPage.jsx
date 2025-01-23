@@ -16,6 +16,7 @@ import {
   loadCountries,
   loadStates,
 } from "../utils/geocoding";
+import { toast } from "react-toastify";
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -160,9 +161,12 @@ const MultiStepVendorSignupPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = async () => {
+  const handleNext = async (e) => {
     if (await validate()) {
       setCurrentStep((prev) => prev + 1);
+    }
+    if(currentStep == 1){
+      handleSubmit(e);
     }
   };
 
@@ -179,12 +183,15 @@ const MultiStepVendorSignupPage = () => {
     if (await validate()) {
       try {
         const response = await apiRequest({
-          // url: "/mic-login/partnerProfileInfo",
+          url: "/mic-login/partnerProfileInfo",
           method: "post",
           data: formData,
         });
-        appStore.setAppProperty("authStatus", AuthStatuses.UNDER_REVIEW);
-        navigate("/application-sent");
+        // appStore.setAppProperty("authStatus", AuthStatuses.UNDER_REVIEW);
+        // navigate("/application-sent");
+        if(response?.data){
+          toast.success("Detailed submiited")
+        }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -231,7 +238,7 @@ const MultiStepVendorSignupPage = () => {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+      <form className="max-w-4xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6 text-center">
           {steps[currentStep].title}
         </h2>

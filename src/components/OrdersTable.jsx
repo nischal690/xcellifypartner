@@ -29,22 +29,22 @@ function OrdersTable({ isLoading, data }) {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, index) => (
+            {data.map((order, index) => (
               <tr key={index} className="border-t">
-                <td className="py-4">{order.id}</td>
+                <td className="py-4">{order.orderId}</td>
                 <td>{order.productId}</td>
                 <td>{order.customerName}</td>
-                <td>{order.date}</td>
-                <td>{order.quantity}</td>
+                <td>{new Date(order?.createdAt).toLocaleString()}</td>
+                <td>{order?.quantity || '1'}</td>
                 <td>{order.price}</td>
-                <td>{order.totalPrice}</td>
+                <td>{order.finalPrice}</td>
                 <td>{order.amountPaid}</td>
                 <td>
-                  <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                    {order.status}
+                  <span className={`px-2 py-1  ${order.saleStatus == "FAILED" ? "bg-red-100 text-red-800" : order.saleStatus == "NEW" ? "bg-yellow-100 text-yellow-800" : order.saleStatus == "SUCCESS" ? "bg-green-100 text-green-800": ""}  rounded-full text-sm`}>
+                    {order.saleStatus}
                   </span>
                 </td>
-                <td>{order.dueDate}</td>
+                <td>{new Date(order?.expiryDate).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

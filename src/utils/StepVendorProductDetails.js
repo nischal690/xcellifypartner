@@ -52,8 +52,8 @@ export const ProductDetailsData = [
             {
               label: 'Study destination countries',
               name: 'study_destination_countries',
-              type: 'multiselect',
-              options: [],
+              type: 'select',
+              options: ['US', 'Canada', 'UK', 'Europe', 'Australia', 'Asia'],
               required: false,
             },
             {
@@ -289,7 +289,16 @@ export const ProductDetailsData = [
               label: 'Subjects',
               name: 'subjects',
               type: 'select',
-              options: ['Subject 1', 'Subject 2'],
+              options: [
+                'Maths',
+                'Science',
+                'Physics',
+                'Chemistry',
+                'Biology',
+                'Economics',
+                'History',
+                'Geography',
+              ],
               required: true,
             },
             {
@@ -308,14 +317,20 @@ export const ProductDetailsData = [
               label: 'Mode of teaching',
               name: 'mode_of_teaching',
               type: 'select',
-              options: ['Online', 'Offline'],
+              options: [
+                'Online(1 on 1)',
+                'Online(group)',
+                'Physical(1 on 1)',
+                'Physical(group)',
+                'Home Visits',
+              ],
               required: false,
             },
             {
               label: 'Study level',
               name: 'study_level',
               type: 'select',
-              options: ['UG', 'PG'],
+              options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
               required: false,
             },
             {
@@ -478,8 +493,16 @@ export const ProductDetailsData = [
             {
               label: 'Study destination country',
               name: 'study_destination_countries',
-              type: 'multiselect',
-              options: [],
+              type: 'select',
+              options: [
+                'India',
+                'US',
+                'Canada',
+                'UK',
+                'Europe',
+                'Australia',
+                'Asia',
+              ],
               required: false,
             },
             {
@@ -578,7 +601,8 @@ export const ProductDetailsData = [
             {
               label: 'Age group',
               name: 'age_group',
-              type: 'text',
+              type: 'select',
+              options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
               required: false,
             },
             {
@@ -627,8 +651,16 @@ export const ProductDetailsData = [
             {
               label: 'Study destination country',
               name: 'study_destination_countries',
-              type: 'multiselect',
-              options: [],
+              type: 'select',
+              options: [
+                'US',
+                'Canada',
+                'UK',
+                'Europe',
+                'Australia',
+                'Asia',
+                'India',
+              ],
               required: false,
             },
             {
@@ -659,6 +691,12 @@ export const ProductDetailsData = [
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
+              type: 'textarea',
+              required: false,
+            },
+            {
+              label: 'Scholarship description',
+              name: 'scholarship_description',
               type: 'textarea',
               required: false,
             },
@@ -735,7 +773,17 @@ export const ProductDetailsData = [
               label: 'Event category',
               name: 'event_category',
               type: 'select',
-              options: ['Category 1', 'Category 2'],
+              options: [
+                'Quiz',
+                'Hackathon',
+                'Seminar',
+                'MUN',
+                'Debate',
+                'Sports',
+                'Art',
+                'Drama',
+                'Others',
+              ],
               required: false,
             },
             {
@@ -1174,7 +1222,7 @@ export const ProductDetailsData = [
               label: 'Product category',
               name: 'category',
               type: 'select',
-              options: ['Category 1', 'Category 2'],
+              options: ['Books', 'Stationery', 'School Uniform', 'Electronics'],
               required: false,
             },
             {
@@ -1427,7 +1475,16 @@ export const validationSchemas = {
 
   Tutoring: Yup.object().shape({
     ...commonValidations,
-    study_level: Yup.string().oneOf(['UG', 'PG']),
+    study_level: Yup.string().oneOf([
+      '6',
+      '7',
+      '8',
+      '9',
+      '10',
+      '11',
+      '12',
+      'Graduation',
+    ]),
     subjects: Yup.string().required('Subject selection is required'),
     education_qualification: Yup.string().required(
       'Education qualification is required'
@@ -1435,15 +1492,17 @@ export const validationSchemas = {
     member_since: Yup.date().max(new Date()),
     mode_of_teaching: Yup.string()
       .required('Teaching mode is required')
-      .oneOf(['Online', 'Offline']),
+      .oneOf([
+        'Online(1 on 1)',
+        'Online(group)',
+        'Physical(1 on 1)',
+        'Physical(group)',
+        'Home Visits',
+      ]),
     service_available_cities: Yup.string().required('Service city is required'),
-    travel_upto: Yup.string().when('mode_of_teaching', {
-      is: 'Offline',
-      then: Yup.string().required(
-        'Travel range is required for offline teaching'
-      ),
-    }),
+    travel_upto: Yup.string().nullable(),
   }),
+
   'Career counselling': Yup.object().shape({
     ...commonValidations,
     education_qualification: Yup.string().required(
@@ -1473,6 +1532,9 @@ export const validationSchemas = {
     ),
     service_available_cities: Yup.string().required('Service city is required'),
     service_delivery: Yup.string().oneOf(['Online', 'Offline']),
+    scholarship_description: Yup.string()
+      .min(50, 'Description must be at least 50 characters')
+      .max(1000, 'Description must not exceed 1000 characters'),
   }),
 
   Events: Yup.object().shape({

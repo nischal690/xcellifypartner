@@ -84,7 +84,8 @@ export default function Login() {
         saveJwtInLocal(response.data.token);
 
         // Reuse the validation function here
-        await validateAndSetAuthStatus(appStore, navigate);
+        await validateAndSetAuthStatus(appStore);
+        navigate('/')
       } else {
         let statusCode = `${response.response.data.status_code}`;
         const errorMessage =

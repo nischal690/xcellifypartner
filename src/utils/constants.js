@@ -21,7 +21,18 @@ export const AuthStatuses = Object.freeze({
     LOGGING_IN: 2,
     LOGIN_SUCCESS: 3,
     TOKEN_EXPIRED: 4,
+});
+
+export const ProfileStatuses = Object.freeze({
     UNVERIFIED: 5,
     INCOMPLETE_PROFILE: 6,
     UNDER_REVIEW: 7,
-});
+    ACTIVE: 8,
+    REJECTED: 9,
+})
+
+export const AccountStatuses = Object.freeze({
+    PENDING: 1,
+    APPROVED: 2,
+    REJECTED: 3,
+})

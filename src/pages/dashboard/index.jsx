@@ -5,6 +5,7 @@ import StatCard from '../../components/StatCard'
 import SalesGraph from '../../components/charts/SalesGraph'
 import OrdersTable from "../../components/OrdersTable";
 import Dropdown from "../../components/commonComponents/Dropdown";
+import { useStore } from "../../stores";
 
 const timeRangeOptions = [
     { value: 'last_7_days', label: 'Last 7 Days' },
@@ -17,10 +18,13 @@ const timeRangeOptions = [
 const Dashboard = () => {
     const [timeRange, setTimeRange] = useState('last_15_days')
     const [salesDataLoading, setSalesDataLoading] = useState(false);
-    const [salesData, setSalesData] = useState({});
-
+    const [salesData, setSalesData] = useState([]);
+    const [totalRevenue, setTotalRevenue] = useState();
+    const [totalOrdersCount, setTotalOrdersCount] = useState();
     const [ordersDataLoading, setOrdersDataLoading] = useState(false);
     const [ordersData, setOrdersData] = useState([]);
+
+    const { appStore } = useStore();
 
     useEffect(() => {
         const getSalesData = async () => {
@@ -28,14 +32,18 @@ const Dashboard = () => {
 
             try {
                 const response = await apiRequest({
-                    url: "/mic-order/orders",
+                    url: "/mic-study/getOrdersCountPerDay",
+                    // url: 'http://192.168.0.100:8080/mic-study/getOrdersCountPerDay',
                     method: "get",
                     params: {
+                        partner_id: appStore.partnerInfo.id,
+                        // partner_id: 1050,
                         time_range: timeRange
                     }
                 });
                 setSalesDataLoading(false);
-                setSalesData(response.data || {})
+                setSalesData(response?.data || {})
+                calculateTotalOrdersAndRevenue(response?.data)
             } catch (error) {
                 setSalesDataLoading(false);
                 console.error(error)
@@ -46,7 +54,8 @@ const Dashboard = () => {
             setOrdersDataLoading(true);
             try {
                 const response = await apiRequest({
-                    url: "/mic-order/orders",
+                    url: `/mic-study/getOrders/${appStore.partnerInfo.id}`,
+                    // url: 'http://192.168.0.100:8080/mic-study/getOrders/1050',
                     method: "get",
                     params: {
                         time_range: timeRange
@@ -63,6 +72,13 @@ const Dashboard = () => {
         getSalesData();
         getOrdersData();
     }, [timeRange])
+
+    const calculateTotalOrdersAndRevenue = (data) => {
+        let calculatedRevenue = data.reduce((sum, item) => sum + item.totalTransaction, 0);
+        let calculatedOrdersCount = data.reduce((sum, item) => sum + item.orderCount, 0);
+        setTotalRevenue(calculatedRevenue);
+        setTotalOrdersCount(calculatedOrdersCount);
+    }
 
 
     return (
@@ -83,12 +99,12 @@ const Dashboard = () => {
             </div>
 
             <div className="flex gap-6 mb-8">
-                <StatCard title="Total Revenue" value="₹ 500,000" />
-                <StatCard title="Total Orders" value="500" />
+                <StatCard title="Total Revenue" value={totalRevenue} />
+                <StatCard title="Total Orders" value={totalOrdersCount} />
             </div>
 
             <div className="mb-8">
-                <SalesGraph data={salesData} isLoading={salesDataLoading} />
+                {salesData && <SalesGraph data={salesData} isLoading={salesDataLoading} />}
             </div>
 
             <div>

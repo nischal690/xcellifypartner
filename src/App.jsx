@@ -17,6 +17,7 @@ import EmailVerifiedPage from './pages/EmailVerifiedPage';
 import ResetPassword from './pages/ResetPassword';
 import EmailVerificationPwd from './pages/EmailVerificationPwd';
 import MultiStepVendorSignupPage from './pages/MultiStepVendorSignupPage';
+import StepVendorProductDetailsPage from './pages/StepVendorProductDetailsPage';
 import AdminApprovalRequestSentPage from './pages/AdminApprovalRequestSentPage';
 import UnderReviewPage from './pages/UnderReviewPage';
 import DashboardPage from './pages/DashboardPage';
@@ -36,13 +37,13 @@ import { validateAndSetAuthStatus } from './utils/validateAuth';
 import NewProfilePage from './pages/NewProfilePage';
 import { ToastContainer } from 'react-toastify';
 
-import ProtectedRoute from './components/ProtectedRoute'
+import ProtectedRoute from './components/ProtectedRoute';
 import Products from './pages/products/index';
 import ProductDetailedView from './pages/productDetail/ProductDetailedView';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: (
       <ProtectedRoute>
         <HomePage />
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/home/*",
+    path: '/home/*',
     element: (
       <ProtectedRoute>
         <HomePage />
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
   {
     path: '/onboarding',
     element: <MultiStepVendorSignupPage />,
+  },
+  {
+    path: '/add-new-product',
+    element: <StepVendorProductDetailsPage />,
   },
   {
     path: '/application-sent',
