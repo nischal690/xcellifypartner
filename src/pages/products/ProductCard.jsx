@@ -1,0 +1,63 @@
+import React from 'react'
+import VendorBg from '../../assets/vendorBg.jpeg';
+import productLogo from '../../assets/productLogo.jpeg';
+import { FaArrowRight } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+
+export default function ProductCard({product}) {
+
+  const navigate = useNavigate();
+  return (
+        <div
+            className="bg-white rounded-lg shadow-md overflow-hidden max-w-[370px] w-full flex flex-col justify-between h-full"
+          >
+            {/* Image Section */}
+            <div className=''>
+              <div
+                className="h-28 bg-cover bg-center text-right p-1 "
+                style={{ backgroundImage: `url(${VendorBg})` }}
+              >
+                <span
+                  className={`px-2 text-white rounded-md text-xs ${
+                    product.product_status === 'Pending'
+                      ? 'bg-yellow-400'
+                      : product.product_status === 'Approved'
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                  }`}
+                >
+                  {product.product_status}
+                </span>
+              </div>
+
+              {/* Content Section */}
+              <div className="p-2 flex flex-col justify-between">
+                <div className="flex items-center mb-2">
+                  <img
+                    src={productLogo}
+                    alt="logo"
+                    className="w-12 h-12 rounded-full mr-3 object-cover -mt-10"
+                  />
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {product.product_title}
+                  </h3>
+                </div>
+                <p className="text-sm text-gray-600 mb-4">
+                  {product.product_description.slice(0,145) + '....'}
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-between items-center p-2 mb-4">
+                <span className="bg-purple-primary text-white px-4 py-0.5 rounded-lg text-[12px]">
+                  {product.category}
+                </span>
+                <button
+                  className="text-blue-500 text-[12px] underline hover:underline flex items-center"
+                  onClick={() => navigate(`/home/product/${product.id}`)}
+                >
+                  View Details <FaArrowRight className="ml-1" />
+                </button>
+              </div>
+          </div>
+  )
+}

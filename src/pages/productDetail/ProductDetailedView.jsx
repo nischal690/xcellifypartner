@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import getProducts_API from '../products/getProducts_API';
 import LeftItems from './LeftItems';
 import RightItems from './RightItems';
 import productBannerImg from '../../assets/product-banner.jpeg'
 import productLogo from '../../assets/productLogo.jpeg'
-import { detailedViewSchemaData } from '../../utils/detailedViewSchema';
+import { detailedViewSchemaData } from '../../utils/DetailedViewSchema';
 import KeyInfo from './KeyInfo';
 import ContentCard from '../../components/commonComponents/ContentCard';
+import apiRequest from '../../utils/apiRequest';
+import { toast } from 'react-toastify';
+import { useStore } from '../../stores';
 
 export default function ProductDetailedView() {
 
@@ -15,6 +18,9 @@ export default function ProductDetailedView() {
     const [product, setProduct] = useState();
     const [category, setCategory] = useState();
     const [productSchema, setProductSchema] = useState();
+
+    const { appStore } = useStore();
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -30,13 +36,25 @@ export default function ProductDetailedView() {
                 setProduct(fetchedProduct[0]);
                 setCategory(fetchedProduct[0]?.category)
                 setProductSchema(detailedViewSchemaData[fetchedProduct[0]?.category])
-                console.log(detailedViewSchemaData[fetchedProduct[0]?.category])
             }
         }
 
         getProduct();
 
     }, [id])
+
+    console.log(product)
+    const handleDelete = async () => {
+        let deleteProductResp = await apiRequest({
+            url: '/mic-study/deleteProduct',
+            method: 'POST',
+            params: { product_id: product?.product_id, profile_id: appStore.partnerInfo.id}
+        })
+        if(deleteProductResp?.data){
+            toast.success("Product deleted");
+            navigate('/home/products');
+        }
+    }
 
   return (
     <div className='max-w-7xl mx-auto p-10 font-dmsans'>
@@ -48,7 +66,7 @@ export default function ProductDetailedView() {
                 {product?.product_status === "Rejected" && (
                     <button className='border border-purple-primary px-4 py-1 text-purple-primary rounded-md hover:text-white hover:bg-purple-primary transition-colors duration-300'>Re-submit</button>
                 )}
-                <button className='text-white bg-[#F04C4D] rounded-md px-4 py-1'>Delete product</button>
+                <button className='text-white bg-[#F04C4D] rounded-md px-4 py-1' onClick={handleDelete}>Delete product</button>
             </div>
         </div>
         <div>

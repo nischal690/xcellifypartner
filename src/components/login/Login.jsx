@@ -73,7 +73,7 @@ export default function Login() {
       const response = await apiRequest({
         url: "/mic-login/login",
         method: "post",
-        data: formData,
+        data: {...formData, role: 'partner'},
       });
       console.log("Login response:", response);
 
@@ -115,7 +115,7 @@ export default function Login() {
       const res = await apiRequest({
         url: "/mic-login/oauthlogin",
         method: "post",
-        data,
+        data: {...data, role: 'partner'},
       });
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;
@@ -153,7 +153,7 @@ export default function Login() {
       const res = await apiRequest({
         url: "/mic-login/oauthlogin",
         method: "post",
-        data,
+        data: {...data, role: 'partner'},
       });
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;

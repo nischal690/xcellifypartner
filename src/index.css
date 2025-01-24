@@ -7,6 +7,9 @@
   .border-light {
     @apply border-[1.5px] border-slate-700;
   }
+  .button-gradient1{
+    @apply bg-gradient-to-b from-purple-primary to-[#6C59CA];
+  }
 }
 
 /*----- To remove the background color fill on autofilling an input field -----*/

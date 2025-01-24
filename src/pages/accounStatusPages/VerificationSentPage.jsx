@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import InboxImg from '../assets/inbox.png'
+import InboxImg from '../../assets/inbox.png'
 import { useSelector } from 'react-redux';
 
 const VerificationSentPage = () => {

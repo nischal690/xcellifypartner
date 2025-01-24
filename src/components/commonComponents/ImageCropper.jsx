@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import Cropper from "react-easy-crop";
-import { toast } from "react-toastify";
+import React, { useState } from 'react';
+import Cropper from 'react-easy-crop';
+import { toast } from 'react-toastify';
 
 const ImageCropper = ({ image, aspect = 16 / 9, onCropComplete, onCancel }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -11,11 +11,11 @@ const ImageCropper = ({ image, aspect = 16 / 9, onCropComplete, onCancel }) => {
     const image = new Image();
     image.src = imageSrc;
 
-    const canvas = document.createElement("canvas");
+    const canvas = document.createElement('canvas');
     canvas.width = pixelCrop.width;
     canvas.height = pixelCrop.height;
 
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
 
     ctx.drawImage(
       image,
@@ -32,7 +32,7 @@ const ImageCropper = ({ image, aspect = 16 / 9, onCropComplete, onCancel }) => {
     return new Promise((resolve) => {
       canvas.toBlob((blob) => {
         resolve(blob);
-      }, "image/jpeg");
+      }, 'image/jpeg');
     });
   };
 
@@ -40,16 +40,20 @@ const ImageCropper = ({ image, aspect = 16 / 9, onCropComplete, onCancel }) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     try {
       const croppedImage = await createCroppedImage(image, croppedAreaPixels);
-      const croppedFile = new File([croppedImage], "cropped-image.jpg", {
-        type: "image/jpeg",
+      const croppedFile = new File([croppedImage], 'cropped-image.jpg', {
+        type: 'image/jpeg',
       });
       onCropComplete(croppedFile);
     } catch (error) {
-      console.error("Error cropping image:", error);
-      toast.error("Failed to crop image");
+      console.error('Error cropping image:', error);
+      toast.error('Failed to crop image');
     }
   };
 
@@ -69,12 +73,14 @@ const ImageCropper = ({ image, aspect = 16 / 9, onCropComplete, onCancel }) => {
         </div>
         <div className="flex justify-end gap-2 mt-4">
           <button
+            type="button"
             onClick={onCancel}
             className="px-4 py-2 bg-gray-200 rounded-md"
           >
             Cancel
           </button>
           <button
+            type="button"
             onClick={handleSave}
             className="px-4 py-2 bg-purple-primary text-white rounded-md"
           >

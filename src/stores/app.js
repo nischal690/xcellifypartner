@@ -1,13 +1,14 @@
-import { makeAutoObservable } from "mobx";
-import { AuthStatuses, ProfileStatuses } from "../utils/constants";
+import { makeAutoObservable } from 'mobx';
+import { AuthStatuses, ProfileStatuses } from '../utils/constants';
 
-import apiRequest from "../utils/apiRequest";
+import apiRequest from '../utils/apiRequest';
 
 //import { getLocalStorageItem, setLocalStorageItem } from '@/utils/storage';
 class AppStore {
   authStatus = AuthStatuses.UNAUTHENTICATED;
   profileStatus = ProfileStatuses.UNVERIFIED;
   partnerInfo = {};
+  userInfo = {};
   products = [];
   loading = false;
   error = null;
@@ -21,12 +22,22 @@ class AppStore {
     return this.partnerInfo;
   }
 
+  get getUserInfo() {
+    return this.userInfo;
+  }
+
   updatePartnerInfo = (partnerInfo) => {
     this.partnerInfo = partnerInfo;
   };
+
+  updateUserInfo = (userInfo) => {
+    this.userInfo = userInfo;
+  };
+
   setSearchValue = (searchValue) => {
     this.searchValue = searchValue;
   };
+
   addProducts = (productsDetails) => {
     this.products = productsDetails;
   };
@@ -105,6 +116,8 @@ class AppStore {
   async uploadFile(category, file) {
     const baseUrl = this.getApiBaseUrl(category);
     const url = `${baseUrl}/upload`;
+
+    // console.log('Uploading file to:', url);
 
     this.setAppProperty('loading', true);
     try {

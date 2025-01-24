@@ -104,7 +104,7 @@ const Dashboard = () => {
             </div>
 
             <div className="mb-8">
-                {salesData && <SalesGraph data={salesData} isLoading={salesDataLoading} />}
+                {salesData[0] && <SalesGraph data={salesData} isLoading={salesDataLoading} />}
             </div>
 
             <div>

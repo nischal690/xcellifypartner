@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import rightArrowIcon from "../assets/right-arrow.svg";
-import PrimaryLogo from "../assets/logo-primary.png";
-import { useNavigate } from "react-router-dom";
-import steps from "../utils/MultiStepVendorSignupFormData"; // Updated data
-import { useStore } from "../stores";
-import { AuthStatuses } from "../utils/constants";
-import apiRequest from "../utils/apiRequest";
-import { validateStep } from "../utils/signupDetailsValidations";
-import Dropdown from "../components/commonComponents/Dropdown";
-import StepVendorProductDetailsPage from "./StepVendorProductDetailsPage";
+import { toJS } from 'mobx';
+
+import rightArrowIcon from '../assets/right-arrow.svg';
+import PrimaryLogo from '../assets/logo-primary.png';
+import { useNavigate } from 'react-router-dom';
+import steps from '../utils/MultiStepVendorSignupFormData'; // Updated data
+import { useStore } from '../stores';
+import { AuthStatuses } from '../utils/constants';
+import apiRequest from '../utils/apiRequest';
+import { validateStep } from '../utils/signupDetailsValidations';
+import Dropdown from '../components/commonComponents/Dropdown';
+import StepVendorProductDetailsPage from './StepVendorProductDetailsPage';
 import {
   getPincodeLocationDetails,
   loadCities,
   loadCountries,
   loadStates,
-} from "../utils/geocoding";
-import { toast } from "react-toastify";
+} from '../utils/geocoding';
+import { toast } from 'react-toastify';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -38,6 +40,9 @@ const MultiStepVendorSignupPage = () => {
   const { appStore } = useStore();
   const [currentStep, setCurrentStep] = useState(0);
 
+  const userInfo = toJS(appStore.getUserInfo);
+  console.log('userInfo', userInfo?.id);
+
   // Dynamically initialize form data
   const initialFormData = steps
     .flatMap((step) =>
@@ -46,7 +51,7 @@ const MultiStepVendorSignupPage = () => {
       )
     )
     .reduce((acc, fieldName) => {
-      acc[fieldName] = "";
+      acc[fieldName] = '';
       return acc;
     }, {});
 
@@ -57,7 +62,50 @@ const MultiStepVendorSignupPage = () => {
   const [stateOptions, setStateOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
   const [disableCountrySelction, setDisableCountrySelection] = useState(false);
-  const debouncedPincode = useDebouncedValue(formData.pincode || "", 500);
+  const debouncedPincode = useDebouncedValue(formData.pincode || '', 500);
+
+  const uploadFieldToApiMap = {
+    digital_signature: {
+      url: 'mic-login/signature',
+      bodyParam: 'signature',
+    },
+    msme_certificate: {
+      url: 'mic-login/msmeCertificate',
+      bodyParam: 'certificate',
+    },
+    brand_logo: {
+      url: 'mic-login/profile-picture',
+      bodyParam: 'image',
+    },
+  };
+
+  const uploadFile = async (fieldName, userId, file) => {
+    const apiDetails = uploadFieldToApiMap[fieldName];
+
+    if (!apiDetails) {
+      console.error(`No API mapping found for field: ${fieldName}`);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append(apiDetails.bodyParam, file);
+    formData.append('user_id', userId);
+
+    try {
+      const response = await apiRequest({
+        url: apiDetails.url,
+        method: 'post',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(`${fieldName} uploaded successfully`, response);
+      toast.success(`${fieldName} uploaded successfully`);
+    } catch (error) {
+      console.error(`Error uploading ${fieldName}:`, error);
+    }
+  };
 
   useEffect(() => {
     const getPincodeLocationDetails1 = async (pincode) => {
@@ -111,7 +159,7 @@ const MultiStepVendorSignupPage = () => {
   }, [formData.state]);
 
   const handleDisable = (name) => {
-    if (name === "country" || name === "state" || name === "city")
+    if (name === 'country' || name === 'state' || name === 'city')
       return disableCountrySelction;
     return false;
   };
@@ -119,13 +167,13 @@ const MultiStepVendorSignupPage = () => {
   const handleOptions = (name) => {
     let options;
     switch (name) {
-      case "country":
+      case 'country':
         options = countryOptions;
         break;
-      case "state":
+      case 'state':
         options = stateOptions;
         break;
-      case "city":
+      case 'city':
         options = cityOptions;
         break;
     }
@@ -138,22 +186,6 @@ const MultiStepVendorSignupPage = () => {
     });
   };
 
-  // const validate = () => {
-  //   const newErrors = {};
-  //   steps[currentStep].sections.forEach((section) => {
-  //     section.fields.forEach((field) => {
-  //       if (field.required && !formData[field.name]) {
-  //         newErrors[field.name] = `${field.label} is required`;
-  //       }
-  //       if (field.pattern && formData[field.name] && !field.pattern.test(formData[field.name])) {
-  //         newErrors[field.name] = `Invalid ${field.label}`;
-  //       }
-  //     });
-  //   });
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
-
   const validate = async () => {
     const newErrors = await validateStep(formData, currentStep);
     console.log(newErrors);
@@ -165,6 +197,9 @@ const MultiStepVendorSignupPage = () => {
     if (await validate()) {
       setCurrentStep((prev) => prev + 1);
     }
+    if (currentStep == 1) {
+      handleSubmit(e);
+    }
     if(currentStep == 1){
       handleSubmit(e);
     }
@@ -175,7 +210,17 @@ const MultiStepVendorSignupPage = () => {
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, files } = e.target;
+
+    if (files && files[0]) {
+      const file = files[0];
+      if (uploadFieldToApiMap[name]) {
+        uploadFile(name, userInfo?.id, file);
+      }
+      setFormData({ ...formData, [name]: file });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -183,17 +228,15 @@ const MultiStepVendorSignupPage = () => {
     if (await validate()) {
       try {
         const response = await apiRequest({
-          url: "/mic-login/partnerProfileInfo",
-          method: "post",
+          url: '/mic-login/partnerProfileInfo',
+          method: 'post',
           data: formData,
         });
-        // appStore.setAppProperty("authStatus", AuthStatuses.UNDER_REVIEW);
-        // navigate("/application-sent");
         if(response?.data){
           toast.success("Detailed submiited")
         }
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     }
   };
@@ -201,7 +244,7 @@ const MultiStepVendorSignupPage = () => {
   return (
     <div className="w-full bg-white rounded-md p-6">
       {/* Header */}
-      <div className="px-3 mb-5" onClick={() => navigate("/")}>
+      <div className="px-3 mb-5" onClick={() => navigate('/')}>
         <img src={PrimaryLogo} className="w-24 lg:w-32" alt="Xcellify" />
       </div>
 
@@ -209,19 +252,19 @@ const MultiStepVendorSignupPage = () => {
       <div className="flex items-center justify-center space-x-5 mb-6">
         {steps.map((step, index) => (
           <React.Fragment key={step.title}>
-            <div className="flex items-center" style={{ marginLeft: "5px" }}>
+            <div className="flex items-center" style={{ marginLeft: '5px' }}>
               <div
                 className={`flex items-center justify-center w-6 h-6 rounded-full ${
                   index <= currentStep
-                    ? "bg-purple-primary text-white"
-                    : "bg-gray-200 text-gray-500"
+                    ? 'bg-purple-primary text-white'
+                    : 'bg-gray-200 text-gray-500'
                 } mx-auto`}
               >
                 {index + 1}
               </div>
               <p
                 className={`text-center ms-2 ${
-                  index <= currentStep ? "text-purple-primary" : "text-gray-500"
+                  index <= currentStep ? 'text-purple-primary' : 'text-gray-500'
                 }`}
               >
                 {step.title}
@@ -230,7 +273,7 @@ const MultiStepVendorSignupPage = () => {
             {index < steps.length - 1 && (
               <img
                 src={rightArrowIcon}
-                style={{ marginLeft: "5px", height: "15px", width: "15px" }}
+                style={{ marginLeft: '5px', height: '15px', width: '15px' }}
               />
             )}
           </React.Fragment>
@@ -254,13 +297,13 @@ const MultiStepVendorSignupPage = () => {
                     <div
                       key={idx}
                       className={`col-span-${
-                        field.type === "textarea" ? "2" : "1"
+                        field.type === 'textarea' ? '2' : '1'
                       }`}
                     >
                       <label className="block text-gray-700 mb-2">
                         {field.label}
                       </label>
-                      {field.type === "select" ? (
+                      {field.type === 'select' ? (
                         <Dropdown
                           id={field.name}
                           name={field.name}
@@ -275,19 +318,7 @@ const MultiStepVendorSignupPage = () => {
                           disabled={handleDisable(field.name)}
                           inputStyle="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
                         />
-                      ) : // <select
-                      //   name={field.name}
-                      //   value={formData[field.name]}
-                      //   onChange={handleChange}
-                      //   className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
-                      // >
-                      //   <option value="">Choose {field.label.toLowerCase()}</option>
-                      //   {field.options?.map((option, idx) => (
-                      //     <option key={idx} value={option}>
-                      //       {option}
-                      //     </option>
-                      //   ))}
-                      // </select>
+                      ) :
                       field.type === "textarea" ? (
                         <textarea
                           name={field.name}
@@ -296,16 +327,11 @@ const MultiStepVendorSignupPage = () => {
                           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
                           rows={4}
                         />
-                      ) : field.type === "file" ? (
+                      ) : field.type === 'file' ? (
                         <input
                           type="file"
                           name={field.name}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              [field.name]: e.target.files[0],
-                            })
-                          }
+                          onChange={handleChange}
                           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
                         />
                       ) : (

@@ -248,7 +248,7 @@ export const detailedViewSchemaData = {
                 fields: [
                     {
                       label: "Cities where service is available",
-                      name: "study_destination_cities",
+                      name: "service_available_cities",
                     },
                     {
                       label: "Can travel upto",

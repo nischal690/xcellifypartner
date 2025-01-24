@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,10 +30,14 @@ const StepVendorProductDetailsPage = () => {
   const { appStore } = useStore();
   const navigate = useNavigate();
   const partnerInfo = toJS(appStore.getPartnerInfo);
-  // console.log('partnerInfo: from product', partnerInfo);
 
-  // console.log(partnerInfo.id);
-
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const origin = params.get('origin');
+  let redirectedFromDashboard = false;
+  if(origin && origin === 'dashboard'){
+    redirectedFromDashboard = true;
+  }
   const fileInputRef = useRef(null);
 
   const [categories, setCategories] = useState([]);
@@ -740,7 +744,8 @@ const StepVendorProductDetailsPage = () => {
         );
       } else {
         toast.success('All products submitted successfully!');
-        navigate('/application-sent');
+        if(!redirectedFromDashboard) navigate('/application-sent');
+        else navigate('/home/products');
       }
     } catch (error) {
       console.error('Unexpected error during submission:', error);
@@ -919,6 +924,7 @@ const StepVendorProductDetailsPage = () => {
 
           <div className="relative">
             <button
+              type="button"
               className="text-gray-700 hover:text-gray-900"
               onClick={() =>
                 toggleMenu(`${fieldName}-${file.id || Date.now()}`)
@@ -943,12 +949,14 @@ const StepVendorProductDetailsPage = () => {
             {showMenu === `${fieldName}-${file.id || Date.now()}` && (
               <div className="absolute right-0 mt-2 w-32 bg-white border rounded-md shadow-lg z-10">
                 <button
+                  type="button"
                   className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
                   onClick={onPreview}
                 >
                   Preview
                 </button>
                 <button
+                  type="button"
                   className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100"
                   onClick={onDelete}
                 >
@@ -1593,6 +1601,7 @@ const StepVendorProductDetailsPage = () => {
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
           <div className="relative bg-white rounded-md shadow-md p-4">
             <button
+              type="button"
               className="absolute top-2 right-2 text-gray-700 hover:text-gray-900"
               onClick={() => setPreviewMedia(null)}
             >

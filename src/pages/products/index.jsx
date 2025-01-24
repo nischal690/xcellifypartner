@@ -21,7 +21,7 @@ const Products = () => {
         const getProducts = async ()=>{
             const payload = [{
                 operation: 'equals',
-                data:[{key:'partner_id', value: 1054 || appStore.partnerInfo?.id},]
+                data:[{key:'partner_id', value: appStore.partnerInfo?.id},]
             },]
             if(!!debouncedSearchValue){
                 payload.push({
@@ -42,9 +42,8 @@ const Products = () => {
 
     return (
         <>
-            {products.length
-                ?<ProductsList products={products}/>
-                :debouncedSearchValue && <p className='w-full text-center text-xl py-20 text-bold text-gray-500'>No Products found</p>
+            {debouncedSearchValue && !products.length ? <p className='w-full text-center text-xl py-20 text-bold text-gray-500'>No Products found</p>
+            : <ProductsList products={products}/>
             }
         </>
     );
