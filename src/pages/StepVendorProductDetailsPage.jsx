@@ -13,7 +13,7 @@ import {
   loadIndianStates,
 } from '../utils/geocoding';
 
-import { AuthStatuses } from '../utils/constants';
+import { AuthStatuses, ProfileStatuses } from '../utils/constants';
 
 import ImageCropper from '../components/commonComponents/ImageCropper';
 import {
@@ -744,7 +744,10 @@ const StepVendorProductDetailsPage = () => {
         );
       } else {
         toast.success('All products submitted successfully!');
-        if(!redirectedFromDashboard) navigate('/application-sent');
+        if(!redirectedFromDashboard){
+          appStore.setAppProperty('profileStatus',ProfileStatuses.UNDER_REVIEW);
+          navigate('/application-sent');
+        } 
         else navigate('/home/products');
       }
     } catch (error) {

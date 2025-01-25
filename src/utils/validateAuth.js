@@ -44,7 +44,7 @@ export const validateAndSetAuthStatus = async (appStore) => {
             return;
         }
         if (partnerInfo.account_status == AccountStatuses.PENDING) {
-            appStore.setAppProperty('profileStatus', ProfileStatuses.ACTIVE);
+            appStore.setAppProperty('profileStatus', ProfileStatuses.UNDER_REVIEW);
             return;
         }
         if(partnerInfo.account_status == AccountStatuses.REJECTED) {
