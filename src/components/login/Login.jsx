@@ -82,8 +82,6 @@ export default function Login() {
         `${response?.data?.status_code}` === "112"
       ) {
         saveJwtInLocal(response.data.token);
-
-        // Reuse the validation function here
         await validateAndSetAuthStatus(appStore);
         navigate('/')
       } else {
@@ -127,6 +125,7 @@ export default function Login() {
         } else {
           saveJwtInLocal(res.data.token);
           appStore.setAppProperty("authStatus", AuthStatuses.LOGIN_SUCCESS);
+          await validateAndSetAuthStatus(appStore);
           navigate("/");
         }
       } else {
@@ -165,6 +164,7 @@ export default function Login() {
         } else {
           saveJwtInLocal(res.data.token);
           appStore.setAppProperty("authStatus", AuthStatuses.LOGIN_SUCCESS);
+          await validateAndSetAuthStatus(appStore);
           navigate("/");
         }
       } else {

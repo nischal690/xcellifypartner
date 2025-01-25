@@ -5,7 +5,7 @@ import LeftItems from './LeftItems';
 import RightItems from './RightItems';
 import productBannerImg from '../../assets/product-banner.jpeg'
 import productLogo from '../../assets/productLogo.jpeg'
-import { detailedViewSchemaData } from '../../utils/detailedViewSchema';
+import { detailedViewSchemaData } from '../../utils/DetailedViewSchema';
 import KeyInfo from './KeyInfo';
 import ContentCard from '../../components/commonComponents/ContentCard';
 import apiRequest from '../../utils/apiRequest';
