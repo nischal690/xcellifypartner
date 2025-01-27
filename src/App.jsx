@@ -43,12 +43,16 @@ import ProductDetailedView from './pages/productDetail/ProductDetailedView';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: '/home',
     element: (
       <ProtectedRoute>
         <HomePage />
       </ProtectedRoute>
     ),
+  },
+  {
+    path: '/',
+    element: <SellerLandingPage />,
   },
   {
     path: '/home/*',

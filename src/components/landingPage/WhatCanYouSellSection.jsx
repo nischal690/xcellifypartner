@@ -11,6 +11,7 @@ import sliderimg5 from '../../assets/landingPageAssets/Images/sliderimg5.png';
 import sliderimg6 from '../../assets/landingPageAssets/Images/sliderimg6.png';
 import sliderimg7 from '../../assets/landingPageAssets/Images/sliderimg7.png';
 import sliderimg8 from '../../assets/landingPageAssets/Images/sliderimg8.png';
+import sliderimg9 from '../../assets/landingPageAssets/Images/sliderimg9.png';
 
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -61,7 +62,7 @@ const WhatCanYouSellData = [
     image: sliderimg8,
     title: 'Activities',
     description:
-      'Sell student-friendly products like stationery, gadgets, and lifestyle essentials.',
+      'Register students for diverse hobby classes, learning activities, and skill-building workshops.',
   },
 ];
 
@@ -128,11 +129,11 @@ const WhatCanYouSellSection = () => {
     <section id="what-to-sell" className="bg-white py-16">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold font-dmsans text-blue-primary mb-9">
-          What can you sell?
+          What Can You Sell?
         </h2>
         <p className="text-lg sm:text-xl lg:text-xl text-blue-primary font-dmsans mb-8 leading-relaxed">
-          Xcellify welcomes partners offering a wide range of services and
-          products tailored <br /> to students’ needs.
+          Xcellify invites all sellers offering services and products crafted to
+          empower students <br /> and meet their diverse needs.
         </p>
 
         <Slider {...settings}>
@@ -144,7 +145,7 @@ const WhatCanYouSellSection = () => {
               <img
                 src={item.image}
                 alt={item.title}
-                className="w-24 h-24 mx-auto mb-4"
+                className="w-28 h-28 mx-auto mb-4"
               />
               <h3 className="text-xl font-bold text-blue-primary mb-3">
                 {item.title}
@@ -152,6 +153,19 @@ const WhatCanYouSellSection = () => {
               <p className="text-sm text-gray-700">{item.description}</p>
             </div>
           ))}
+
+          <div className="bg-purple-primary rounded-lg p-6 shadow-lg mx-3 sm:mx-5 border border-purple-300 flex flex-col justify-between items-center">
+            <div className="flex flex-col items-center">
+              <img
+                src={sliderimg9}
+                alt="More Categories"
+                className=" object-contain mx-auto mb-6"
+              />
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-2 text-center">
+                More Categories <br /> Launching Soon!
+              </h3>
+            </div>
+          </div>
         </Slider>
 
         <button
@@ -161,7 +175,7 @@ const WhatCanYouSellSection = () => {
           className="mt-12 text-[#F3F1FF] px-8 py-4 rounded-lg font-semibold text-lg font-dmsans hover:bg-[#957EE0] transition-all duration-300"
           onClick={() => navigate('/login')}
         >
-          Earn with Xcellify now!
+          Earn with Xcellify Now
         </button>
       </div>
     </section>

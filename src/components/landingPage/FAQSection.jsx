@@ -119,7 +119,7 @@ const FAQSection = () => {
             className="text-[#F3F1FF] px-8 py-4 rounded-lg font-semibold text-lg font-dmsans hover:bg-[#957EE0] transition-all duration-300"
             onClick={() => navigate('/login')}
           >
-            Earn with Xcellify now!
+            Earn with Xcellify Now
           </button>
         </div>
       </div>

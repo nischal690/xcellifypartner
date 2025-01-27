@@ -6,15 +6,14 @@ import { AuthStatuses } from '../utils/constants';
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const {appStore} = useStore();
+  const { appStore } = useStore();
   const isSignedIn = appStore.authStatus === AuthStatuses.LOGIN_SUCCESS;
 
   useEffect(() => {
     if (isSignedIn) {
-      navigate('/');
+      navigate('/home');
     }
   }, [isSignedIn, navigate]);
 
   return !isSignedIn ? <Login /> : null;
 }
-

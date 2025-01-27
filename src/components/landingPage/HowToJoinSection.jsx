@@ -6,7 +6,7 @@ const HowToJoinSection = () => {
     <section id="how-to-start" className="bg-white py-16">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold font-dmsans text-blue-primary mb-12">
-          How to Join
+          How to Join?
         </h2>
 
         <div className="w-full flex justify-center">

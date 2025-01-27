@@ -45,8 +45,8 @@ const WhyXcellifySection = () => {
   const navigate = useNavigate();
   return (
     <section id="why-partner" className="bg-white py-16">
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl sm:text-4xl font-extrabold font-dmsans text-blue-primary mb-12">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl sm:text-4xl font-extrabold font-dmsans text-blue-primary mb-12 text-center">
           Why Partner with Xcellify?
         </h2>
 
@@ -56,8 +56,8 @@ const WhyXcellifySection = () => {
               key={index}
               className="bg-purple-primary text-white rounded-lg p-4 flex flex-col shadow-md"
             >
-              <div className="flex items-center space-x-2">
-                <img src={item.image} alt={item.title} className="w-8 h-8" />
+              <div className="flex items-center space-x-1">
+                <img src={item.image} alt={item.title} />
                 <h3 className="text-base font-semibold font-dmsans leading-tight">
                   {item.title}
                 </h3>
@@ -68,25 +68,26 @@ const WhyXcellifySection = () => {
           ))}
         </div>
 
-        <button
-          className="
-    mt-12 
-    text-[#F3F1FF] 
-    w-1/4 sm:w-1/2 md:w-1/3 lg:w-1/4 
-    px-4 sm:px-6 md:px-8 
-    py-2 sm:py-3 md:py-4 
-    rounded-lg 
-    font-bold 
-    text-sm sm:text-base md:text-lg 
-    font-dmsans 
-    hover:bg-[#957EE0] 
-    transition-all duration-300 
-    bg-gradient-to-r from-[#876FFD] to-[#6C59CA]
-  "
-          onClick={() => navigate('/signup')}
-        >
-          Sign up
-        </button>
+        <div className="flex justify-center">
+          <button
+            className="
+      mt-12 
+      text-[#F3F1FF] 
+      px-4 sm:px-6 md:px-8 
+      py-2 sm:py-3 md:py-4 
+      rounded-lg 
+      font-bold 
+      text-sm sm:text-base md:text-lg 
+      font-dmsans 
+      hover:bg-[#957EE0] 
+      transition-all duration-300 
+      bg-gradient-to-r from-[#876FFD] to-[#6C59CA]
+    "
+            onClick={() => navigate('/signup')}
+          >
+            Sign Up Now
+          </button>
+        </div>
       </div>
     </section>
   );

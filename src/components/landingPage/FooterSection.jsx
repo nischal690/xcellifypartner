@@ -3,12 +3,13 @@ import footerLogo from '../../assets/landingPageAssets/Images/logo.png';
 import {
   FaFacebook,
   FaInstagram,
-  FaTwitter,
   FaSnapchat,
   FaDiscord,
   FaYoutube,
   FaLinkedin,
 } from 'react-icons/fa';
+
+import { FaSquareXTwitter } from 'react-icons/fa6';
 
 const FooterSection = () => {
   return (
@@ -79,7 +80,10 @@ const FooterSection = () => {
               </h3>
               <ul className="space-y-2 text-sm text-[#F5F5F5] font-medium font-dmsans">
                 <li>
-                  <a href="#sell" className="hover:underline">
+                  <a
+                    href="https://partner.xcellify.com/"
+                    className="hover:underline"
+                  >
                     Sell on Xcellify
                   </a>
                 </li>
@@ -117,25 +121,7 @@ const FooterSection = () => {
                   href="https://www.x.com/xcellify"
                   className="hover:text-white"
                 >
-                  <FaTwitter />
-                </a>
-                <a
-                  href="https://snapchat.com/t/hJniACnM"
-                  className="hover:text-white"
-                >
-                  <FaSnapchat />
-                </a>
-                <a
-                  href="https://discord.gg/G6MNRv5H"
-                  className="hover:text-white"
-                >
-                  <FaDiscord />
-                </a>
-                <a
-                  href="https://www.youtube.com/@Xcellify_official"
-                  className="hover:text-white"
-                >
-                  <FaYoutube />
+                  <FaSquareXTwitter />
                 </a>
                 <a
                   href="https://www.linkedin.com/company/xcellify"
