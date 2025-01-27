@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FiMail } from "react-icons/fi";
 import LogoPrimary from '../../assets/logo-primary.png';
+import { useStore } from '../../stores';
+import { useNavigate } from "react-router-dom";
 
 const VerifyEmailPage = () => {
+
+  const {appStore} = useStore();
+  const navigate = useNavigate();
+  useEffect(()=>{
+    if(appStore.partnerInfo?.is_verified)
+      navigate('/home')
+  },[appStore.partnerInfo?.is_verified])
+  
   return (
     <div className="bg-gray-50 h-screen">
       <div className="px-12 py-5 h-[5%]">

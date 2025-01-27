@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import UnderVerificationLogo from '../../assets/applicationStatuses/underReview.png'
 import LogoPrimary from '../../assets/logo-primary.png';
 import { AuthStatuses } from '../../utils/constants';
@@ -9,6 +9,12 @@ const UnderReviewPage = () => {
 
   const { appStore } = useStore();
   const navigate = useNavigate();
+
+  useEffect(()=>{
+    if(appStore.partnerInfo.account_status == 2){ //approved
+      navigate('/');
+    }
+  }, appStore.partnerInfo.account_status)
 
   const handleLogout = () => {
     appStore.setAppProperty('authStatus', AuthStatuses.UNAUTHENTICATED);

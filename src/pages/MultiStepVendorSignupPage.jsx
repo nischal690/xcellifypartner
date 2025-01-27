@@ -244,7 +244,7 @@ const MultiStepVendorSignupPage = () => {
   return (
     <div className="w-full bg-white rounded-md p-6">
       {/* Header */}
-      <div className="px-3 mb-5" onClick={() => navigate('/')}>
+      <div className="px-3 mb-5 w-fit" onClick={() => navigate('/')}>
         <img src={PrimaryLogo} className="w-24 lg:w-32" alt="Xcellify" />
       </div>
 

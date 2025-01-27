@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FiCheckCircle } from "react-icons/fi";
 import PrimaryLogo from "../assets/logo-primary.png";
 import useVendorProfile from "../hooks/profile/useVendorProfile";
-import { MdEditNote, MdOutlineModeEdit } from "react-icons/md";
+import { MdDownload, MdEditNote, MdOutlineModeEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import steps from "../utils/MultiStepVendorSignupFormData";
 import { TextInput } from "../components/commonComponents";
@@ -15,6 +15,9 @@ import { getPincodeLocationDetails, loadCities, loadCountries, loadStates } from
 import { toast } from "react-toastify";
 import Products from "./products";
 import Sidebar from "../components/sidebar";
+import getEssentialDocuments from "../utils/getEssentialDocuments";
+import MSMECertificateIcon from "../assets/svg-icons/MSMECertificateIcon";
+import { FaDownload } from "react-icons/fa";
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -51,6 +54,9 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({})
   const [editProfileData, setEditProfileData] = useState({})
   const [fieldErrors, setFieldErrors] = useState({});
+  const [msmeCertificate, setMSMECertificate] = useState();
+  const [signature, setSignature] = useState();
+  const [brandLogo, setBrandLogo] = useState();
   //geocoding
   const [countryOptions, setcountryOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
@@ -122,6 +128,16 @@ export default function ProfilePage() {
       ],
     },
   };
+
+  useEffect(()=>{
+    const getDocuments = async()=>{
+      const {msmeCertificate, signature, brandLogo} = await getEssentialDocuments(profile.user_id, profile.partner_id)
+      setMSMECertificate(msmeCertificate);
+      setBrandLogo(brandLogo);
+      setSignature(signature);
+    }
+    getDocuments();
+  },[profile.partner_id])
 
   useEffect(() => {
     const getPincodeLocationDetails1 = async (pincode) => {
@@ -337,8 +353,39 @@ export default function ProfilePage() {
             </button>
           ))}
         </div>
-        <div className="flex flex-row justify-between">
-          {renderTabContent()}
+        <div className="flex flex-col justify-between">
+          <div className="flex flex-row justify-between">
+            {renderTabContent()}
+          </div>  
+          {
+            activeTab === 'complianceDetails' &&
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-4">Essential Documents</h3>
+              <div className="flex item-center gap-3">
+                { msmeCertificate && <a href={`data:application/pdf;base64,${msmeCertificate}`} download="msme-certificate.pdf">
+                  <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
+                    <span className="pr-2"><MSMECertificateIcon/></span>
+                    MSME certificate
+                    <MdDownload className="text-gray-700 ml-2"/>
+                  </button>
+                </a>}
+                {signature &&<a href={`data:application/JPEG;base64,${signature}`} download="signature">
+                  <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
+                    <span className="pr-2"><MSMECertificateIcon/></span>
+                    Signature
+                    <MdDownload className="text-gray-700 ml-2"/>
+                  </button>
+                </a>}
+                {brandLogo &&<a href={`data:application/JPEG;base64,${brandLogo}`} download="brand-logo">
+                  <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
+                    <span className="pr-2"><MSMECertificateIcon/></span>
+                    Brand Logo
+                    <MdDownload className="text-gray-700 ml-2"/>
+                  </button>
+                </a>}
+              </div>
+            </div>
+          }
         </div></>}
         {editingCard &&
         <div className="w-full flex flex-col items-center">
