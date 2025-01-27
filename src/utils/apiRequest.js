@@ -11,7 +11,7 @@ import {
 
 const axiosInstance = axios.create({
   // baseURL: window.XcellifyURLConfig.api_domain_url || `https://xcellify.com/`,
-  baseURL: "https://test.xcellify.com/",
+  baseURL: `${import.meta.env.VITE_SERVER_URL}`,
   timeout: 120000,
   headers: { "Content-Type": "application/json" },
 });
