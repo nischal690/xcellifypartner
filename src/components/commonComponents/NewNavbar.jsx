@@ -13,12 +13,15 @@ const NewNavbar = () => {
   };
 
   const handleLoginClick = () => {
-    navigate('/login');
+    // navigate('/login');
+    navigate('/ComingSoonPage');
     setIsMenuOpen(false);
   };
 
   const handleSignupClick = () => {
-    navigate('/signup');
+    // navigate('/signup');
+    navigate('/ComingSoonPage');
+
     setIsMenuOpen(false);
   };
 

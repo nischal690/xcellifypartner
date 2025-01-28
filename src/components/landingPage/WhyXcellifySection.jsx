@@ -83,7 +83,7 @@ const WhyXcellifySection = () => {
       transition-all duration-300 
       bg-gradient-to-r from-[#876FFD] to-[#6C59CA]
     "
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/ComingSoonPage')}
           >
             Sign Up Now
           </button>

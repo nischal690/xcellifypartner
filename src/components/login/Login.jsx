@@ -1,32 +1,35 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { useGoogleLogin } from "@react-oauth/google";
-import { useDispatch } from "react-redux";
-import { data } from "./loginPageData";
-import "react-toastify/dist/ReactToastify.css";
-import apiRequest from "../../utils/apiRequest";
-import LoginLeftItems from "./LoginLeftItems";
-import Icon from "../../assets/logo-primary.png";
-import GoogleAuthIcon from "../../assets/loginPageAssets/authIcons/google-auth-icon.png";
-import FacebookAuthIcon from "../../assets/loginPageAssets/authIcons/facebook-auth-icon.png";
-import { useLogin } from "react-facebook";
-import Captcha from "../Captcha";
+import React, { useEffect, useState, useRef } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import { useGoogleLogin } from '@react-oauth/google';
+import { useDispatch } from 'react-redux';
+import { data } from './loginPageData';
+import 'react-toastify/dist/ReactToastify.css';
+import apiRequest from '../../utils/apiRequest';
+import LoginLeftItems from './LoginLeftItems';
+import Icon from '../../assets/logo-primary.png';
+import signUplastImg from '../../assets/signUpPageAssets/Img/signUplastImg.png';
 
-import emailIcon from "../../assets/loginPageAssets/emailIcon.svg";
-import lockIcon from "../../assets/loginPageAssets/lockIcon.svg";
-import eyeOn from "../../assets/loginPageAssets/eyeOn.png";
-import eyeOff from "../../assets/loginPageAssets/eyeOff.png";
-import EmailVerificationPwd from "../../pages/EmailVerificationPwd";
-import { useStore } from "../../stores";
-import { AuthStatuses, HTTP_CODE } from "../../utils/constants";
-import { validateAndSetAuthStatus } from "../../utils/validateAuth";
+import { SignUpData } from '../../components/signUp/SignUpPageData';
+import GoogleAuthIcon from '../../assets/loginPageAssets/authIcons/google-auth-icon.png';
+import FacebookAuthIcon from '../../assets/loginPageAssets/authIcons/facebook-auth-icon.png';
+import { useLogin } from 'react-facebook';
+import Captcha from '../Captcha';
+
+import emailIcon from '../../assets/loginPageAssets/emailIcon.svg';
+import lockIcon from '../../assets/loginPageAssets/lockIcon.svg';
+import eyeOn from '../../assets/loginPageAssets/eyeOn.png';
+import eyeOff from '../../assets/loginPageAssets/eyeOff.png';
+import EmailVerificationPwd from '../../pages/EmailVerificationPwd';
+import { useStore } from '../../stores';
+import { AuthStatuses, HTTP_CODE } from '../../utils/constants';
+import { validateAndSetAuthStatus } from '../../utils/validateAuth';
 
 export default function Login() {
   const { appStore } = useStore();
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
-  const [captchaValue, setCaptchaValue] = useState("");
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [captchaValue, setCaptchaValue] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [loading, setLoading] = useState();
@@ -40,14 +43,14 @@ export default function Login() {
   useEffect(() => {
     setTimeout(() => {
       if (appStore.authStatus === AuthStatuses.LOGIN_SUCCESS) {
-        navigate("/");
+        navigate('/');
       }
     }, 1000);
   }, []);
 
   useEffect(() => {
     setIsButtonEnabled(
-      formData.email !== "" && formData.password !== "" && captchaValue !== ""
+      formData.email !== '' && formData.password !== '' && captchaValue !== ''
     );
   }, [formData, captchaValue]);
 
@@ -62,7 +65,7 @@ export default function Login() {
 
   const handleSubmit = async () => {
     if (!isCaptchaVallid) {
-      toast.error("Incorrect Captcha", { position: "top-right" });
+      toast.error('Incorrect Captcha', { position: 'top-right' });
       setRefreshCaptcha(true);
       return;
     }
@@ -71,33 +74,33 @@ export default function Login() {
 
     try {
       const response = await apiRequest({
-        url: "/mic-login/login",
-        method: "post",
-        data: {...formData, role: 'partner'},
+        url: '/mic-login/login',
+        method: 'post',
+        data: { ...formData, role: 'partner' },
       });
-      console.log("Login response:", response);
+      console.log('Login response:', response);
 
       if (
         response?.status == HTTP_CODE.SUCCESS &&
-        `${response?.data?.status_code}` === "112"
+        `${response?.data?.status_code}` === '112'
       ) {
         saveJwtInLocal(response.data.token);
         await validateAndSetAuthStatus(appStore);
-        navigate('/')
+        navigate('/');
       } else {
         let statusCode = `${response.response.data.status_code}`;
         const errorMessage =
-          statusCode === "111"
-            ? "User not registered"
-            : statusCode === "113"
-            ? "Incorrect email or password"
-            : "Internal Server error";
-        toast.error(errorMessage, { position: "top-right" });
+          statusCode === '111'
+            ? 'User not registered'
+            : statusCode === '113'
+            ? 'Incorrect email or password'
+            : 'Internal Server error';
+        toast.error(errorMessage, { position: 'top-right' });
       }
     } catch (error) {
-      console.error("Login error:", error);
-      toast.error("An error occurred. Please try again.", {
-        position: "top-right",
+      console.error('Login error:', error);
+      toast.error('An error occurred. Please try again.', {
+        position: 'top-right',
       });
     } finally {
       setLoading(false);
@@ -111,29 +114,29 @@ export default function Login() {
         type: 1, //Google
       };
       const res = await apiRequest({
-        url: "/mic-login/oauthlogin",
-        method: "post",
-        data: {...data, role: 'partner'},
+        url: '/mic-login/oauthlogin',
+        method: 'post',
+        data: { ...data, role: 'partner' },
       });
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;
       if (res && res.status == HTTP_CODE.SUCCESS && user_type_code === 1002) {
-        if (res?.data?.role == "student" || res?.data?.role == "parent") {
-          appStore.setAppProperty("authStatus", AuthStatuses.FORBIDDEN);
-          toast.error("Access Denied", { position: "top-right" });
+        if (res?.data?.role == 'student' || res?.data?.role == 'parent') {
+          appStore.setAppProperty('authStatus', AuthStatuses.FORBIDDEN);
+          toast.error('Access Denied', { position: 'top-right' });
           return;
         } else {
           saveJwtInLocal(res.data.token);
-          appStore.setAppProperty("authStatus", AuthStatuses.LOGIN_SUCCESS);
+          appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
           await validateAndSetAuthStatus(appStore);
-          navigate("/");
+          navigate('/');
         }
       } else {
         const errorMessage =
-          `${user_type_code}` === "1004"
-            ? "User is not registered with us"
-            : "Internal Server error";
-        toast.error(errorMessage, { position: "top-right" });
+          `${user_type_code}` === '1004'
+            ? 'User is not registered with us'
+            : 'Internal Server error';
+        toast.error(errorMessage, { position: 'top-right' });
       }
     },
     onError: (error) => console.log(error),
@@ -142,7 +145,7 @@ export default function Login() {
   let continueWithFacebook = async () => {
     try {
       const response = await login({
-        scope: "email",
+        scope: 'email',
       });
       console.log(response);
       const data = {
@@ -150,29 +153,29 @@ export default function Login() {
         type: 2, //FaceBook
       };
       const res = await apiRequest({
-        url: "/mic-login/oauthlogin",
-        method: "post",
-        data: {...data, role: 'partner'},
+        url: '/mic-login/oauthlogin',
+        method: 'post',
+        data: { ...data, role: 'partner' },
       });
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;
       if (res && res.status == HTTP_CODE.SUCCESS && user_type_code === 1002) {
-        if (res?.data?.role == "student" || res?.data?.role == "parent") {
-          appStore.setAppProperty("authStatus", AuthStatuses.FORBIDDEN);
-          toast.error("Access Denied", { position: "top-right" });
+        if (res?.data?.role == 'student' || res?.data?.role == 'parent') {
+          appStore.setAppProperty('authStatus', AuthStatuses.FORBIDDEN);
+          toast.error('Access Denied', { position: 'top-right' });
           return;
         } else {
           saveJwtInLocal(res.data.token);
-          appStore.setAppProperty("authStatus", AuthStatuses.LOGIN_SUCCESS);
+          appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
           await validateAndSetAuthStatus(appStore);
-          navigate("/");
+          navigate('/');
         }
       } else {
         const errorMessage =
-          `${user_type_code}` === "1004"
-            ? "User is not registered with us"
-            : "Internal Server error";
-        toast.error(errorMessage, { position: "top-right" });
+          `${user_type_code}` === '1004'
+            ? 'User is not registered with us'
+            : 'Internal Server error';
+        toast.error(errorMessage, { position: 'top-right' });
       }
     } catch (error) {
       console.log(error.message);
@@ -180,7 +183,7 @@ export default function Login() {
   };
 
   let saveJwtInLocal = (jwt) => {
-    localStorage.setItem("token", jwt);
+    localStorage.setItem('token', jwt);
   };
 
   let captchaValidation = (isValid) => {
@@ -202,30 +205,65 @@ export default function Login() {
   return (
     <div className="w-full min-h-screen flex flex-col md:flex-row">
       {/* Login Left Container */}
-      <div className="hidden md:flex flex-col w-1/2 h-full lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
-        <div>
-          <h1 className="text-purple-primary text-4xl font-bold mb-12">
-            Why Xcellify?
-          </h1>
-          <div className="flex flex-col items-center space-y-10">
-            {data.map((item, index) => (
-              <LoginLeftItems
-                key={index}
-                img={item.img}
-                content={item.content}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="flex flex-col items-center justify-center w-full">
+      <div className="hidden md:flex flex-col justify-between w-1/2 h-screen lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
+        <div className="flex flex-col items-start justify-center h-full">
           <img
             src={Icon}
             alt="Xcellify Logo"
-            onClick={() => {
-              navigate("/");
-            }}
-            className="w-[300px] cursor-pointer"
+            className="mt-8 w-40 h-30 mb-4 self-center"
           />
+
+          <div className="mt-8 justify-center w-full">
+            <h2 className="text-2xl font-bold font-dmsans text-purple-primary mb-4 text-center">
+              Your Growth, Our Priority!
+            </h2>
+            <p className="text-xl font-semibold font-dmsans text-purple-primary leading-relaxed text-center-start">
+              Designed with vendors like you in mind, we are dedicated to <br />
+              providing you with unmatched opportunities to connect with <br />{' '}
+              a niche student audience.
+            </p>
+          </div>
+
+          <div className="mt-8 w-full flex flex-col items-center text-center">
+            <h3 className="text-xl font-bold font-dmsans text-purple-primary mb-6">
+              Why Partner with Us?
+            </h3>
+
+            <div className="w-full flex justify-center">
+              <div className="space-y-6 w-full md:w-3/4 lg:w-2/3">
+                {SignUpData.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-row items-center space-x-4 text-left w-full"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-12 h-12 object-contain"
+                    />
+
+                    <div className="flex-1">
+                      <p className="text-m text-purple-primary">
+                        <span className="font-bold text-purple-primary">
+                          {item.title}:{' '}
+                        </span>
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Last Image */}
+          <div className="w-full flex justify-end pr-0 mb-3">
+            <img
+              src={signUplastImg}
+              alt="illustration Graphic"
+              className="w-64 lg:mr-[-4rem] md:mr-[-2rem]"
+            />
+          </div>
         </div>
       </div>
 
@@ -250,7 +288,7 @@ export default function Login() {
             <input
               className="w-full bg-transparent border-0 outline-none pl-2"
               placeholder="Enter your password"
-              type={isPasswordVisible ? "text" : "password"}
+              type={isPasswordVisible ? 'text' : 'password'}
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -285,8 +323,8 @@ export default function Login() {
             disabled={!isButtonEnabled}
             className={`w-full text-white py-3 rounded-xl mt-10 transition-all ${
               isButtonEnabled
-                ? "bg-[#6A3CB3] hover:bg-[#57359E]"
-                : "bg-gray-400 cursor-not-allowed"
+                ? 'bg-[#6A3CB3] hover:bg-[#57359E]'
+                : 'bg-gray-400 cursor-not-allowed'
             }`}
             type="button"
             onClick={handleSubmit}
@@ -309,7 +347,7 @@ export default function Login() {
                 </svg>
               </div>
             ) : (
-              "Log in"
+              'Log in'
             )}
           </button>
         </form>
@@ -350,7 +388,7 @@ export default function Login() {
 				</div> */}
         <div className="text-center mt-8">
           <p className="text-white">
-            Don't have an account?{" "}
+            Don't have an account?{' '}
             <Link to="/signup" className="font-medium underline">
               Sign Up
             </Link>

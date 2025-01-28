@@ -173,7 +173,7 @@ const WhatCanYouSellSection = () => {
             background: 'linear-gradient(to right, #876FFD, #6C59CA)',
           }}
           className="mt-12 text-[#F3F1FF] px-8 py-4 rounded-lg font-semibold text-lg font-dmsans hover:bg-[#957EE0] transition-all duration-300"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/ComingSoonPage')}
         >
           Earn with Xcellify Now
         </button>

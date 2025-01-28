@@ -37,7 +37,7 @@ const HeroSection = () => {
               transition-all duration-300 
               whitespace-nowrap
             "
-            onClick={() => navigate('/signup')}
+            onClick={() => navigate('/ComingSoonPage')}
           >
             Partner with Xcellify Today
           </button>

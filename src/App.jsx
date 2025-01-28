@@ -12,6 +12,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
+import ComingSoonPage from './pages/ComingSoonPage';
 import VerificationSentPage from './pages/accounStatusPages/VerificationSentPage';
 import EmailVerifiedPage from './pages/EmailVerifiedPage';
 import ResetPassword from './pages/ResetPassword';
@@ -68,7 +69,8 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: <LoginPage />,
+    // element: <LoginPage />,
+    element: <ComingSoonPage />,
   },
   {
     path: '/verify-email',
@@ -76,7 +78,8 @@ const router = createBrowserRouter([
   },
   {
     path: '/signup',
-    element: <SignUpPage />,
+    // element: <SignUpPage />,
+    element: <ComingSoonPage />,
   },
   {
     path: '/onboarding',
@@ -117,6 +120,10 @@ const router = createBrowserRouter([
   {
     path: '/lessons/:id',
     element: <LessonPreviewPage />,
+  },
+  {
+    path: '/ComingSoonPage',
+    element: <ComingSoonPage />,
   },
   {
     path: '*',

@@ -1,59 +1,97 @@
 import React, { useEffect } from 'react';
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import {
   SeparatorWithText,
   SocialMediaButton,
-} from "../../components/commonComponents";
-import SignUpForm from "./SignUpForm";
+} from '../../components/commonComponents';
+import SignUpForm from './SignUpForm';
 
-import GoogleAuthIcon from "../../assets/loginPageAssets/authIcons/google-auth-icon.png";
-import FacebookAuthIcon from "../../assets/loginPageAssets/authIcons/facebook-auth-icon.png";
-import Icon from "../../assets/logo-primary.png";
-import { SignUpData } from "./SignUpPageData";
-import LoginLeftItems from "../login/LoginLeftItems";
-import { useSignUp } from "../../hooks/auth/useSignUp";
-import { useStore} from '../../stores'
-import { AuthStatuses } from "../../utils/constants"
+import GoogleAuthIcon from '../../assets/loginPageAssets/authIcons/google-auth-icon.png';
+import FacebookAuthIcon from '../../assets/loginPageAssets/authIcons/facebook-auth-icon.png';
+import Icon from '../../assets/logo-primary.png';
+import signUplastImg from '../../assets/signUpPageAssets/Img/signUpLastImg.png';
+import { SignUpData } from './SignUpPageData';
+import LoginLeftItems from '../login/LoginLeftItems';
+import { useSignUp } from '../../hooks/auth/useSignUp';
+import { useStore } from '../../stores';
+import { AuthStatuses } from '../../utils/constants';
 
 export default function SignUp() {
   const { continueWithGoogle, continueWithFacebook } = useSignUp();
   const navigate = useNavigate();
   const { appStore } = useStore();
 
-	useEffect(() => {
-		setTimeout(() => {
-			if(appStore.authStatus === AuthStatuses.UNVERIFIED) {
-				navigate("/onboarding")
-			}
-		}, 1000);
-	}, [])
+  useEffect(() => {
+    setTimeout(() => {
+      if (appStore.authStatus === AuthStatuses.UNVERIFIED) {
+        navigate('/onboarding');
+      }
+    }, 1000);
+  }, []);
 
   return (
     <div className="w-full min-h-screen flex flex-col max-md:items-center md:flex-row justify-center">
       {/* Login Left Container */}
       <div className="hidden md:flex flex-col justify-between w-1/2 h-screen lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
-        <div className="w-full">
-          <h1 className="text-purple-primary text-4xl font-bold mb-12">
-            What’s the benefit of creating an account?
-          </h1>
-          <div className="flex flex-col items-center space-y-6 pt-14 w-full">
-            {SignUpData.map((item, index) => (
-              <LoginLeftItems
-                key={index}
-                img={item.img}
-                content={item.content}
-              />
-            ))}
+        <div className="flex flex-col items-start justify-center h-full">
+          <img
+            src={Icon}
+            alt="Xcellify Logo"
+            className="mt-8 w-40 h-30 mb-4 self-center"
+          />
+
+          <div className="mt-8 justify-center w-full">
+            <h2 className="text-2xl font-bold font-dmsans text-purple-primary mb-4 text-center">
+              Your Growth, Our Priority!
+            </h2>
+            <p className="text-xl font-semibold font-dmsans text-purple-primary leading-relaxed text-center-start">
+              Designed with vendors like you in mind, we are dedicated to <br />
+              providing you with unmatched opportunities to connect with <br />{' '}
+              a niche student audience.
+            </p>
           </div>
-          <div className="pt-10">
+
+          <div className="mt-8 w-full flex flex-col items-center text-center">
+            <h3 className="text-xl font-bold font-dmsans text-purple-primary mb-6">
+              Why Partner with Us?
+            </h3>
+
+            <div className="w-full flex justify-center">
+              <div className="space-y-6 w-full md:w-3/4 lg:w-2/3">
+                {SignUpData.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-row items-center space-x-4 text-left w-full"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-12 h-12 object-contain"
+                    />
+
+                    <div className="flex-1">
+                      <p className="text-m text-purple-primary">
+                        <span className="font-bold text-purple-primary">
+                          {item.title}:{' '}
+                        </span>
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Last Image */}
+          <div className="w-full flex justify-end pr-0 mb-3">
             <img
-              src={Icon}
-              alt="Xcellify Logo"
-              onClick={()=>{navigate('/')}}
-              className="md:w-[250px] lg:w-[300px] mx-auto cursor-pointer"
+              src={signUplastImg}
+              alt="illustration Graphic"
+              className="w-64 lg:mr-[-4rem] md:mr-[-2rem]"
             />
           </div>
         </div>
@@ -86,8 +124,13 @@ export default function SignUp() {
           </div>
 
           <div className="text-center my-7">
-					<p className="text-white">Already have an account? <Link to="/login" className="font-medium underline">Login</Link></p>
-				</div>
+            <p className="text-white">
+              Already have an account?{' '}
+              <Link to="/login" className="font-medium underline">
+                Login
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
 
