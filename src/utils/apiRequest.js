@@ -9,9 +9,10 @@ import {
 
 //const navigate = useNavigate()
 
+console.log("VITE_ENV >>> ", import.meta.env.VITE_SERVER_URL, import.meta.env.VITE_ENV)
 const axiosInstance = axios.create({
   // baseURL: window.XcellifyURLConfig.api_domain_url || `https://xcellify.com/`,
-  baseURL: `${import.meta.env.VITE_SERVER_URL}`,
+  baseURL: import.meta.env.VITE_SERVER_URL,
   timeout: 120000,
   headers: { "Content-Type": "application/json" },
 });
