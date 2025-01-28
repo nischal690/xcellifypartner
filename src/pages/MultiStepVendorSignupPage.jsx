@@ -197,9 +197,6 @@ const MultiStepVendorSignupPage = () => {
     if (await validate()) {
       setCurrentStep((prev) => prev + 1);
     }
-    if (currentStep == 1) {
-      handleSubmit(e);
-    }
     if(currentStep == 1){
       handleSubmit(e);
     }

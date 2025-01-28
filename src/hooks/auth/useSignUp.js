@@ -7,7 +7,7 @@ import { useLogin } from "react-facebook";
 import { validateForm } from "../../utils/HelperFunction";
 import apiRequest from "../../utils/apiRequest";
 import { useStore } from "../../stores";
-import { AuthStatuses } from "../../utils/constants";
+import { AuthStatuses, ProfileStatuses } from "../../utils/constants";
 
 export const useSignUp = () => {
   let [loading, setLoading] = useState();
@@ -119,8 +119,8 @@ export const useSignUp = () => {
       const user_type_code = response?.data?.user_type_code || response?.response?.data?.user_type_code; 
       if (user_type_code == 1003) {
         //1001 : Signup creation success
-        saveJwtInLocal(response.data.token);
-        appStore.setAppProperty('authStatus', AuthStatuses.UNVERIFIED)
+        // saveJwtInLocal(response.data.token);
+        appStore.setAppProperty('profileStatus', ProfileStatuses.UNVERIFIED);
         navigate("/email-sent/email-verification");
       } else if (user_type_code == 1002) {
         //1002 : already user exists with email-id
