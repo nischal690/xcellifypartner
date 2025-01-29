@@ -12,7 +12,7 @@ import SignUpForm from './SignUpForm';
 import GoogleAuthIcon from '../../assets/loginPageAssets/authIcons/google-auth-icon.png';
 import FacebookAuthIcon from '../../assets/loginPageAssets/authIcons/facebook-auth-icon.png';
 import Icon from '../../assets/logo-primary.png';
-import signUplastImg from '../../assets/signUpPageAssets/Img/signUpLastImg.png';
+import signUplastImg from '../../assets/signUpPageAssets/Img/signUplastImg.png';
 import { SignUpData } from './SignUpPageData';
 import LoginLeftItems from '../login/LoginLeftItems';
 import { useSignUp } from '../../hooks/auth/useSignUp';

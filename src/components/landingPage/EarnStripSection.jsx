@@ -11,7 +11,7 @@ const EarnStripSection = () => {
   return (
     <section className="bg-purple-primary py-3 sm:py-4 md:py-6">
       <div className="max-w-screen-lg mx-auto flex justify-center items-center gap-20 sm:gap-30 md:gap-40 lg:gap-80 px-4">
-        <button onClick={() => navigate('/ComingSoonPage')}>
+        <button onClick={() => navigate('/login')}>
           <img
             src={image1}
             alt="Register"

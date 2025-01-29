@@ -117,7 +117,7 @@ const FAQSection = () => {
               background: 'linear-gradient(to right, #876FFD, #6C59CA)',
             }}
             className="text-[#F3F1FF] px-8 py-4 rounded-lg font-semibold text-lg font-dmsans hover:bg-[#957EE0] transition-all duration-300"
-            onClick={() => navigate('/ComingSoonPage')}
+            onClick={() => navigate('/login')}
           >
             Earn with Xcellify Now
           </button>
