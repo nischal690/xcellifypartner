@@ -43,8 +43,8 @@ function Sidebar() {
         return;
     }
 
-    const goToSettingsView = () => {
-        navigate('/home/settings')
+    const goToServicesView = () => {
+        navigate('/home/services')
         return;
     }
 
@@ -75,8 +75,8 @@ console.log(appStore.partnerInfo);
             <nav className="mt-8">
                 <NavItem icon={<RiDashboardLine />} onClick={goToDashboard} text="Dashboard" active={isCurrentTabActive('dashboard')} />
                 <NavItem icon={<ProductsIcon />} onClick={goToProductsView} text="Product" active={isCurrentTabActive('products')} />
+                <NavItem icon={<ProductsIcon />} onClick={goToServicesView} text="Services" active={isCurrentTabActive('services')} />
                 <NavItem icon={<PriceIcon />} onClick={goToPayoutsView} text="Payout" active={isCurrentTabActive('payout')} />
-                <NavItem icon={<SettingsIcon />} onClick={goToSettingsView} text="Settings" active={isCurrentTabActive('settings')} />
                 <NavItem icon={<LogoutIcon />} onClick={handleLogout} text="Logout" className="text-red-500" />
             </nav>
         </div>

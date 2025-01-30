@@ -7,6 +7,7 @@ import Sidebar from '../components/sidebar/index'
 import NavBar from '../components/navbar/index'
 import NewProfilePage from '../pages/NewProfilePage'
 import ProductDetailedView from "../pages/productDetail/ProductDetailedView";
+import Services from "../pages/services/index";
 
 const HomePage = () => {
 
@@ -25,7 +26,7 @@ const HomePage = () => {
             <Route path='products' element={<ProductsView />} />
             <Route path= 'product/:id' element={<ProductDetailedView />}/>
             {/* <Route path="payouts" element={<ProductsView />} /> */}
-            {/* <Route path="settings" element={<ProductsView />} /> */}
+            <Route path="services" element={<Services />} />
           </Routes>
         </div>
       </main>
