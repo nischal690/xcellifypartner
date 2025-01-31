@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: xcellify-partner-deployment
+  name: xcellify-partner-deployment-1
   namespace: xcellify-partner
 spec:
   selector:
     matchLabels:
-      app: xcellify-partner
+      app: xcellify-partner-1
   replicas: 1
   template:
     metadata:
       labels:
-        app: xcellify-partner
+        app: xcellify-partner-1
     spec:
       containers:
-        - image: xcellifyrepo.azurecr.io/xcellify/partner:6.1.0
+        - image: xcellifyrepo.azurecr.io/xcellify/partner:prod-cs
           imagePullPolicy: Always
-          name: xcellify-partner
+          name: xcellify-partner-1
           ports:
             - containerPort: 80
       imagePullSecrets:
