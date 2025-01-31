@@ -52,16 +52,6 @@ const FooterSection = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="#terms" className="hover:underline">
-                    Terms of use
-                  </a>
-                </li>
-                <li>
-                  <a href="#privacy" className="hover:underline">
-                    Privacy policy
-                  </a>
-                </li>
-                <li>
                   <a href="#refund" className="hover:underline">
                     Refund policy
                   </a>
@@ -135,7 +125,36 @@ const FooterSection = () => {
         </div>
 
         <div className="mt-8 border-t border-gray-300 pt-4 font-medium font-dmsans text-center text-sm text-[#FFFFFF]">
-          <p>Copyrights © Xcellify Private Limited</p>
+          <div>
+            <div className="flex flex-col md:flex-row justify-center items-center text-white text-sm space-y-2 md:space-y-0 md:space-x-28">
+              <p className="text-center">
+                Copyrights &copy; Xcellify Private Limited
+              </p>
+              <div className="flex space-x-4">
+                <a
+                  href="https://xcellify.com/PrivacyPolicy"
+                  className="hover:underline"
+                  // onClick={(e) => {
+                  //   e.preventDefault();
+                  //   navigate('/PrivacyPolicy');
+                  // }}
+                >
+                  Privacy Policy
+                </a>
+                <span>|</span>
+                <a
+                  href="https://xcellify.com/TermsOfUse"
+                  className="hover:underline"
+                  // onClick={(e) => {
+                  //   e.preventDefault();
+                  //   navigate('/TermsOfUse');
+                  // }}
+                >
+                  Terms Of Use
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

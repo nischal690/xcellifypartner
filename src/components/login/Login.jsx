@@ -86,7 +86,7 @@ export default function Login() {
       ) {
         saveJwtInLocal(response.data.token);
         await validateAndSetAuthStatus(appStore);
-        navigate('/home')
+        navigate('/home');
       } else {
         let statusCode = `${response.response.data.status_code}`;
         const errorMessage =
@@ -207,23 +207,6 @@ export default function Login() {
       {/* Login Left Container */}
       <div className="hidden md:flex flex-col justify-between w-1/2 h-screen lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
         <div className="flex flex-col items-start justify-center h-full">
-          <img
-            src={Icon}
-            alt="Xcellify Logo"
-            className="mt-8 w-40 h-30 mb-4 self-center"
-          />
-
-          <div className="mt-8 justify-center w-full">
-            <h2 className="text-2xl font-bold font-dmsans text-purple-primary mb-4 text-center">
-              Your Growth, Our Priority!
-            </h2>
-            <p className="text-xl font-semibold font-dmsans text-purple-primary leading-relaxed text-center-start">
-              Designed with vendors like you in mind, we are dedicated to <br />
-              providing you with unmatched opportunities to connect with <br />{' '}
-              a niche student audience.
-            </p>
-          </div>
-
           <div className="mt-8 w-full flex flex-col items-center text-center">
             <h3 className="text-xl font-bold font-dmsans text-purple-primary mb-6">
               Why Partner with Us?
@@ -255,15 +238,11 @@ export default function Login() {
               </div>
             </div>
           </div>
-
-          {/* Last Image */}
-          <div className="w-full flex justify-end pr-0 mb-3">
-            <img
-              src={signUplastImg}
-              alt="illustration Graphic"
-              className="w-64 lg:mr-[-4rem] md:mr-[-2rem]"
-            />
-          </div>
+          <img
+            src={Icon}
+            alt="Xcellify Logo"
+            className="mt-8 w-40 h-30 mb-4 self-center"
+          />
         </div>
       </div>
 
