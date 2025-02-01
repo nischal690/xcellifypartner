@@ -43,6 +43,8 @@ import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './components/ProtectedRoute';
 import Products from './pages/products/index';
 import ProductDetailedView from './pages/productDetail/ProductDetailedView';
+import ContactUs from './pages/ContactusPage';
+import AboutusPage from './pages/AboutusPage';
 
 const router = createBrowserRouter([
   {
@@ -132,6 +134,14 @@ const router = createBrowserRouter([
   {
     path: '/ComingSoonPage',
     element: <ComingSoonPage />,
+  },
+  {
+    path: '/about-us',
+    element: <AboutusPage />
+  },
+  {
+    path:'/contact',
+    element: <ContactUs />
   },
   {
     path: '*',

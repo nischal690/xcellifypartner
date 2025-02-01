@@ -37,7 +37,7 @@ const FooterSection = () => {
               </h3>
               <ul className="space-y-2 text-sm text-[#F5F5F5] font-medium font-dmsans">
                 <li>
-                  <a href="#about-us" className="hover:underline">
+                  <a href="/about-us" className="hover:underline">
                     About us
                   </a>
                 </li>
@@ -63,7 +63,7 @@ const FooterSection = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="#contact" className="hover:underline">
+                  <a href="/contact" className="hover:underline">
                     Contact us
                   </a>
                 </li>

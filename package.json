@@ -22,6 +22,7 @@
     "i18next": "^23.16.4",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-http-backend": "^2.6.2",
+    "lucide-react": "^0.474.0",
     "mobx": "^6.13.5",
     "mobx-react": "^9.1.1",
     "react": "^18.3.1",

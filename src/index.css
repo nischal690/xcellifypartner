@@ -41,3 +41,13 @@ body::-webkit-scrollbar {
   user-select: none; /* Standard syntax */
 }
 
+.balanced-shadow{
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+}
+
+.arrows-bg{
+  background-image: url('./assets/aboutus/bottomSection/threeArrowsDimmed.png');
+  background-repeat: no-repeat;
+  background-position: 20px 90px;
+  background-size: 430px 680px;
+}
