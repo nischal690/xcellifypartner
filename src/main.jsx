@@ -17,14 +17,14 @@ const loadingMarkup = (
 )
 
 createRoot(document.getElementById('root')).render(
-  
+
   <Provider store={store}>
-    <FacebookProvider appId='550066020937862'>
-    <GoogleOAuthProvider clientId='348252864229-knvikkfilg4hu7tc2k6en3ltncca6v4j.apps.googleusercontent.com'>
-      <Suspense fallback={loadingMarkup}>
-        <App />
-      </Suspense>
-    </GoogleOAuthProvider>
-  </FacebookProvider>
+    <FacebookProvider appId={import.meta.env.VITE_FACEBOOK_CLIENT_ID}>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <Suspense fallback={loadingMarkup}>
+          <App />
+        </Suspense>
+      </GoogleOAuthProvider>
+    </FacebookProvider>
   </Provider>
 )

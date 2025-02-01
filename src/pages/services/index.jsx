@@ -5,6 +5,18 @@ import apiRequest from '../../utils/apiRequest';
 import { useStore } from "../../stores";
 import ServiceModal from "../../components/commonComponents/modals/ServiceModal"; // Import the modal
 
+const CATEGORY_MAPPING = {
+    "CRCN": "Career Counselling",
+    "STOV": "Study Overseas",
+    "STIN": "Study India",
+    "TTRN": "Tutoring",
+    "SMCR": "Summer Courses",
+    "STFN": "Study Finance",
+    "MRCN": "Merchandise",
+    "EVNT": "Events",
+    "FNNN": "Fun"
+}
+
 function Services() {
     const { appStore } = useStore();
     const [activeTab, setActiveTab] = useState('upcoming');
@@ -47,9 +59,9 @@ function Services() {
 
     const getOrderStatus = (order_status) => {
         const order_status_info = {
-          FAILED: 'bg-red-100 text-red-800',
-          NEW: 'bg-yellow-100 text-yellow-800',
-          SUCCESS: 'bg-green-100 text-green-800'
+            FAILED: 'bg-red-100 text-red-800',
+            NEW: 'bg-yellow-100 text-yellow-800',
+            SUCCESS: 'bg-green-100 text-green-800'
         }
         return order_status_info[order_status] || ''
     }
@@ -58,8 +70,8 @@ function Services() {
         let parsedDate = '';
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
         if (orderDate) {
-          const date = new Date(orderDate);
-          parsedDate = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
+            const date = new Date(orderDate);
+            parsedDate = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()}`;
         }
         return parsedDate || '-'
     }
@@ -137,7 +149,7 @@ function Services() {
                                         <td className="px-6 py-4 text-sm text-gray-900">{service.orderId}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{getParsedDate(service.createdAt)}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{service.customer || service.userId || '-'}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">{service.categoryId || '-'}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">{CATEGORY_MAPPING[service.categoryId] || '-'}</td>
                                         <td className="px-6 py-4 text-sm ">
                                             <span className={`px-2 py-1 ${service?.saleStatus && getOrderStatus(service.saleStatus)} rounded-full`}>{service.saleStatus}</span>
                                         </td>
