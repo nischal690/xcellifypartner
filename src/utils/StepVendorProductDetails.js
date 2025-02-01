@@ -331,7 +331,11 @@ export const ProductDetailsData = [
             {
               label: 'Member since',
               name: 'member_since',
-              type: 'date',
+              type: 'select',
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
               required: true,
             },
             {

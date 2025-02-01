@@ -138,7 +138,7 @@ const FooterSection = () => {
               </p>
               <div className="flex space-x-4">
                 <a
-                  href="https://xcellify.com/PrivacyPolicy"
+                  href="/PrivacyPolicy"
                   className="hover:underline"
                   // onClick={(e) => {
                   //   e.preventDefault();
@@ -149,7 +149,7 @@ const FooterSection = () => {
                 </a>
                 <span>|</span>
                 <a
-                  href="https://xcellify.com/TermsOfUse"
+                  href="/TermsOfUse"
                   className="hover:underline"
                   // onClick={(e) => {
                   //   e.preventDefault();

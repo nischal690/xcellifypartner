@@ -1,20 +1,24 @@
-import axios from "axios";
-import { HTTP_CODE } from "../utils/constants";
+import axios from 'axios';
+import { HTTP_CODE } from '../utils/constants';
 import {
   getLocalStorageItem,
   removeLocalStorageItem,
   setLocalStorageItem,
-} from "../utils/localStorageService";
+} from '../utils/localStorageService';
 //import { useNavigate } from 'react-router-dom'
 
 //const navigate = useNavigate()
 
-console.log("VITE_ENV >>> ", import.meta.env.VITE_SERVER_URL, import.meta.env.VITE_ENV)
+console.log(
+  'VITE_ENV >>> ',
+  import.meta.env.VITE_SERVER_URL,
+  import.meta.env.VITE_ENV
+);
 const axiosInstance = axios.create({
   // baseURL: window.XcellifyURLConfig.api_domain_url || `https://xcellify.com/`,
   baseURL: import.meta.env.VITE_SERVER_URL,
   timeout: 120000,
-  headers: { "Content-Type": "application/json" },
+  headers: { 'Content-Type': 'application/json' },
 });
 
 /**
@@ -31,14 +35,14 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = getLocalStorageItem("token");
+    const token = getLocalStorageItem('token');
     if (token) {
-      config.headers["Authorization"] = "Bearer " + token;
+      config.headers['Authorization'] = 'Bearer ' + token;
     }
     if (config.data instanceof FormData) {
-      config.headers["Content-Type"] = "multipart/form-data";
+      config.headers['Content-Type'] = 'multipart/form-data';
     }
-    delete config.headers["Content-Type"];
+    delete config.headers['Content-Type'];
     return config;
   },
   (error) => {
@@ -71,12 +75,12 @@ const handleError = (error) => {
       Promise.reject(error);
       break;
     case HTTP_CODE.TOKEN_INVALID:
-      removeLocalStorageItem("token");
+      removeLocalStorageItem('token');
       //navigate('/login')
       break;
     case HTTP_CODE.FORBIDDEN:
       errorMessage =
-        "You may not have permission for this page. Please contact your administrator."; // i18n
+        'You may not have permission for this page. Please contact your administrator.'; // i18n
       break;
     default:
   }

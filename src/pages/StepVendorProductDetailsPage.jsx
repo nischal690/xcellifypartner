@@ -1387,6 +1387,50 @@ const StepVendorProductDetailsPage = () => {
                               field.name
                             )}
                           </>
+                        ) : field.name === 'member_since' ? (
+                          <>
+                            <select
+                              name={field.name}
+                              value={
+                                product
+                                  ? product.formData[field.name] || ''
+                                  : currentForm.formData[field.name] || ''
+                              }
+                              onChange={(e) =>
+                                product
+                                  ? handleProductChange(
+                                      e,
+                                      categoryIndex,
+                                      productIndex
+                                    )
+                                  : handleProductChange(e)
+                              }
+                              className={`w-full p-2 border rounded-md ${
+                                (
+                                  product
+                                    ? product.errors[field.name]
+                                    : currentForm.errors[field.name]
+                                )
+                                  ? 'border-red-500'
+                                  : ''
+                              }`}
+                            >
+                              <option value="">Select Year</option>
+                              {Array.from(
+                                { length: new Date().getFullYear() - 1700 + 1 },
+                                (_, i) =>
+                                  (new Date().getFullYear() - i).toString()
+                              ).map((year) => (
+                                <option key={year} value={year}>
+                                  {year}
+                                </option>
+                              ))}
+                            </select>
+                            {renderErrorMessage(
+                              product ? product.errors : currentForm.errors,
+                              field.name
+                            )}
+                          </>
                         ) : field.type === 'multiselect' ? (
                           <div>
                             <Select

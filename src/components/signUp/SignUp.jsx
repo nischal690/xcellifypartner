@@ -35,12 +35,12 @@ export default function SignUp() {
   return (
     <div className="w-full min-h-screen flex flex-col max-md:items-center md:flex-row justify-center">
       {/* Login Left Container */}
-      <div className="hidden md:flex flex-col justify-between w-1/2 h-screen lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
+      <div className="hidden md:flex flex-col w-1/2 h-screen lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
         <h3 className="text-4xl font-bold font-dmsans text-purple-primary mb-6">
           Why Partner with Us?
         </h3>
         <div className="w-full flex flex-col">
-          <div className="w-full flex ">
+          <div className="w-full flex">
             <div className="space-y-6 w-full md:w-3/4 lg:w-2/3">
               {SignUpData.map((item, index) => (
                 <div
@@ -66,11 +66,12 @@ export default function SignUp() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-start justify-center h-full">
+        {/* Fixing the gap between text and logo */}
+        <div className="flex flex-col items-start mt-8">
           <img
             src={Icon}
             alt="Xcellify Logo"
-            className="mt-8 w-44 h-32 mb-4 self-center"
+            className="w-44 h-32 mb-4 self-center"
           />
         </div>
       </div>

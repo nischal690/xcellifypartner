@@ -39,13 +39,20 @@ const TermsOfUseScreen = () => {
         </p>
         <p>
           These Terms of Use apply to the use of the website
-          https://xcellify.com, and any sub-domains, mobile- optimized version
-          of the website, or any other medium authorized by the Company
-          (hereinafter referred to as the “Platform”) owned by Xcellify Private
-          Limited, a company incorporated under the laws of India, having its
-          registered office at RG-601, Purva Riviera, Marathahalli ,
-          Bangalore-560037, Karnataka, India (hereinafter referred to as the
-          “Company” “Xcellify” “we” “us” and “our”).
+          <a
+            href="https://xcellify.com/"
+            className="underline text-blue-600 hover:text-blue-800"
+          >
+            {' '}
+            https://xcellify.com
+          </a>
+          , and any sub-domains, mobile- optimized version of the website, or
+          any other medium authorized by the Company (hereinafter referred to as
+          the “Platform”) owned by Xcellify Private Limited, a company
+          incorporated under the laws of India, having its registered office at
+          RG-601, Purva Riviera, Marathahalli , Bangalore-560037, Karnataka,
+          India (hereinafter referred to as the “Company” “Xcellify” “we” “us”
+          and “our”).
         </p>
         <p className="font-bold">Please read the Terms carefully.</p>
         <p>
@@ -746,10 +753,17 @@ const TermsOfUseScreen = () => {
             officers, directors, agents, and employees, from any and all claims
             or demands, or actions including reasonable attorneys’ fees, made by
             any third party or penalty imposed due to or arising out of the
-            User’s breach of these Terms, Privacy Policy and other policies, or
-            the User’s violation of any law, rules or regulations or the rights
-            (including infringement of any intellectual property rights) of a
-            third party.
+            User’s breach of these Terms,{' '}
+            <a
+              href="https://xcellify.com/PrivacyPolicy"
+              className="underline text-blue-600 hover:text-blue-800"
+            >
+              {' '}
+              Privacy Policy
+            </a>{' '}
+            and other policies, or the User’s violation of any law, rules or
+            regulations or the rights (including infringement of any
+            intellectual property rights) of a third party.
           </p>
         </div>{' '}
         <h2 className="text-2xl font-semibold mt-6">
@@ -822,13 +836,21 @@ const TermsOfUseScreen = () => {
         <h2 className="text-2xl font-semibold mt-6">15. PRIVACY POLICY</h2>
         <div className="flex">
           <strong className="mr-2">15.1.</strong>
+
           <p className="flex-1">
-            As elaborated under the Privacy Policy, the Company will keep all
-            confidential information, confidential and shall not disclose it to
-            anyone except as required by law, and shall ensure that such
-            confidential information is protected with security measures and a
-            degree of care that it would apply to its own confidential
-            information.
+            As elaborated under the{' '}
+            <a
+              href="https://xcellify.com/PrivacyPolicy"
+              className="underline text-blue-600 hover:text-blue-800"
+            >
+              {' '}
+              Privacy Policy
+            </a>
+            , the Company will keep all confidential information, confidential
+            and shall not disclose it to anyone except as required by law, and
+            shall ensure that such confidential information is protected with
+            security measures and a degree of care that it would apply to its
+            own confidential information.
           </p>
         </div>
         <div className="flex">
@@ -1276,9 +1298,16 @@ const TermsOfUseScreen = () => {
         <p>
           (b) By participating in the Assessment, you grant the Company
           permission to collect, process, and use your input data in accordance
-          with the Platform’s Privacy Policy. The Company reserves the right to
-          anonymize and aggregate data for research, analytics, and service
-          improvement purposes.
+          with the Platform’s{' '}
+          <a
+            href="https://xcellify.com/PrivacyPolicy"
+            className="underline text-blue-600 hover:text-blue-800"
+          >
+            {' '}
+            Privacy Policy
+          </a>
+          . The Company reserves the right to anonymize and aggregate data for
+          research, analytics, and service improvement purposes.
         </p>
         <div className="flex">
           <strong className="mr-2">6.2.</strong>
