@@ -342,12 +342,12 @@ export default function Login() {
           >
             <img src={GoogleAuthIcon} alt="Google" className="w-full" />
           </button>
-          <button
+          {/*<button
             className="w-10 h-10 flex items-center justify-center border-2 border-white py-2 px-2 rounded-full text-white transition-all bg-white "
             onClick={continueWithFacebook}
           >
             <img src={FacebookAuthIcon} alt="Facebook" className="w-full" />
-          </button>
+          </button>*/}
         </div>
         {/* <div className="w-full max-w-md mt-6 space-y-3">
 					<button

@@ -95,11 +95,11 @@ export default function SignUp() {
               text=""
               onClick={continueWithGoogle}
             />
-            <SocialMediaButton
+            {/*<SocialMediaButton
               icon={FacebookAuthIcon}
               text=""
               onClick={continueWithFacebook}
-            />
+            />*/}
           </div>
 
           <div className="text-center my-7">
