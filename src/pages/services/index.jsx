@@ -37,8 +37,8 @@ function Services() {
             setServicesLoading(true);
             try {
                 const params = {}
-                if (sortStatus) params.sort_status = sortStatus;
-                if (activeTab) params.order_status = activeTab;
+                if (sortStatus) params.sort = sortStatus;
+                if (activeTab && activeTab !== 'all') params.status = activeTab;
 
                 const response = await apiRequest({
                     url: `/mic-study/getOrders/${appStore.partnerInfo.id}`,
