@@ -47,12 +47,18 @@ const FooterSection = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="#news" className="hover:underline">
+                  <a
+                    href="https://education.economictimes.indiatimes.com/news/breaking-barriers-in-education-xcellify-indias-first-comprehensive-student-marketplace-makes-high-quality-career-and-lifestyle-resources-accessible-to-every-student-in-india/117737536"
+                    className="hover:underline"
+                  >
                     In the news
                   </a>
                 </li>
                 <li>
-                  <a href="#refund" className="hover:underline">
+                  <a
+                    href="https://xcellify.com/PrivacyPolicy"
+                    className="hover:underline"
+                  >
                     Refund policy
                   </a>
                 </li>

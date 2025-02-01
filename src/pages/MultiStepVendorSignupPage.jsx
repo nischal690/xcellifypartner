@@ -12,6 +12,8 @@ import apiRequest from '../utils/apiRequest';
 import { validateStep } from '../utils/signupDetailsValidations';
 import Dropdown from '../components/commonComponents/Dropdown';
 import StepVendorProductDetailsPage from './StepVendorProductDetailsPage';
+
+import signupValidationSchemas from '../utils/signupDetailsValidations';
 import {
   getPincodeLocationDetails,
   loadCities,
@@ -197,7 +199,7 @@ const MultiStepVendorSignupPage = () => {
     if (await validate()) {
       setCurrentStep((prev) => prev + 1);
     }
-    if(currentStep == 1){
+    if (currentStep == 1) {
       handleSubmit(e);
     }
   };
@@ -206,6 +208,20 @@ const MultiStepVendorSignupPage = () => {
     if (currentStep > 0) setCurrentStep((prev) => prev - 1);
   };
 
+  const validateField = async (name, value) => {
+    try {
+      await signupValidationSchemas[currentStep].validateAt(name, {
+        ...formData,
+        [name]: value,
+      });
+
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    } catch (error) {
+      setErrors((prev) => ({ ...prev, [name]: error.message }));
+    }
+  };
+
+  // Update your handleChange function
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -214,9 +230,11 @@ const MultiStepVendorSignupPage = () => {
       if (uploadFieldToApiMap[name]) {
         uploadFile(name, userInfo?.id, file);
       }
-      setFormData({ ...formData, [name]: file });
+      setFormData((prev) => ({ ...prev, [name]: file }));
+      validateField(name, file);
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({ ...prev, [name]: value }));
+      validateField(name, value);
     }
   };
 
@@ -229,8 +247,8 @@ const MultiStepVendorSignupPage = () => {
           method: 'post',
           data: formData,
         });
-        if(response?.data){
-          toast.success("Detailed submiited")
+        if (response?.data) {
+          toast.success('Detailed submiited');
         }
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -299,7 +317,17 @@ const MultiStepVendorSignupPage = () => {
                     >
                       <label className="block text-gray-700 mb-2">
                         {field.label}
+                        {field.required &&
+                          (field.name !== 'company_name' ||
+                            formData.company_type !== 'Individual') &&
+                          (field.name !== 'msme_certificate' ||
+                            formData.MSME_registered === 'Yes') &&
+                          (field.name !== 'GST' ||
+                            formData.company_type !== 'Individual') && (
+                            <span className="text-red-500 ml-1">*</span>
+                          )}
                       </label>
+
                       {field.type === 'select' ? (
                         <Dropdown
                           id={field.name}
@@ -315,8 +343,7 @@ const MultiStepVendorSignupPage = () => {
                           disabled={handleDisable(field.name)}
                           inputStyle="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
                         />
-                      ) :
-                      field.type === "textarea" ? (
+                      ) : field.type === 'textarea' ? (
                         <textarea
                           name={field.name}
                           value={formData[field.name]}

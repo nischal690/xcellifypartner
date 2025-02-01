@@ -13,9 +13,12 @@ import {
   loadIndianStates,
 } from '../utils/geocoding';
 
+import { hsnCodeMapping } from '../utils/productsCodes';
+
 import { AuthStatuses, ProfileStatuses } from '../utils/constants';
 
 import ImageCropper from '../components/commonComponents/ImageCropper';
+import { ErrorBoundary } from '../components/ErrorBoundry';
 import {
   validateField,
   validateForm,
@@ -35,7 +38,7 @@ const StepVendorProductDetailsPage = () => {
   const params = new URLSearchParams(location.search);
   const origin = params.get('origin');
   let redirectedFromDashboard = false;
-  if(origin && origin === 'dashboard'){
+  if (origin && origin === 'dashboard') {
     redirectedFromDashboard = true;
   }
   const fileInputRef = useRef(null);
@@ -67,6 +70,85 @@ const StepVendorProductDetailsPage = () => {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
 
+  const OptionCountries = [
+    'US',
+    'Canada',
+    'UK',
+    'Europe',
+    'Australia',
+    'Asia',
+  ].map((country) => ({
+    value: country,
+    label: country,
+  }));
+
+  const loadServiceDelivary = ['Online', 'Physical'].map((service) => ({
+    value: service,
+    label: service,
+  }));
+
+  const loadStudyLevel = ['UG', 'PG'].map((level) => ({
+    value: level,
+    label: level,
+  }));
+
+  const loadTutorStudyLevel = [
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    'Graduation',
+  ].map((level) => ({
+    value: level,
+    label: level,
+  }));
+
+  const loadModeOfTeaching = [
+    'Online(1 on 1)',
+    'Online(group)',
+    'Physical(1 on 1)',
+    'Physical(group)',
+    'Home Visits',
+  ].map((mode) => ({
+    value: mode,
+    label: mode,
+  }));
+
+  const loadSubjects = [
+    'Maths',
+    'Science',
+    'Physics',
+    'Chemistry',
+    'Biology',
+    'Economics',
+    'History',
+    'Geography',
+  ].map((subject) => ({
+    value: subject,
+    label: subject,
+  }));
+
+  const loadCounsellingLevel = [
+    'Under grade 6',
+    '6th to 8th',
+    '9th & 10th',
+    '11th & 12th',
+    'UG',
+  ].map((level) => ({
+    value: level,
+    label: level,
+  }));
+
+  const loadLoanStudyLevel = ['School', 'College', 'Diploma', 'UG', 'PG'].map(
+    (level) => ({
+      value: level,
+      label: level,
+    })
+  );
+
   const fetchStates = () => {
     const states = loadIndianStates();
     setStates(states);
@@ -79,9 +161,8 @@ const StepVendorProductDetailsPage = () => {
 
   useEffect(() => {
     const fetchCountries = async () => {
-      const { countriesList } = loadCountries();
       setCountries(
-        countriesList.map((country) => ({ value: country, label: country }))
+        OptionCountries.map((country) => ({ value: country, label: country }))
       );
     };
 
@@ -109,7 +190,17 @@ const StepVendorProductDetailsPage = () => {
       updatedCategories[categoryIndex].products[productIndex].formData[
         fieldName
       ] = values;
-      setCategories(updatedCategories);
+
+      validateField(
+        updatedCategories[categoryIndex].products[productIndex].category,
+        fieldName,
+        values
+      ).then(({ isValid, error }) => {
+        updatedCategories[categoryIndex].products[productIndex].errors[
+          fieldName
+        ] = !isValid ? error : '';
+        setCategories(updatedCategories);
+      });
     } else {
       setCurrentForm((prev) => ({
         ...prev,
@@ -118,6 +209,18 @@ const StepVendorProductDetailsPage = () => {
           [fieldName]: values,
         },
       }));
+
+      validateField(currentForm.category, fieldName, values).then(
+        ({ isValid, error }) => {
+          setCurrentForm((prev) => ({
+            ...prev,
+            errors: {
+              ...prev.errors,
+              [fieldName]: !isValid ? error : '',
+            },
+          }));
+        }
+      );
     }
   };
 
@@ -161,7 +264,15 @@ const StepVendorProductDetailsPage = () => {
   };
 
   const handleProductCategoryChange = (e) => {
-    setCurrentForm({ ...currentForm, category: e.target.value });
+    const selectedCategory = e.target.value;
+    setCurrentForm((prev) => ({
+      ...prev,
+      category: selectedCategory,
+      formData: {
+        ...prev.formData,
+        hsn_code: hsnCodeMapping[selectedCategory] || '',
+      },
+    }));
   };
 
   const handleProductChange = async (e, categoryIndex, productIndex) => {
@@ -234,81 +345,97 @@ const StepVendorProductDetailsPage = () => {
   const handleSaveNestedProduct = (categoryIndex, productIndex) => {
     const updatedCategories = [...categories];
     const product = updatedCategories[categoryIndex].products[productIndex];
+    const category = updatedCategories[categoryIndex].name;
 
-    validateForm(categories[categoryIndex].name, product.formData).then(
-      ({ isValid, errors }) => {
-        if (!isValid) {
-          product.errors = errors;
-          setCategories(updatedCategories);
-          return;
-        }
-
-        const savedFormData = {
-          ...product.formData,
-          product_images:
-            product.formData.product_images?.map((file) => {
-              const previewUrl =
-                file instanceof File
-                  ? URL.createObjectURL(file)
-                  : filePreviewMap.images[file.id];
-
-              return {
-                id: file.id || null,
-                preview: previewUrl,
-                file: file instanceof File ? file : null,
-                name: file.name || `Image ${Date.now()}`,
-                size: file.size,
-                type: file instanceof File ? file.type : 'image',
-              };
-            }) || [],
-          product_videos: product.formData.product_videos
-            ? {
-                id: product.formData.product_videos.id || null,
-                preview:
-                  product.formData.product_videos instanceof File
-                    ? URL.createObjectURL(product.formData.product_videos)
-                    : filePreviewMap.videos[product.formData.product_videos.id],
-                file:
-                  product.formData.product_videos instanceof File
-                    ? product.formData.product_videos
-                    : null,
-                name:
-                  product.formData.product_videos.name || `Video ${Date.now()}`,
-                size: product.formData.product_videos.size,
-                type: 'video',
-              }
-            : null,
-        };
-
-        const newPreviewMap = {
-          images: { ...filePreviewMap.images },
-          videos: { ...filePreviewMap.videos },
-        };
-
-        savedFormData.product_images?.forEach((img) => {
-          if (img.preview) {
-            newPreviewMap.images[img.id || URL.createObjectURL(img.file)] =
-              img.preview;
-          }
-        });
-
-        if (savedFormData.product_videos?.preview) {
-          const videoKey =
-            savedFormData.product_videos.id ||
-            (savedFormData.product_videos.file &&
-              URL.createObjectURL(savedFormData.product_videos.file));
-          newPreviewMap.videos[videoKey] = savedFormData.product_videos.preview;
-        }
-
-        setFilePreviewMap(newPreviewMap);
-
-        product.formData = savedFormData;
-        product.isOpen = false;
+    validateForm(category, product.formData).then(({ isValid, errors }) => {
+      if (!isValid) {
+        product.errors = errors;
         setCategories(updatedCategories);
-
-        toast.success('Product saved successfully!');
+        return;
       }
-    );
+
+      const savedFormData = { ...product.formData };
+
+      //  category-specific fields
+      const fieldMap = {
+        'Study overseas': ['study_level', 'study_destination_countries'],
+        'Study India': ['study_level', 'study_destination_states'],
+        Tutoring: ['study_level', 'mode_of_teaching', 'subjects'],
+        'Career counselling': ['study_level', 'service_delivery'],
+        'Summer courses': ['study_level', 'service_delivery'],
+        'Study Finance': ['service_delivery'],
+        'Loans and scholarships': [
+          'loan_for_study_level',
+          'loan_available_countries',
+        ],
+        Events: ['event_delivery', 'event_location'],
+        Competitions: ['event_delivery', 'event_location'],
+      };
+
+      // Only include relevant fields for the category
+      const relevantFields = fieldMap[category] || [];
+      relevantFields.forEach((field) => {
+        savedFormData[field] = product.formData[field] || '';
+      });
+
+      // Handle media fields which are common across categories
+      savedFormData.product_images =
+        product.formData.product_images?.map((file) => ({
+          id: file.id || null,
+          preview:
+            file instanceof File
+              ? URL.createObjectURL(file)
+              : filePreviewMap.images[file.id],
+          file: file instanceof File ? file : null,
+          name: file.name || `Image ${Date.now()}`,
+          size: file.size,
+          type: file instanceof File ? file.type : 'image',
+        })) || [];
+
+      savedFormData.product_videos = product.formData.product_videos
+        ? {
+            id: product.formData.product_videos.id || null,
+            preview:
+              product.formData.product_videos instanceof File
+                ? URL.createObjectURL(product.formData.product_videos)
+                : filePreviewMap.videos[product.formData.product_videos.id],
+            file:
+              product.formData.product_videos instanceof File
+                ? product.formData.product_videos
+                : null,
+            name: product.formData.product_videos.name || `Video ${Date.now()}`,
+            size: product.formData.product_videos.size,
+            type: 'video',
+          }
+        : null;
+
+      // Update preview maps
+      const newPreviewMap = {
+        images: { ...filePreviewMap.images },
+        videos: { ...filePreviewMap.videos },
+      };
+
+      savedFormData.product_images?.forEach((img) => {
+        if (img.preview) {
+          newPreviewMap.images[img.id || URL.createObjectURL(img.file)] =
+            img.preview;
+        }
+      });
+
+      if (savedFormData.product_videos?.preview) {
+        const videoKey =
+          savedFormData.product_videos.id ||
+          (savedFormData.product_videos.file &&
+            URL.createObjectURL(savedFormData.product_videos.file));
+        newPreviewMap.videos[videoKey] = savedFormData.product_videos.preview;
+      }
+
+      setFilePreviewMap(newPreviewMap);
+      product.formData = savedFormData;
+      product.isOpen = false;
+      setCategories(updatedCategories);
+      toast.success('Product saved successfully!');
+    });
   };
 
   const handleFileChange = (e, fieldName, categoryIndex, productIndex) => {
@@ -744,11 +871,13 @@ const StepVendorProductDetailsPage = () => {
         );
       } else {
         toast.success('All products submitted successfully!');
-        if(!redirectedFromDashboard){
-          appStore.setAppProperty('profileStatus',ProfileStatuses.UNDER_REVIEW);
+        if (!redirectedFromDashboard) {
+          appStore.setAppProperty(
+            'profileStatus',
+            ProfileStatuses.UNDER_REVIEW
+          );
           navigate('/application-sent');
-        } 
-        else navigate('/home/products');
+        } else navigate('/home/products');
       }
     } catch (error) {
       console.error('Unexpected error during submission:', error);
@@ -856,6 +985,26 @@ const StepVendorProductDetailsPage = () => {
     });
     console.log('API Response:', response);
     setCategories([]);
+  };
+
+  const handleSkipNow = () => {
+    // Skip submission and navigate directly
+    if (!redirectedFromDashboard) {
+      appStore.setAppProperty('profileStatus', ProfileStatuses.UNDER_REVIEW);
+      navigate('/application-sent');
+    } else {
+      navigate('/home/products');
+    }
+    return;
+  };
+
+  const generateYearOptions = () => {
+    const currentYear = new Date().getFullYear();
+    const years = [];
+    for (let year = currentYear; year >= 1950; year--) {
+      years.push(year.toString());
+    }
+    return years;
   };
 
   const renderErrorMessage = (errors, fieldName) => {
@@ -1187,38 +1336,127 @@ const StepVendorProductDetailsPage = () => {
                               {renderErrorMessage(product.errors, field.name)}
                             </div>
                           </>
+                        ) : field.name === 'hsn_code' ? (
+                          <>
+                            <input
+                              type="text"
+                              name={field.name}
+                              value={product.formData[field.name] || ''}
+                              readOnly
+                              className="w-full p-2 border rounded-md bg-gray-100"
+                            />
+                            {renderErrorMessage(product.errors, field.name)}
+                          </>
+                        ) : field.name === 'service_provided_since' ? (
+                          <>
+                            <select
+                              name={field.name}
+                              value={
+                                product
+                                  ? product.formData[field.name] || ''
+                                  : currentForm.formData[field.name] || ''
+                              }
+                              onChange={(e) =>
+                                product
+                                  ? handleProductChange(
+                                      e,
+                                      categoryIndex,
+                                      productIndex
+                                    )
+                                  : handleProductChange(e)
+                              }
+                              className={`w-full p-2 border rounded-md ${
+                                (
+                                  product
+                                    ? product.errors[field.name]
+                                    : currentForm.errors[field.name]
+                                )
+                                  ? 'border-red-500'
+                                  : ''
+                              }`}
+                            >
+                              <option value="">Select Year</option>
+                              {generateYearOptions().map((year) => (
+                                <option key={year} value={year}>
+                                  {year}
+                                </option>
+                              ))}
+                            </select>
+                            {renderErrorMessage(
+                              product ? product.errors : currentForm.errors,
+                              field.name
+                            )}
+                          </>
                         ) : field.type === 'multiselect' ? (
-                          <Select
-                            isMulti
-                            name={field.name}
-                            options={
-                              field.name === 'study_destination_states'
-                                ? states
-                                : field.name === 'service_available_cities'
-                                ? cities
-                                : field.name === 'event_location'
-                                ? cities
-                                : field.name === 'loan_available_countries'
-                                ? countries
-                                : []
-                            }
-                            value={(product.formData[field.name] || '')
-                              .split(', ')
-                              .filter(Boolean)
-                              .map((value) => ({ value, label: value }))}
-                            onChange={(selectedOptions) =>
-                              handleMultiSelectChange(
-                                selectedOptions,
-                                field.name,
-                                categoryIndex,
-                                productIndex
-                              )
-                            }
-                            placeholder={`Select ${field.label}`}
-                            className={`w-full ${
-                              product.errors[field.name] ? 'border-red-500' : ''
-                            }`}
-                          />
+                          <div>
+                            <Select
+                              isMulti
+                              name={field.name}
+                              options={
+                                field.name === 'study_level' &&
+                                category.name === 'Tutoring'
+                                  ? loadTutorStudyLevel
+                                  : field.name === 'study_level' &&
+                                    category.name === 'Career counselling'
+                                  ? loadCounsellingLevel
+                                  : field.name === 'event_delivery'
+                                  ? loadServiceDelivary
+                                  : field.name === 'loan_for_study_level'
+                                  ? loadLoanStudyLevel
+                                  : field.name === 'study_destination_countries'
+                                  ? OptionCountries
+                                  : field.name === 'mode_of_teaching'
+                                  ? loadModeOfTeaching
+                                  : field.name === 'subjects'
+                                  ? loadSubjects
+                                  : field.name === 'service_delivery'
+                                  ? loadServiceDelivary
+                                  : field.name === 'study_level'
+                                  ? loadStudyLevel
+                                  : field.name === 'study_destination_states'
+                                  ? states
+                                  : field.name === 'service_available_cities'
+                                  ? cities
+                                  : field.name === 'event_location'
+                                  ? cities
+                                  : field.name === 'loan_available_countries'
+                                  ? countries
+                                  : []
+                              }
+                              value={(product.formData[field.name] || '')
+                                .split(', ')
+                                .filter(Boolean)
+                                .map((value) => ({ value, label: value }))}
+                              onChange={(selectedOptions) =>
+                                handleMultiSelectChange(
+                                  selectedOptions,
+                                  field.name,
+                                  categoryIndex,
+                                  productIndex
+                                )
+                              }
+                              placeholder={`Select ${field.label}`}
+                              className={`w-full ${
+                                product.errors[field.name]
+                                  ? 'border-red-500'
+                                  : ''
+                              }`}
+                              styles={{
+                                control: (base) => ({
+                                  ...base,
+                                  borderColor: product.errors[field.name]
+                                    ? '#ef4444'
+                                    : base.borderColor,
+                                  '&:hover': {
+                                    borderColor: product.errors[field.name]
+                                      ? '#ef4444'
+                                      : base.borderColor,
+                                  },
+                                }),
+                              }}
+                            />
+                            {renderErrorMessage(product.errors, field.name)}
+                          </div>
                         ) : (
                           <>
                             <input
@@ -1278,370 +1516,447 @@ const StepVendorProductDetailsPage = () => {
   };
 
   return (
-    <div>
-      {categories.map((category, categoryIndex) => (
-        <div key={categoryIndex} className="mb-6 border rounded-md m-10">
-          <div
-            className="cursor-pointer bg-purple-100 p-3 flex justify-between items-center"
-            onClick={() => toggleAccordion(categoryIndex)}
-          >
-            <h3 className="text-lg font-medium">
-              {category.name || 'Select Category'}
-            </h3>
-            <span>{category.isOpen ? '-' : '+'}</span>
-          </div>
-          {category.isOpen && (
-            <div className="p-4">
-              {renderProductForms(category, categoryIndex)}
+    <ErrorBoundary>
+      <div>
+        {categories.map((category, categoryIndex) => (
+          <div key={categoryIndex} className="mb-6 border rounded-md m-10">
+            <div
+              className="cursor-pointer bg-purple-100 p-3 flex justify-between items-center"
+              onClick={() => toggleAccordion(categoryIndex)}
+            >
+              <h3 className="text-lg font-medium">
+                {category.name || 'Select Category'}
+              </h3>
+              <span>{category.isOpen ? '-' : '+'}</span>
             </div>
-          )}
-        </div>
-      ))}
-
-      <div className="mb-6 border rounded-md p-4 mt-8 m-10">
-        <label className="block text-gray-700 mb-2">Choose Category</label>
-        <select
-          value={currentForm.category}
-          onChange={handleProductCategoryChange}
-          className="w-1/3 p-2 border rounded-md mb-4"
-        >
-          <option value="">Select Category</option>
-          {Object.keys(ProductDetailsData[0].categoryFields).map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
-
-        {currentForm.category && (
-          <div>
-            {ProductDetailsData[0].categoryFields[currentForm.category]?.some(
-              (section) => section.heading === 'Subcategory'
-            ) && !currentForm.formData.subcategory ? (
-              <div className="mb-4">
-                <label className="block text-gray-700 mb-2">
-                  Select Subcategory
-                </label>
-                <select
-                  name="subcategory"
-                  value={currentForm.formData.subcategory || ''}
-                  onChange={handleProductChange}
-                  className="w-1/3 p-2 border rounded-md"
-                >
-                  <option value="">Select Subcategory</option>
-                  {ProductDetailsData[0].categoryFields[currentForm.category]
-                    .find((section) => section.heading === 'Subcategory')
-                    ?.fields[0].options.map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                </select>
-                {renderErrorMessage(currentForm.errors, 'subcategory')}
+            {category.isOpen && (
+              <div className="p-4">
+                {renderProductForms(category, categoryIndex)}
               </div>
-            ) : (
-              <div>
-                {ProductDetailsData[0].categoryFields[
-                  currentForm.category
-                ]?.map((section, sectionIndex) => {
-                  if (
-                    section.subcategory &&
-                    section.subcategory !== currentForm.formData.subcategory
-                  ) {
-                    return null;
-                  }
-                  return (
-                    <div key={sectionIndex} className="mb-4">
-                      <h5 className="text-sm font-semibold mb-2">
-                        {section.heading}
-                      </h5>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {section.fields.map((field, fieldIndex) => (
-                          <div key={fieldIndex}>
-                            <label className="block text-gray-700 mb-2">
-                              {field.label}
-                              {field.required && (
-                                <span className="text-red-500">*</span>
-                              )}
-                            </label>
-                            {field.type === 'textarea' ? (
-                              <>
-                                <textarea
-                                  name={field.name}
-                                  placeholder={`Enter ${field.label}`}
-                                  value={currentForm.formData[field.name] || ''}
-                                  onChange={handleProductChange}
-                                  className={`w-full p-2 border rounded-md ${
-                                    currentForm.errors[field.name]
-                                      ? 'border-red-500'
-                                      : ''
-                                  }`}
-                                />
-                                {renderErrorMessage(
-                                  currentForm.errors,
-                                  field.name
+            )}
+          </div>
+        ))}
+
+        <div className="mb-6 border rounded-md p-4 mt-8 m-10">
+          <label className="block text-gray-700 mb-2">Choose Category</label>
+          <select
+            value={currentForm.category}
+            onChange={handleProductCategoryChange}
+            className="w-1/3 p-2 border rounded-md mb-4"
+          >
+            <option value="">Select Category</option>
+            {Object.keys(ProductDetailsData[0].categoryFields).map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+
+          {currentForm.category && (
+            <div>
+              {ProductDetailsData[0].categoryFields[currentForm.category]?.some(
+                (section) => section.heading === 'Subcategory'
+              ) && !currentForm.formData.subcategory ? (
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2">
+                    Select Subcategory
+                  </label>
+                  <select
+                    name="subcategory"
+                    value={currentForm.formData.subcategory || ''}
+                    onChange={handleProductChange}
+                    className="w-1/3 p-2 border rounded-md"
+                  >
+                    <option value="">Select Subcategory</option>
+                    {ProductDetailsData[0].categoryFields[currentForm.category]
+                      .find((section) => section.heading === 'Subcategory')
+                      ?.fields[0].options.map((option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                  </select>
+                  {renderErrorMessage(currentForm.errors, 'subcategory')}
+                </div>
+              ) : (
+                <div>
+                  {ProductDetailsData[0].categoryFields[
+                    currentForm.category
+                  ]?.map((section, sectionIndex) => {
+                    if (
+                      section.subcategory &&
+                      section.subcategory !== currentForm.formData.subcategory
+                    ) {
+                      return null;
+                    }
+                    return (
+                      <div key={sectionIndex} className="mb-4">
+                        <h5 className="text-sm font-semibold mb-2">
+                          {section.heading}
+                        </h5>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {section.fields.map((field, fieldIndex) => (
+                            <div key={fieldIndex}>
+                              <label className="block text-gray-700 mb-2">
+                                {field.label}
+                                {field.required && (
+                                  <span className="text-red-500">*</span>
                                 )}
-                              </>
-                            ) : field.type === 'select' ? (
-                              <>
-                                <select
-                                  name={field.name}
-                                  value={currentForm.formData[field.name] || ''}
-                                  onChange={handleProductChange}
-                                  className={`w-full p-2 border rounded-md ${
-                                    currentForm.errors[field.name]
-                                      ? 'border-red-500'
-                                      : ''
-                                  }`}
-                                >
-                                  <option value="">Select {field.label}</option>
-                                  {field.options.map((option, optIndex) => (
-                                    <option key={optIndex} value={option}>
-                                      {option}
-                                    </option>
-                                  ))}
-                                </select>
-                                {renderErrorMessage(
-                                  currentForm.errors,
-                                  field.name
-                                )}
-                              </>
-                            ) : field.type === 'file' ? (
-                              <>
-                                <div className="flex flex-col gap-2">
-                                  <div
-                                    className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md ${
+                              </label>
+                              {field.type === 'textarea' ? (
+                                <>
+                                  <textarea
+                                    name={field.name}
+                                    placeholder={`Enter ${field.label}`}
+                                    value={
+                                      currentForm.formData[field.name] || ''
+                                    }
+                                    onChange={handleProductChange}
+                                    className={`w-full p-2 border rounded-md ${
                                       currentForm.errors[field.name]
                                         ? 'border-red-500'
-                                        : 'border-purple-primary'
+                                        : ''
+                                    }`}
+                                  />
+                                  {renderErrorMessage(
+                                    currentForm.errors,
+                                    field.name
+                                  )}
+                                </>
+                              ) : field.type === 'select' ? (
+                                <>
+                                  <select
+                                    name={field.name}
+                                    value={
+                                      currentForm.formData[field.name] || ''
+                                    }
+                                    onChange={handleProductChange}
+                                    className={`w-full p-2 border rounded-md ${
+                                      currentForm.errors[field.name]
+                                        ? 'border-red-500'
+                                        : ''
                                     }`}
                                   >
-                                    <input
-                                      type="file"
-                                      name={field.name}
-                                      id={`${field.name}-upload`}
-                                      onChange={(e) =>
-                                        handleFileChange(e, field.name)
-                                      }
-                                      accept={
-                                        field.name === 'product_images'
-                                          ? 'image/*'
-                                          : 'video/*'
-                                      }
-                                      multiple={field.name === 'product_images'}
-                                      className="hidden"
-                                    />
-                                    <label
-                                      htmlFor={`${field.name}-upload`}
-                                      className="cursor-pointer flex flex-col items-center justify-center"
+                                    <option value="">
+                                      Select {field.label}
+                                    </option>
+                                    {field.options.map((option, optIndex) => (
+                                      <option key={optIndex} value={option}>
+                                        {option}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  {renderErrorMessage(
+                                    currentForm.errors,
+                                    field.name
+                                  )}
+                                </>
+                              ) : field.type === 'file' ? (
+                                <>
+                                  <div className="flex flex-col gap-2">
+                                    <div
+                                      className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md ${
+                                        currentForm.errors[field.name]
+                                          ? 'border-red-500'
+                                          : 'border-purple-primary'
+                                      }`}
                                     >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="h-10 w-10 text-purple-primary"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
+                                      <input
+                                        type="file"
+                                        name={field.name}
+                                        id={`${field.name}-upload`}
+                                        onChange={(e) =>
+                                          handleFileChange(e, field.name)
+                                        }
+                                        accept={
+                                          field.name === 'product_images'
+                                            ? 'image/*'
+                                            : 'video/*'
+                                        }
+                                        multiple={
+                                          field.name === 'product_images'
+                                        }
+                                        className="hidden"
+                                      />
+                                      <label
+                                        htmlFor={`${field.name}-upload`}
+                                        className="cursor-pointer flex flex-col items-center justify-center"
                                       >
-                                        <path
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          strokeWidth={2}
-                                          d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-5-4l-3-3m0 0l-3 3m3-3v12"
-                                        />
-                                      </svg>
-                                      <p className="text-purple-primary mt-2 text-sm">
-                                        Click to upload
-                                      </p>
-                                      <p className="text-purple-primary text-xs">
-                                        (Max 20mb)
-                                      </p>
-                                    </label>
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          className="h-10 w-10 text-purple-primary"
+                                          fill="none"
+                                          viewBox="0 0 24 24"
+                                          stroke="currentColor"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-5-4l-3-3m0 0l-3 3m3-3v12"
+                                          />
+                                        </svg>
+                                        <p className="text-purple-primary mt-2 text-sm">
+                                          Click to upload
+                                        </p>
+                                        <p className="text-purple-primary text-xs">
+                                          (Max 20mb)
+                                        </p>
+                                      </label>
+                                    </div>
+
+                                    {/* Preview section */}
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                      {field.name === 'product_images' &&
+                                        (
+                                          currentForm.formData[field.name] || []
+                                        ).map((file, idx) => (
+                                          <FilePreviewCard
+                                            key={idx}
+                                            file={file}
+                                            fieldName={field.name}
+                                            onPreview={() =>
+                                              handlePreview(file, field.name)
+                                            }
+                                            onDelete={() =>
+                                              handleFileRemove(field.name, idx)
+                                            }
+                                            showMenu={showMenu}
+                                            toggleMenu={toggleMenu}
+                                            isUploading={
+                                              uploadingFiles[
+                                                `${field.name}-main-form`
+                                              ]
+                                            }
+                                          />
+                                        ))}
+
+                                      {field.name === 'product_videos' &&
+                                        currentForm.formData[field.name] && (
+                                          <FilePreviewCard
+                                            file={
+                                              currentForm.formData[field.name]
+                                            }
+                                            fieldName={field.name}
+                                            onPreview={() =>
+                                              handlePreview(
+                                                currentForm.formData[
+                                                  field.name
+                                                ],
+                                                field.name
+                                              )
+                                            }
+                                            onDelete={() =>
+                                              handleFileRemove(field.name, 0)
+                                            }
+                                            showMenu={showMenu}
+                                            toggleMenu={toggleMenu}
+                                            isUploading={
+                                              uploadingFiles[
+                                                `${field.name}-main-form`
+                                              ]
+                                            }
+                                          />
+                                        )}
+                                    </div>
+
+                                    {renderErrorMessage(
+                                      currentForm.errors,
+                                      field.name
+                                    )}
                                   </div>
-
-                                  {/* Preview section */}
-                                  <div className="flex flex-wrap gap-2 mt-2">
-                                    {field.name === 'product_images' &&
-                                      (
-                                        currentForm.formData[field.name] || []
-                                      ).map((file, idx) => (
-                                        <FilePreviewCard
-                                          key={idx}
-                                          file={file}
-                                          fieldName={field.name}
-                                          onPreview={() =>
-                                            handlePreview(file, field.name)
-                                          }
-                                          onDelete={() =>
-                                            handleFileRemove(field.name, idx)
-                                          }
-                                          showMenu={showMenu}
-                                          toggleMenu={toggleMenu}
-                                          isUploading={
-                                            uploadingFiles[
-                                              `${field.name}-main-form`
-                                            ]
-                                          }
-                                        />
-                                      ))}
-
-                                    {field.name === 'product_videos' &&
-                                      currentForm.formData[field.name] && (
-                                        <FilePreviewCard
-                                          file={
-                                            currentForm.formData[field.name]
-                                          }
-                                          fieldName={field.name}
-                                          onPreview={() =>
-                                            handlePreview(
-                                              currentForm.formData[field.name],
-                                              field.name
-                                            )
-                                          }
-                                          onDelete={() =>
-                                            handleFileRemove(field.name, 0)
-                                          }
-                                          showMenu={showMenu}
-                                          toggleMenu={toggleMenu}
-                                          isUploading={
-                                            uploadingFiles[
-                                              `${field.name}-main-form`
-                                            ]
-                                          }
-                                        />
-                                      )}
-                                  </div>
-
+                                </>
+                              ) : field.type === 'multiselect' ? (
+                                <div>
+                                  <Select
+                                    isMulti
+                                    name={field.name}
+                                    options={
+                                      field.name === 'study_level' &&
+                                      currentForm.category === 'Tutoring'
+                                        ? loadTutorStudyLevel
+                                        : field.name === 'study_level' &&
+                                          currentForm.category ===
+                                            'Career counselling'
+                                        ? loadCounsellingLevel
+                                        : field.name === 'event_delivery'
+                                        ? loadServiceDelivary
+                                        : field.name === 'loan_for_study_level'
+                                        ? loadLoanStudyLevel
+                                        : field.name ===
+                                          'study_destination_countries'
+                                        ? OptionCountries
+                                        : field.name === 'mode_of_teaching'
+                                        ? loadModeOfTeaching
+                                        : field.name === 'subjects'
+                                        ? loadSubjects
+                                        : field.name === 'service_delivery'
+                                        ? loadServiceDelivary
+                                        : field.name === 'study_level'
+                                        ? loadStudyLevel
+                                        : field.name ===
+                                          'study_destination_states'
+                                        ? states
+                                        : field.name ===
+                                          'service_available_cities'
+                                        ? cities
+                                        : field.name === 'event_location'
+                                        ? cities
+                                        : field.name ===
+                                          'loan_available_countries'
+                                        ? countries
+                                        : []
+                                    }
+                                    value={(
+                                      currentForm.formData[field.name] || ''
+                                    )
+                                      .split(', ')
+                                      .filter(Boolean)
+                                      .map((value) => ({
+                                        value,
+                                        label: value,
+                                      }))}
+                                    onChange={(selectedOptions) =>
+                                      handleMultiSelectChange(
+                                        selectedOptions,
+                                        field.name
+                                      )
+                                    }
+                                    placeholder={`Select ${field.label}`}
+                                    className={`w-full ${
+                                      currentForm.errors[field.name]
+                                        ? 'border-red-500'
+                                        : ''
+                                    }`}
+                                    styles={{
+                                      control: (base) => ({
+                                        ...base,
+                                        borderColor: currentForm.errors[
+                                          field.name
+                                        ]
+                                          ? '#ef4444'
+                                          : base.borderColor,
+                                        '&:hover': {
+                                          borderColor: currentForm.errors[
+                                            field.name
+                                          ]
+                                            ? '#ef4444'
+                                            : base.borderColor,
+                                        },
+                                      }),
+                                    }}
+                                  />
                                   {renderErrorMessage(
                                     currentForm.errors,
                                     field.name
                                   )}
                                 </div>
-                              </>
-                            ) : field.type === 'multiselect' ? (
-                              <Select
-                                isMulti
-                                name={field.name}
-                                options={
-                                  field.name === 'study_destination_states'
-                                    ? states
-                                    : field.name === 'service_available_cities'
-                                    ? cities
-                                    : field.name === 'event_location'
-                                    ? cities
-                                    : field.name === 'loan_available_countries'
-                                    ? countries
-                                    : []
-                                }
-                                value={(currentForm.formData[field.name] || '')
-                                  .split(', ')
-                                  .filter(Boolean)
-                                  .map((value) => ({ value, label: value }))}
-                                onChange={(selectedOptions) =>
-                                  handleMultiSelectChange(
-                                    selectedOptions,
+                              ) : (
+                                <>
+                                  <input
+                                    type={field.type}
+                                    name={field.name}
+                                    placeholder={`Enter ${field.label}`}
+                                    value={
+                                      currentForm.formData[field.name] || ''
+                                    }
+                                    onChange={handleProductChange}
+                                    className={`w-full p-2 border rounded-md ${
+                                      currentForm.errors[field.name]
+                                        ? 'border-red-500'
+                                        : ''
+                                    }`}
+                                  />
+                                  {renderErrorMessage(
+                                    currentForm.errors,
                                     field.name
-                                  )
-                                }
-                                placeholder={`Select ${field.label}`}
-                                className={`w-full ${
-                                  currentForm.errors[field.name]
-                                    ? 'border-red-500'
-                                    : ''
-                                }`}
-                              />
-                            ) : (
-                              <>
-                                <input
-                                  type={field.type}
-                                  name={field.name}
-                                  placeholder={`Enter ${field.label}`}
-                                  value={currentForm.formData[field.name] || ''}
-                                  onChange={handleProductChange}
-                                  className={`w-full p-2 border rounded-md ${
-                                    currentForm.errors[field.name]
-                                      ? 'border-red-500'
-                                      : ''
-                                  }`}
-                                />
-                                {renderErrorMessage(
-                                  currentForm.errors,
-                                  field.name
-                                )}
-                              </>
-                            )}
-                          </div>
-                        ))}
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="flex justify-end gap-10 mt-9">
+          <button
+            type="button"
+            className="w-96 px-4 py-2 bg-[#F3F1FF] text-blue-primary font-dmsans font-bold rounded-md  border border-blue-primary"
+            onClick={handleAddProductForm}
+          >
+            Save & add product
+          </button>
+          <button
+            type="button"
+            className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md"
+            style={{
+              background: 'linear-gradient(to right, #876FFD, #6C59CA)',
+            }}
+            onClick={handleSkipNow}
+          >
+            Skip as of now
+          </button>
+          <button
+            type="button"
+            className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md"
+            style={{
+              background: 'linear-gradient(to right, #876FFD, #6C59CA)',
+            }}
+            onClick={handleSubmit}
+          >
+            Submit All Products
+          </button>
+        </div>
+
+        {previewMedia && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-10">
+            <div className="relative bg-white rounded-md shadow-md p-4">
+              <button
+                type="button"
+                className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 z-20 bg-white text-center rounded-md"
+                onClick={() => setPreviewMedia(null)}
+              >
+                Close
+              </button>
+              {previewMedia.type === 'image' ||
+              previewMedia.url?.includes('image') ? (
+                <img
+                  src={previewMedia.url}
+                  alt="Preview"
+                  className="max-w-full max-h-screen rounded-md"
+                />
+              ) : (
+                <video
+                  src={previewMedia.url}
+                  controls
+                  className="max-w-full max-h-screen rounded-md"
+                />
+              )}
+            </div>
           </div>
         )}
-      </div>
-      <div className="flex justify-end gap-10 mt-9">
-        <button
-          type="button"
-          className="w-96 px-4 py-2 bg-[#F3F1FF] text-blue-primary font-dmsans font-bold rounded-md  border border-blue-primary"
-          onClick={handleAddProductForm}
-        >
-          Save & add another product
-        </button>
-        <button
-          type="button"
-          className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md"
-          style={{
-            background: 'linear-gradient(to right, #876FFD, #6C59CA)',
-          }}
-          onClick={handleSubmit}
-        >
-          Submit All Products
-        </button>
-      </div>
 
-      {previewMedia && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-10">
-          <div className="relative bg-white rounded-md shadow-md p-4">
-            <button
-              type="button"
-              className="absolute top-2 right-2 text-gray-700 hover:text-gray-900 z-20 bg-white text-center rounded-md"
-              onClick={() => setPreviewMedia(null)}
-            >
-              Close
-            </button>
-            {previewMedia.type === 'image' ||
-            previewMedia.url?.includes('image') ? (
-              <img
-                src={previewMedia.url}
-                alt="Preview"
-                className="max-w-full max-h-screen rounded-md"
-              />
-            ) : (
-              <video
-                src={previewMedia.url}
-                controls
-                className="max-w-full max-h-screen rounded-md"
-              />
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Add cropper before ToastContainer */}
-      {cropperImage && !currentFileInfo?.categoryIndex && (
-        <ImageCropper
-          image={cropperImage}
-          aspect={16 / 9}
-          onCropComplete={handleCropComplete}
-          onCancel={() => {
-            setCropperImage(null);
-            setCurrentFileInfo(null);
-          }}
-        />
-      )}
-      {/* <ToastContainer autoClose={2000} /> */}
-    </div>
+        {/* Add cropper before ToastContainer */}
+        {cropperImage && !currentFileInfo?.categoryIndex && (
+          <ImageCropper
+            image={cropperImage}
+            aspect={16 / 9}
+            onCropComplete={handleCropComplete}
+            onCancel={() => {
+              setCropperImage(null);
+              setCurrentFileInfo(null);
+            }}
+          />
+        )}
+        {/* <ToastContainer autoClose={2000} /> */}
+      </div>
+    </ErrorBoundary>
   );
 };
 

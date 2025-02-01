@@ -36,44 +36,42 @@ export default function SignUp() {
     <div className="w-full min-h-screen flex flex-col max-md:items-center md:flex-row justify-center">
       {/* Login Left Container */}
       <div className="hidden md:flex flex-col justify-between w-1/2 h-screen lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
-        <div className="flex flex-col items-start justify-center h-full">
-          <div className="mt-8 w-full flex flex-col items-center text-center">
-            <h3 className="text-xl font-bold font-dmsans text-purple-primary mb-6">
-              Why Partner with Us?
-            </h3>
+        <h3 className="text-4xl font-bold font-dmsans text-purple-primary mb-6">
+          Why Partner with Us?
+        </h3>
+        <div className="w-full flex flex-col">
+          <div className="w-full flex ">
+            <div className="space-y-6 w-full md:w-3/4 lg:w-2/3">
+              {SignUpData.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-row items-center space-x-4 text-left w-full"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-12 h-12 object-contain"
+                  />
 
-            <div className="w-full flex justify-center">
-              <div className="space-y-6 w-full md:w-3/4 lg:w-2/3">
-                {SignUpData.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-row items-center space-x-4 text-left w-full"
-                  >
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-12 h-12 object-contain"
-                    />
-
-                    <div className="flex-1">
-                      <p className="text-m text-purple-primary">
-                        <span className="font-bold text-purple-primary">
-                          {item.title}:{' '}
-                        </span>
-                        {item.description}
-                      </p>
-                    </div>
+                  <div className="flex-1">
+                    <p className="text-xl text-purple-primary">
+                      <span className="font-bold text-purple-primary">
+                        {item.title}:{' '}
+                      </span>
+                      {item.description}
+                    </p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          </div>{' '}
+          </div>
+        </div>
+        <div className="flex flex-col items-start justify-center h-full">
           <img
             src={Icon}
             alt="Xcellify Logo"
-            className="mt-8 w-40 h-30 mb-4 self-center"
+            className="mt-8 w-44 h-32 mb-4 self-center"
           />
-          {/* Last Image */}
         </div>
       </div>
 

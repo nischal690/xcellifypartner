@@ -7,16 +7,10 @@ const steps = [
         heading: 'Company details',
         fields: [
           {
-            label: 'Company name',
-            name: 'company_name',
-            type: 'text',
-            required: true,
-          },
-          {
             label: 'Company type',
             name: 'company_type',
             type: 'select',
-            required: false,
+            required: true,
             options: [
               { label: 'Individual', value: 'Individual' },
               { label: 'Sole Proprietorship', value: 'sole_proprietership' },
@@ -24,6 +18,12 @@ const steps = [
               { label: 'Private limited company', value: 'privateltd' },
               { label: 'Public limited company', value: 'publicltd' },
             ],
+          },
+          {
+            label: 'Company name',
+            name: 'company_name',
+            type: 'text',
+            required: true,
           },
           { label: 'Website', name: 'website', type: 'url', required: false },
           {
@@ -65,19 +65,19 @@ const steps = [
             label: 'CEO/Owner name',
             name: 'owner_name',
             type: 'text',
-            required: true,
+            required: false,
           },
           {
             label: "CEO/Owner's Email ID",
             name: 'owner_email',
             type: 'email',
-            required: true,
+            required: false,
           },
           {
             label: "CEO/Owner's mobile number",
             name: 'owner_mobile',
             type: 'mobile',
-            required: true,
+            required: false,
             structure: { country_code: true, number: true },
           },
         ],
@@ -134,7 +134,7 @@ const steps = [
             label: 'Referred by',
             name: 'referred_by',
             type: 'text',
-            required: true,
+            required: false,
           },
           {
             label: 'Digital signature',
@@ -146,7 +146,7 @@ const steps = [
             label: 'Upload brand logo',
             name: 'brand_logo',
             type: 'file',
-            required: true,
+            required: false,
           },
         ],
       },
@@ -163,7 +163,7 @@ const steps = [
             label: 'Bank name',
             name: 'bank_name',
             type: 'text',
-            required: false,
+            required: true,
           },
           {
             label: 'Account type',
@@ -173,7 +173,7 @@ const steps = [
               { label: 'Current', value: 'current' },
               { label: 'Savings', value: 'savings' },
             ],
-            required: false,
+            required: true,
           },
           {
             label: 'Bank account number',
@@ -194,7 +194,7 @@ const steps = [
         fields: [
           { label: 'PAN', name: 'PAN', type: 'text', required: false },
           { label: 'CIN', name: 'CIN', type: 'text', required: false },
-          { label: 'GST', name: 'GST', type: 'text', required: false },
+          { label: 'GST', name: 'GST', type: 'text', required: true },
           {
             label: 'Are you registered under MSME?',
             name: 'MSME_registered',
@@ -209,6 +209,7 @@ const steps = [
             label: 'Upload MSME Certificate',
             name: 'msme_certificate',
             type: 'file',
+            required: true,
           },
         ],
       },
@@ -217,105 +218,7 @@ const steps = [
   {
     step: 3,
     title: 'Product Details',
-    sections: [
-      {
-        heading: 'Basic details',
-        fields: [
-          {
-            label: 'Product Title',
-            name: 'product_title',
-            type: 'text',
-            required: true,
-          },
-          {
-            label: 'Service provided since',
-            name: 'service_since',
-            type: 'date',
-            required: false,
-          },
-          {
-            label: 'Courses level',
-            name: 'courses_level',
-            type: 'text',
-            required: false,
-          },
-        ],
-      },
-      {
-        heading: 'Service locations',
-        fields: [
-          {
-            label: 'Countries serviced',
-            name: 'countries_serviced',
-            type: 'text',
-            required: false,
-          },
-          {
-            label: 'Cities serviced',
-            name: 'cities_serviced',
-            type: 'text',
-            required: false,
-          },
-        ],
-      },
-      {
-        heading: 'Additional details',
-        fields: [
-          {
-            label: 'Product description',
-            name: 'product_description',
-            type: 'textarea',
-            required: false,
-          },
-          {
-            label: 'Product unique selling point',
-            name: 'product_usp',
-            type: 'textarea',
-            required: false,
-          },
-        ],
-      },
-      {
-        heading: 'Pricing',
-        fields: [
-          { label: 'Price', name: 'price', type: 'number', required: true },
-          {
-            label: 'Currency',
-            name: 'currency',
-            type: 'select',
-            required: true,
-            options: [
-              { label: 'USD', value: 'USD' },
-              { label: 'INR', value: 'INR' },
-              { label: 'EUR', value: 'EUR' },
-            ],
-          },
-        ],
-      },
-      {
-        heading: 'Marketing materials',
-        fields: [
-          {
-            label: 'Google reviews/rating',
-            name: 'google_reviews',
-            type: 'text',
-            required: false,
-          },
-          {
-            label: 'Upload brand logo',
-            name: 'brand_logo',
-            type: 'file',
-            required: false,
-          },
-          {
-            label: 'Upload product image/video',
-            name: 'product_media',
-            type: 'file',
-            required: false,
-          },
-        ],
-      },
-    ],
+    sections: [],
   },
 ];
 
