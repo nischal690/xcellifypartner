@@ -43,7 +43,7 @@ const Products = () => {
     return (
         <>
             {debouncedSearchValue && !products.length ? <p className='w-full text-center text-xl py-20 text-bold text-gray-500'>No Products found</p>
-            : <ProductsList products={products}/>
+            : <ProductsList products={products} brandLogo={appStore?.brandLogo}/>
             }
         </>
     );

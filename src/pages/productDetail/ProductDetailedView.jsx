@@ -3,8 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import getProducts_API from '../products/getProducts_API';
 import LeftItems from './LeftItems';
 import RightItems from './RightItems';
-import productBannerImg from '../../assets/product-banner.jpeg'
-import productLogo from '../../assets/productLogo.jpeg'
+import placeholderImg from '../../assets/brandLogoPlaceholder.png'
 import { detailedViewSchemaData } from '../../utils/detailedViewSchema';
 import KeyInfo from './KeyInfo';
 import ContentCard from '../../components/commonComponents/ContentCard';
@@ -56,11 +55,25 @@ export default function ProductDetailedView() {
         }
     }
 
+    let productImage = placeholderImg;
+      
+    if(!!product?.product_images?.length){
+        let maxWidth = 0;
+        product?.product_images?.forEach((image, index)=>{
+            if(image?.width > maxWidth){
+                productImage = import.meta.env?.VITE_STRAPI_URL + product?.product_images[index]?.url;
+                maxWidth = image?.width;
+            }
+        })
+    }
+
   return (
-    <div className='max-w-7xl mx-auto p-10 font-dmsans'>
+    <div className='max-w-7xl mx-auto px-10 font-dmsans'>
         <div className='flex justify-between items-center my-4'>
-            <div>
-                {/* Breadcrumbs */}
+            <div className='flex item-center'>
+                <span className='text-lg mr-3'>Products</span>
+                <span>{'>'}</span>
+                <span className='text-lg font-semibold ml-3'>Product Details</span>
             </div>
             <div className='space-x-5'>
                 {product?.product_status === "Rejected" && (
@@ -71,9 +84,9 @@ export default function ProductDetailedView() {
         </div>
         <div>
             <div>
-                <img src={productBannerImg} alt="banner" className='h-36 w-full object-cover rounded-lg' />
+                <img src={productImage} alt="banner" className='h-52 w-full object-cover rounded-lg' />
             </div>
-            <img src={productLogo} alt="" className="w-16 h-16 rounded-full mr-3 object-cover -mt-10 ms-10" />
+            <img src={appStore?.brandLogo || placeholderImg} alt="" className="w-16 h-16 rounded-full mr-3 object-cover -mt-10 ms-10" />
         </div>
         <KeyInfo product={product} category={category}/>
         <div className='flex space-x-10'>

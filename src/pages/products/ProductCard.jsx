@@ -1,10 +1,9 @@
-import React from 'react';
-import VendorBg from '../../assets/vendorBg.jpeg';
-import productLogo from '../../assets/productLogo.jpeg';
+import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import brandLogoPlaceholder from '../../assets/brandLogoPlaceholder.png'
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, brandLogo }) {
   const navigate = useNavigate();
 
   const {
@@ -13,14 +12,25 @@ export default function ProductCard({ product }) {
     product_description = '',
     category = '',
     id = '',
+    product_images = [],
   } = product || {};
+
+  let productImage = brandLogoPlaceholder;
+
+  if(!!product_images?.length && !!product_images[0]?.url){
+    if(!!product_images[0]?.formats?.small?.url){
+      productImage = import.meta.env?.VITE_STRAPI_URL + product_images[0]?.formats?.small?.url;
+    }
+    else productImage = import.meta.env?.VITE_STRAPI_URL + product_images[0]?.url;
+  }
+                  
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-[370px] w-full flex flex-col justify-between h-full">
       <div className="">
         <div
           className="h-28 bg-cover bg-center text-right p-1"
-          style={{ backgroundImage: `url(${VendorBg})` }}
+          style={{ backgroundImage: `url(${`${productImage}`})` }}
         >
           <span
             className={`px-2 text-white rounded-md text-xs ${
@@ -38,7 +48,7 @@ export default function ProductCard({ product }) {
         <div className="p-2 flex flex-col justify-between">
           <div className="flex items-center mb-2">
             <img
-              src={productLogo}
+              src={brandLogo || brandLogoPlaceholder}
               alt="logo"
               className="w-12 h-12 rounded-full mr-3 object-cover -mt-10"
             />

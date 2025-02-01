@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import Dashboard from '../pages/dashboard/index'
@@ -8,8 +8,21 @@ import NavBar from '../components/navbar/index'
 import NewProfilePage from '../pages/NewProfilePage'
 import ProductDetailedView from "../pages/productDetail/ProductDetailedView";
 import Services from "../pages/services/index";
+import { useStore } from "../stores";
+import { getProfilePicture_API } from "../utils/getProfilePicture_API";
+import { observer } from "mobx-react";
 
 const HomePage = () => {
+  const {appStore} = useStore();
+
+  useEffect(()=>{
+      const fetchPartnerInfo = async ()=>{
+          const brand_logo = await getProfilePicture_API(appStore.partnerInfo?.id);
+          if(!!brand_logo)
+            appStore.setAppProperty('brandLogo', `data:image/png;base64,${brand_logo}`);
+      }
+      fetchPartnerInfo();
+  },[appStore?.partnerInfo?.id])
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -35,4 +48,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default observer(HomePage);

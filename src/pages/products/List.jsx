@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AiOutlinePlus } from 'react-icons/ai';
 import ProductCard from './ProductCard';
 
-const ProductsList = ({ products }) => {
+const ProductsList = ({ products, brandLogo }) => {
 
   const navigate = useNavigate();
   const handleAddAnotherProduct = () => {
@@ -17,7 +17,7 @@ const ProductsList = ({ products }) => {
       {/* Card Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5">
         {products?.map((product) => (
-          <ProductCard product={product} key={product?.id}/>
+          <ProductCard product={product} key={product?.id} brandLogo={brandLogo}/>
         ))}
         <div
           className="min-h-60 bg-white rounded-lg shadow-lg shadow-gray-300 overflow-hidden max-w-[370px] w-full flex flex-col items-center justify-center"

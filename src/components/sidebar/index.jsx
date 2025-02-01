@@ -13,13 +13,21 @@ import PrimaryLogo from '../../assets/logo-primary.png'
 import NavItem from './NavItem';
 import { useStore } from "../../stores";
 import { AuthStatuses } from "../../utils/constants";
+import { useEffect, useState } from 'react';
+import { getProfilePicture_API } from '../../utils/getProfilePicture_API';
+import { observer } from 'mobx-react';
 
 function Sidebar() {
     const navigate = useNavigate();
     const { appStore } = useStore()
+    const [profilePicture, setProfilePicture] = useState('');
 
     const partnerInfo = appStore.getPartnerInfo;
     const display_name = partnerInfo?.company_name || `${partnerInfo?.first_name || ''} ${partnerInfo?.last_name || ''}`
+
+    useEffect(()=>{
+        setProfilePicture(appStore?.brandLogo);
+    },[appStore?.brandLogo])
 
     const handleLogout = () => {
         appStore.setAppProperty('authStatus', AuthStatuses.UNAUTHENTICATED);
@@ -66,7 +74,7 @@ console.log(appStore.partnerInfo);
             <div className="p-4 cursor-pointer "  onClick={goToProfileView}>
                 <div className="flex items-center space-x-2 p-2 bg-gray-100 rounded-md ">
                     <div className="w-8 h-8 flex items-center justify-center">
-                        <img src={partnerInfo?.profile_picture || profilePlaceholderImage} alt={partnerInfo.company_name} className='rounded-full' /> {/** TODO : Update with company image URL */}
+                        <img src={profilePicture || profilePlaceholderImage} alt={partnerInfo.company_name} className='object-cover w-8 h-8 rounded-full' /> {/** TODO : Update with company image URL */}
                     </div>
                     <span>{display_name}</span>
                 </div>
@@ -84,4 +92,4 @@ console.log(appStore.partnerInfo);
 }
 
 
-export default Sidebar;
+export default observer(Sidebar);

@@ -13,6 +13,7 @@ class AppStore {
   loading = false;
   error = null;
   searchValue = '';
+  brandLogo = '';
 
   constructor() {
     makeAutoObservable(this);
