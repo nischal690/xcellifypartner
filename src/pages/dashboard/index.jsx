@@ -33,11 +33,9 @@ const Dashboard = () => {
             try {
                 const response = await apiRequest({
                     url: "/mic-study/getOrdersCountPerDay",
-                    // url: 'http://192.168.0.100:8080/mic-study/getOrdersCountPerDay',
                     method: "get",
                     params: {
                         partner_id: appStore.partnerInfo.id,
-                        // partner_id: 1050,
                         time_range: timeRange
                     }
                 });
@@ -55,7 +53,6 @@ const Dashboard = () => {
             try {
                 const response = await apiRequest({
                     url: `/mic-study/getOrders/${appStore.partnerInfo.id}`,
-                    // url: 'http://192.168.0.100:8080/mic-study/getOrders/1050',
                     method: "get",
                     params: {
                         time_range: timeRange
@@ -104,7 +101,7 @@ const Dashboard = () => {
             </div>
 
             <div className="mb-8">
-                {salesData[0] && <SalesGraph data={salesData} isLoading={salesDataLoading} />}
+                <SalesGraph data={salesData} isLoading={salesDataLoading} />
             </div>
 
             <div>

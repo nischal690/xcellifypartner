@@ -30,31 +30,59 @@ const sampleData = [
 
 export default function SalesGraph({isLoading, data}) {
 
-    console.log(data)
-    const modifiedData = data?.map(item => {
-        let tempDate = new Date(item.date)
-        return {...item, date: tempDate.toLocaleString('en-US', { month: 'short', day: 'numeric' })}
-        })
-    console.log(modifiedData)
-    return (
-        <ComposedChart
-            width={1000}
-            height={400}
-            data={modifiedData}
-            margin={{
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20
-            }}
-        >
-            <CartesianGrid stroke="#f5f5f5" />
-            <XAxis dataKey="date" scale="band" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="orderCount" barSize={20} fill="#413ea0" />
-            <Line type="monotone" dataKey="totalTransaction" stroke="#ff7300" />
-        </ComposedChart>
-    );
-}
+    const modifiedData = data && data.length > 0 ? data.map(item => {
+        let tempDate = new Date(item.date);
+        return {
+          ...item,
+          date: tempDate.toLocaleString('en-US', { month: 'short', day: 'numeric' }),
+          totalTransaction: item.totalTransaction / 1000, // Scaling the totalTransaction by 1000
+        };
+      }) : [];
+
+      const tooltipFormatter = (value, name, props) => {
+        if (name === 'totalTransaction') {
+          return [`${value.toFixed(3)}K`, name]; // Display with 3 decimal points and K
+        }
+        return [value, name]; // Default for orderCount
+      };
+
+      return (
+        <div style={{ position: "relative" }}>
+            {/* If no data, display the "No data" message */}
+            {modifiedData.length === 0 && (
+                <div
+                style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-100%, -50%)",
+                    fontSize: "24px",
+                    fontWeight: "bold",
+                    color: "gray",
+                }}
+                >
+                No data available
+                </div>
+            )}
+            <ComposedChart
+                width={1000}
+                height={400}
+                data={modifiedData}
+                margin={{
+                    top: 20,
+                    right: 20,
+                    bottom: 20,
+                    left: 20,
+                }}
+                >
+                <CartesianGrid stroke="#f5f5f5" />
+                <XAxis dataKey="date" scale="band" />
+                <YAxis />
+                <Tooltip formatter={tooltipFormatter}/>
+                <Legend />
+                <Bar dataKey="orderCount" barSize={20} fill="#413ea0" />
+                <Line type="monotone" dataKey="totalTransaction" stroke="#ff7300" />
+            </ComposedChart>
+        </div>
+      );
+    }
