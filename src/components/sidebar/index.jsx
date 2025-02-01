@@ -76,7 +76,7 @@ console.log(appStore.partnerInfo);
                 <NavItem icon={<RiDashboardLine />} onClick={goToDashboard} text="Dashboard" active={isCurrentTabActive('dashboard')} />
                 <NavItem icon={<ProductsIcon />} onClick={goToProductsView} text="Product" active={isCurrentTabActive('products')} />
                 <NavItem icon={<ProductsIcon />} onClick={goToServicesView} text="Services" active={isCurrentTabActive('services')} />
-                <NavItem icon={<PriceIcon />} onClick={goToPayoutsView} text="Payout" active={isCurrentTabActive('payout')} />
+                {/*<NavItem icon={<PriceIcon />} onClick={goToPayoutsView} text="Payout" active={isCurrentTabActive('payout')} />*/}
                 <NavItem icon={<LogoutIcon />} onClick={handleLogout} text="Logout" className="text-red-500" />
             </nav>
         </div>
