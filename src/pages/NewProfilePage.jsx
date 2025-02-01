@@ -371,14 +371,14 @@ export default function ProfilePage() {
                     <MdDownload className="text-gray-700 ml-2"/>
                   </button>
                 </a>}
-                {signature &&<a href={`data:application/JPEG;base64,${signature}`} download="signature">
+                {signature &&<a href={`data:image/png;base64,${signature}`} download="signature">
                   <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
                     <span className="pr-2"><MSMECertificateIcon/></span>
                     Signature
                     <MdDownload className="text-gray-700 ml-2"/>
                   </button>
                 </a>}
-                {brandLogo &&<a href={`data:application/JPEG;base64,${brandLogo}`} download="brand-logo">
+                {brandLogo &&<a href={`data:image/png;base64,${brandLogo}`} download="brand-logo">
                   <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
                     <span className="pr-2"><MSMECertificateIcon/></span>
                     Brand Logo
