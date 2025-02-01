@@ -19,7 +19,7 @@ const CATEGORY_MAPPING = {
 
 function Services() {
     const { appStore } = useStore();
-    const [activeTab, setActiveTab] = useState('upcoming');
+    const [activeTab, setActiveTab] = useState('pending');
     const [sortStatus, setSortStatus] = useState('');
     const [servicesData, setServicesData] = useState([]);
     const [servicesLoading, setServicesLoading] = useState(false);
@@ -28,8 +28,8 @@ function Services() {
     const [selectedService, setSelectedService] = useState(null);
 
     const sortingOptions = [
-        { value: 'date', label: 'Sort by: Date' },
-        { value: 'status', label: 'Sort by: Status' }
+        { value: 'createdAt', label: 'Sort by: Date' },
+        { value: 'order_status', label: 'Sort by: Status' }
     ];
 
     useEffect(() => {
@@ -111,7 +111,7 @@ function Services() {
                 <div className="border-b border-gray-200 mb-6">
                     <nav className="flex gap-8">
                         <TabButton text="All services" active={activeTab === 'all'} onClick={() => setActiveTab('all')} />
-                        <TabButton text="Upcoming services" active={activeTab === 'upcoming'} onClick={() => setActiveTab('upcoming')} />
+                        <TabButton text="Upcoming services" active={activeTab === 'pending'} onClick={() => setActiveTab('pending')} />
                         <TabButton text="Completed services" active={activeTab === 'completed'} onClick={() => setActiveTab('completed')} />
                         <TabButton text="Cancelled services" active={activeTab === 'cancelled'} onClick={() => setActiveTab('cancelled')} />
                     </nav>
@@ -140,7 +140,7 @@ function Services() {
                                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Customer name</th>
                                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Product category</th>
                                     <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Order Status</th>
-                                    <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Action</th>
+                                    {activeTab === 'pending' && <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">Action</th>}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
@@ -148,16 +148,16 @@ function Services() {
                                     <tr key={service.id}>
                                         <td className="px-6 py-4 text-sm text-gray-900">{service.orderId}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{getParsedDate(service.createdAt)}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-900">{service.customer || service.userId || '-'}</td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">{service.customerName || service.userId || '-'}</td>
                                         <td className="px-6 py-4 text-sm text-gray-900">{CATEGORY_MAPPING[service.categoryId] || '-'}</td>
                                         <td className="px-6 py-4 text-sm ">
                                             <span className={`px-2 py-1 ${service?.saleStatus && getOrderStatus(service.saleStatus)} rounded-full`}>{service.saleStatus}</span>
                                         </td>
-                                        <td className="px-6 py-4">
+                                        {activeTab === 'pending' && <td className="px-6 py-4">
                                             <button className="px-4 py-2 text-sm text-white bg-indigo-600 rounded-lg hover:bg-indigo-700" onClick={() => startService(service)}>
                                                 Start Service
                                             </button>
-                                        </td>
+                                        </td>}
                                     </tr>
                                 ))}
                             </tbody>
