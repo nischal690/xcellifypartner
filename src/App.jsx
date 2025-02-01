@@ -25,6 +25,8 @@ import DashboardPage from './pages/DashboardPage';
 import ProductDetail from './pages/ProductPage';
 import AddNewProductPage from './pages/AddNewProductPage';
 import LessonPreviewPage from './pages/LessonsPreviewPage';
+import PrivacyPolicyScreen from './components/landingPage/footerPages/PrivacyPolicyScreen';
+import TermsOfUseScreen from './components/landingPage/footerPages/TermsOfUseScreen';
 import ProfilePage1 from './pages/ProfilePage1';
 import { observer } from 'mobx-react';
 import { useStore } from './stores';
@@ -121,6 +123,12 @@ const router = createBrowserRouter([
     path: '/lessons/:id',
     element: <LessonPreviewPage />,
   },
+
+  {
+    path: '/PrivacyPolicy',
+    element: <PrivacyPolicyScreen />,
+  },
+  { path: '/TermsOfUse', element: <TermsOfUseScreen /> },
   {
     path: '/ComingSoonPage',
     element: <ComingSoonPage />,

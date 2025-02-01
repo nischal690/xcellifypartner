@@ -1,3 +1,4 @@
+import { t } from 'i18next';
 import * as Yup from 'yup';
 export const ProductDetailsData = [
   {
@@ -16,18 +17,28 @@ export const ProductDetailsData = [
             {
               label: 'Service provided since',
               name: 'service_provided_since',
-              type: 'number',
-              required: false,
+              type: 'select',
+              required: true,
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
             },
             {
               label: 'Study level',
               name: 'study_level',
-              type: 'select',
-              options: ['UG', 'PG'],
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
+            {
+              label: 'Education qualification',
+              name: 'education_qualification',
+              type: 'text',
               required: false,
             },
             {
-              label: 'Product code',
+              label: 'Product code (if applicable)',
               name: 'product_code',
               type: 'text',
               required: false,
@@ -42,7 +53,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'text',
-              required: false,
+              required: true,
             },
           ],
         },
@@ -52,23 +63,23 @@ export const ProductDetailsData = [
             {
               label: 'Study destination countries',
               name: 'study_destination_countries',
-              type: 'select',
-              options: ['US', 'Canada', 'UK', 'Europe', 'Australia', 'Asia'],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
             {
               label: 'Cities where service is available',
               name: 'service_available_cities',
               type: 'multiselect',
               options: [],
-              required: false,
+              required: true,
             },
             {
               label: 'Service delivery',
               name: 'service_delivery',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
           ],
         },
@@ -79,20 +90,20 @@ export const ProductDetailsData = [
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Pricing',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            { label: 'Price', name: 'price', type: 'number', required: false },
             {
               label: 'Currency',
               name: 'currency',
@@ -110,7 +121,7 @@ export const ProductDetailsData = [
               label: 'Final price',
               name: 'final_price',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -152,18 +163,28 @@ export const ProductDetailsData = [
             {
               label: 'Service provided since',
               name: 'service_provided_since',
-              type: 'number',
-              required: false,
+              type: 'select',
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
+              required: true,
             },
             {
               label: 'Study level',
               name: 'study_level',
-              type: 'select',
-              options: ['UG', 'PG'],
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
+            {
+              label: 'Education qualification',
+              name: 'education_qualification',
+              type: 'text',
               required: false,
             },
             {
-              label: 'Product code',
+              label: 'Product code (if applicable)',
               name: 'product_code',
               type: 'text',
               required: false,
@@ -178,7 +199,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: false,
+              required: true,
             },
           ],
         },
@@ -197,15 +218,15 @@ export const ProductDetailsData = [
               name: 'service_available_cities',
               type: 'multiselect',
               options: [],
-              required: false,
+              required: true,
             },
-            {
-              label: 'Service delivery',
-              name: 'service_delivery',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: false,
-            },
+            // {
+            //   label: 'Service delivery',
+            //   name: 'service_delivery',
+            //   type: 'select',
+            //   options: ['Online', 'Offline'],
+            //   required: false,
+            // },
           ],
         },
         {
@@ -215,26 +236,26 @@ export const ProductDetailsData = [
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Pricing',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            { label: 'Price', name: 'price', type: 'number', required: false },
             {
               label: 'Currency',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
-              required: true,
+              required: false,
             },
             {
               label: 'Discount',
@@ -246,7 +267,7 @@ export const ProductDetailsData = [
               label: 'Final price',
               name: 'final_price',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -288,7 +309,7 @@ export const ProductDetailsData = [
             {
               label: 'Subjects',
               name: 'subjects',
-              type: 'select',
+              type: 'multiselect',
               options: [
                 'Maths',
                 'Science',
@@ -305,18 +326,22 @@ export const ProductDetailsData = [
               label: 'Education qualification',
               name: 'education_qualification',
               type: 'text',
-              required: false,
+              required: true,
             },
             {
               label: 'Member since',
               name: 'member_since',
-              type: 'text',
-              required: false,
+              type: 'select',
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
+              required: true,
             },
             {
               label: 'Mode of teaching',
               name: 'mode_of_teaching',
-              type: 'select',
+              type: 'multiselect',
               options: [
                 'Online(1 on 1)',
                 'Online(group)',
@@ -324,14 +349,14 @@ export const ProductDetailsData = [
                 'Physical(group)',
                 'Home Visits',
               ],
-              required: false,
+              required: true,
             },
             {
               label: 'Study level',
               name: 'study_level',
-              type: 'select',
+              type: 'multiselect',
               options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
-              required: false,
+              required: true,
             },
             {
               label: 'Product code',
@@ -349,7 +374,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: false,
+              required: true,
             },
           ],
         },
@@ -368,7 +393,7 @@ export const ProductDetailsData = [
               name: 'travel_upto',
               type: 'select',
               options: [5, 10],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -379,26 +404,26 @@ export const ProductDetailsData = [
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Pricing',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            { label: 'Price', name: 'price', type: 'number', required: false },
             {
               label: 'Currency',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
-              required: true,
+              required: false,
             },
             {
               label: 'Discount',
@@ -410,7 +435,7 @@ export const ProductDetailsData = [
               label: 'Final price',
               name: 'final_price',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -456,16 +481,27 @@ export const ProductDetailsData = [
               required: false,
             },
             {
-              label: 'Member since',
-              name: 'member_since',
-              type: 'text',
-              required: false,
+              label: 'Service provided since',
+              name: 'service_provided_since',
+              type: 'select',
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
+              required: true,
+            },
+            {
+              label: 'Study level',
+              name: 'study_level',
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
             {
               label: 'Counselling duration in hours',
               name: 'counselling_duration',
               type: 'number',
-              required: false,
+              required: true,
             },
             {
               label: 'Product code',
@@ -483,7 +519,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: false,
+              required: true,
             },
           ],
         },
@@ -493,7 +529,7 @@ export const ProductDetailsData = [
             {
               label: 'Study destination country',
               name: 'study_destination_countries',
-              type: 'select',
+              type: 'multiselect',
               options: [
                 'India',
                 'US',
@@ -510,14 +546,14 @@ export const ProductDetailsData = [
               name: 'service_available_cities',
               type: 'multiselect',
               options: [],
-              required: false,
+              required: true,
             },
             {
               label: 'Service delivery',
               name: 'service_delivery',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
           ],
         },
@@ -528,26 +564,31 @@ export const ProductDetailsData = [
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Pricing',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            {
+              label: 'Counselling fees per hour',
+              name: 'price',
+              type: 'number',
+              required: false,
+            },
             {
               label: 'Currency',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
-              required: true,
+              required: false,
             },
             {
               label: 'Discount',
@@ -556,10 +597,10 @@ export const ProductDetailsData = [
               required: false,
             },
             {
-              label: 'Final price',
+              label: 'Final price per hour',
               name: 'final_price',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -603,27 +644,27 @@ export const ProductDetailsData = [
               name: 'age_group',
               type: 'select',
               options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
-              required: false,
+              required: true,
             },
             {
               label: 'Duration',
               name: 'duration',
               type: 'text',
-              required: false,
+              required: true,
             },
             {
               label: 'Program eligibility',
               name: 'program_eligibility',
-              type: 'select',
-              options: ['10th Class', '12th Class', 'Graduate'],
-              required: false,
+              type: 'text',
+              options: [],
+              required: true,
             },
             {
               label: 'Scholarship available ',
               name: 'scholarship_available',
               type: 'select',
               options: ['Yes', 'No'],
-              required: false,
+              required: true,
             },
             {
               label: 'Product code',
@@ -641,7 +682,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: false,
+              required: true,
             },
           ],
         },
@@ -651,31 +692,23 @@ export const ProductDetailsData = [
             {
               label: 'Study destination country',
               name: 'study_destination_countries',
-              type: 'select',
-              options: [
-                'US',
-                'Canada',
-                'UK',
-                'Europe',
-                'Australia',
-                'Asia',
-                'India',
-              ],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
             {
               label: 'Cities where service is available',
               name: 'service_available_cities',
               type: 'multiselect',
               options: [],
-              required: false,
+              required: true,
             },
             {
               label: 'Service delivery',
               name: 'service_delivery',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
           ],
         },
@@ -686,32 +719,32 @@ export const ProductDetailsData = [
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Scholarship description',
               name: 'scholarship_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Pricing',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            { label: 'Price', name: 'price', type: 'number', required: false },
             {
               label: 'Currency',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
-              required: true,
+              required: false,
             },
             {
               label: 'Discount',
@@ -723,7 +756,7 @@ export const ProductDetailsData = [
               label: 'Final price',
               name: 'final_price',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -767,7 +800,7 @@ export const ProductDetailsData = [
               name: 'event_location',
               type: 'multiselect',
               options: [],
-              required: false,
+              required: true,
             },
             {
               label: 'Event category',
@@ -784,14 +817,13 @@ export const ProductDetailsData = [
                 'Drama',
                 'Others',
               ],
-              required: false,
+              required: true,
             },
             {
               label: 'Age group',
               name: 'age_group',
-              type: 'select',
-              options: ['Age group 1', 'Age group 2'],
-              required: false,
+              type: 'text',
+              required: true,
             },
             {
               label: 'HSN code',
@@ -803,7 +835,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: false,
+              required: true,
             },
           ],
         },
@@ -814,39 +846,44 @@ export const ProductDetailsData = [
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Event delivery',
               name: 'event_delivery',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
             {
               label: 'Event registration deadline',
               name: 'event_registration_deadline',
               type: 'date',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Pricing',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            {
+              label: 'Event registration fees',
+              name: 'price',
+              type: 'number',
+              required: false,
+            },
             {
               label: 'Currency',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
-              required: true,
+              required: false,
             },
             {
               label: 'Discount',
@@ -858,7 +895,7 @@ export const ProductDetailsData = [
               label: 'Final price',
               name: 'final_price',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -895,15 +932,18 @@ export const ProductDetailsData = [
               label: 'Subcategory',
               name: 'subcategory',
               type: 'select',
-              options: ['Scholarship', 'Education Loan'],
+              options: [
+                'Student Education loan',
+                'Student Education Scholarship',
+              ],
               required: true,
             },
           ],
         },
         // Scholarship Form
         {
-          heading: 'Basic details (g)',
-          subcategory: 'Scholarship', // Render only for Scholarship
+          heading: 'Basic details (education Scholarship)',
+          subcategory: 'Student Education Scholarship', // Render only for Scholarship
           fields: [
             {
               label: 'Product Title',
@@ -912,32 +952,31 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Loan for study level',
+              label: 'Scholarship For Study Level',
               name: 'loan_for_study_level',
-              type: 'select',
-              options: ['Undergraduate', 'Postgraduate'],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
             {
-              label: 'Loan duration',
+              label: 'Scholarship duration',
               name: 'loan_duration',
-              type: 'select',
-              options: ['1 year', '2 years', '3 years'],
-              required: false,
+              type: 'text',
+              required: true,
             },
             {
-              label: 'Loan eligibility',
+              label: 'Scholarship eligibility',
               name: 'loan_eligibility',
               type: 'text',
               required: false,
             },
-            {
-              label: 'Whether 100% Financing Available',
-              name: 'full_financing_available',
-              type: 'select',
-              options: ['Yes', 'No'],
-              required: false,
-            },
+            // {
+            //   label: 'Whether 100% Financing Available',
+            //   name: 'full_financing_available',
+            //   type: 'select',
+            //   options: ['Yes', 'No'],
+            //   required: false,
+            // },
             {
               label: 'Product code',
               name: 'product_code',
@@ -960,14 +999,21 @@ export const ProductDetailsData = [
         },
         {
           heading: 'Service locations (Scholarship)',
-          subcategory: 'Scholarship',
+          subcategory: 'Student Education Scholarship',
           fields: [
+            // {
+            //   label: 'List of Countries Loan Available for',
+            //   name: 'loan_available_countries',
+            //   type: 'multiselect',
+            //   options: [],
+            //   required: false,
+            // },
             {
-              label: 'List of Countries Loan Available for',
-              name: 'loan_available_countries',
+              label: 'Study destination countries',
+              name: 'study_destination_countries',
               type: 'multiselect',
               options: [],
-              required: false,
+              required: true,
             },
             {
               label: 'Cities where service is available',
@@ -987,33 +1033,33 @@ export const ProductDetailsData = [
         },
         {
           heading: 'Additional details (Scholarship)',
-          subcategory: 'Scholarship',
+          subcategory: 'Student Education Scholarship',
           fields: [
             {
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Pricing (Scholarship)',
-          subcategory: 'Scholarship',
+          subcategory: 'Student Education Scholarship',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            { label: 'Price', name: 'price', type: 'number', required: false },
             {
               label: 'Currency',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
-              required: true,
+              required: false,
             },
             {
               label: 'Discount',
@@ -1025,13 +1071,13 @@ export const ProductDetailsData = [
               label: 'Final price',
               name: 'final_price',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
         {
           heading: 'Marketing materials (Scholarship)',
-          subcategory: 'Scholarship',
+          subcategory: 'Student Education Scholarship',
           fields: [
             {
               label: 'Google reviews/rating',
@@ -1056,7 +1102,7 @@ export const ProductDetailsData = [
         // Education Loan Form
         {
           heading: 'Basic details (Education Loan)',
-          subcategory: 'Education Loan',
+          subcategory: 'Student Education loan',
           fields: [
             {
               label: 'Product Title',
@@ -1067,15 +1113,14 @@ export const ProductDetailsData = [
             {
               label: 'Loan for study level',
               name: 'loan_for_study_level',
-              type: 'select',
-              options: ['Undergraduate', 'Postgraduate'],
-              required: false,
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
             {
               label: 'Loan duration',
               name: 'loan_duration',
-              type: 'select',
-              options: ['1 year', '2 years', '3 years'],
+              type: 'number',
               required: false,
             },
             {
@@ -1107,84 +1152,96 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Service locations (Education Loan)',
-          subcategory: 'Education Loan',
+          subcategory: 'Student Education loan',
           fields: [
+            // {
+            //   label: 'List of Countries Loan Available for',
+            //   name: 'loan_available_countries',
+            //   type: 'select',
+            //   options: ['Country 1', 'Country 2'],
+            //   required: false,
+            // },
             {
-              label: 'List of Countries Loan Available for',
-              name: 'loan_available_countries',
-              type: 'select',
-              options: ['Country 1', 'Country 2'],
-              required: false,
+              label: 'Study destination countries',
+              name: 'study_destination_countries',
+              type: 'multiselect',
+              options: [],
+              required: true,
             },
-            {
-              label: 'Cities where service is available',
-              name: 'service_available_cities',
-              type: 'select',
-              options: ['City 1', 'City 2'],
-              required: false,
-            },
+            // {
+            //   label: 'Cities where service is available',
+            //   name: 'service_available_cities',
+            //   type: 'select',
+            //   options: ['City 1', 'City 2'],
+            //   required: false,
+            // },
             {
               label: 'Service delivery',
               name: 'service_delivery',
               type: 'select',
               options: ['Online', 'Offline'],
-              required: false,
+              required: true,
             },
           ],
         },
         {
           heading: 'Additional details (Education Loan)',
-          subcategory: 'Education Loan',
+          subcategory: 'Student Education loan',
           fields: [
             {
               label: 'Product description',
               name: 'product_description',
               type: 'textarea',
-              required: false,
+              required: true,
             },
             {
               label: 'Product unique selling point',
               name: 'product_unique_selling_point',
               type: 'textarea',
-              required: false,
+              required: true,
             },
           ],
         },
         {
-          heading: 'Pricing (Education Loan)',
-          subcategory: 'Education Loan',
+          heading: 'Processing/Origination fees',
+          subcategory: 'Student Education loan',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            {
+              label: 'Minimum fees',
+              name: 'price',
+              type: 'number',
+              required: false,
+            },
             {
               label: 'Currency',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
-              required: true,
+              required: false,
             },
             {
-              label: 'Discount',
+              label: 'Loan Interest %',
               name: 'discount',
               type: 'number',
               required: false,
             },
-            {
-              label: 'Final price',
-              name: 'final_price',
-              type: 'number',
-              required: true,
-            },
+            // {
+            //   label: 'Final price',
+            //   name: 'final_price',
+            //   type: 'number',
+            //   required: false,
+            // },
           ],
         },
         {
           heading: 'Marketing materials (Education Loan)',
-          subcategory: 'Education Loan',
+          subcategory: 'Student Education loan',
           fields: [
             {
               label: 'Google reviews/rating',
@@ -1364,39 +1421,37 @@ export const validateFileUpload = (file, type) => {
 const commonValidations = {
   product_title: Yup.string()
     .required('Product title is required')
-    .min(3, 'Product title must be at least 3 characters'),
-  product_code: Yup.string()
-    .matches(/^[A-Za-z0-9-]+$/, 'Product code must be alphanumeric')
-    .required('Product code is required'),
-  price: Yup.number()
-    .required('Price is required')
-    .positive('Price must be positive'),
-  currency: Yup.string().required('Currency is required').oneOf(['INR', 'USD']),
+    .min(3, 'Product title must be at least 3 characters')
+    .max(200, 'Product title must be at most 200 characters'),
+  product_code: Yup.string(),
+  price: Yup.number().positive('Price must be positive'),
+  currency: Yup.string().oneOf(['INR', 'USD']),
   discount: Yup.number()
     .min(0, 'Discount cannot be negative')
     .max(100, 'Discount cannot exceed 100%'),
-  final_price: Yup.number()
-    .required('Final price is required')
-    .test(
-      'is-less-than-price',
-      'Final price must be less than or equal to the original price',
-      function (value) {
-        const price = this.parent.price || 0;
-        return !value || value <= price;
-      }
-    ),
+  final_price: Yup.number().test(
+    'is-less-than-price',
+    'Final price must be less than or equal to the original price',
+    function (value) {
+      const price = this.parent.price || 0;
+      return !value || value <= price;
+    }
+  ),
   hsn_code: Yup.string()
     .matches(/^\d{6}$/, 'HSN code must be exactly 6 digits')
     .required('HSN code is required'),
   gst_rate: Yup.number()
     .min(0, 'GST rate cannot be negative')
-    .max(100, 'GST rate cannot exceed 100%'),
+    .max(100, 'GST rate cannot exceed 100%')
+    .required('GST rate is required'),
   product_description: Yup.string()
     .min(50, 'Description must be at least 50 characters')
-    .max(1000, 'Description must not exceed 1000 characters'),
+    .max(1500, 'Description must not exceed 1000 characters')
+    .required('Description is required'),
   product_unique_selling_point: Yup.string()
     .min(50, 'USP must be at least 50 characters')
-    .max(1000, 'USP must not exceed 1000 characters'),
+    .max(1500, 'USP must not exceed 1000 characters')
+    .required('USP is required'),
   google_reviews: Yup.string().matches(
     /^[0-5](\.[0-9]{1,2})?$/,
     'Rating must be a number between 0 and 5, with up to two decimal places'
@@ -1446,50 +1501,54 @@ const commonValidations = {
 export const validationSchemas = {
   'Study overseas': Yup.object().shape({
     ...commonValidations,
-    study_level: Yup.string().oneOf(['UG', 'PG']),
-    service_provided_since: Yup.date().max(
-      new Date(),
-      'Date cannot be in the future'
+    study_level: Yup.string().required('Study level is required'),
+    education_qualification: Yup.string().notRequired().default(''),
+
+    service_provided_since: Yup.date().required(
+      'Service provided since is required'
     ),
     study_destination_countries: Yup.string().required(
       'Destination country is required'
     ),
-    service_available_cities: Yup.string().required(
-      'Destination city is required'
-    ),
-    service_delivery: Yup.string().oneOf(['Online', 'Offline']),
+    // Add this to your validation schema
+    service_available_cities: Yup.string()
+      .required('Please select at least one city where service is available.')
+      .test(
+        'not-empty',
+        'Please select at least one city where service is available.',
+        (value) => value && value.length > 0
+      ),
+
+    service_delivery: Yup.string().required('Service delivery is required'),
   }),
 
   'Study India': Yup.object().shape({
     ...commonValidations,
-    study_level: Yup.string().oneOf(['UG', 'PG']),
-    service_provided_since: Yup.date().max(new Date()),
+    study_level: Yup.string().required('Study level is required'),
+    education_qualification: Yup.string().notRequired().default(''),
+
+    service_provided_since: Yup.date().required(
+      'Service provided since is required'
+    ),
     study_destination_states: Yup.string().required(
       'Destination State is required'
     ),
     service_available_cities: Yup.string().required(
       'Destination city is required'
     ),
-    service_delivery: Yup.string().oneOf(['Online', 'Offline']),
+    // service_delivery: Yup.string().oneOf(['Online', 'Offline']),
   }),
 
   Tutoring: Yup.object().shape({
     ...commonValidations,
-    study_level: Yup.string().oneOf([
-      '6',
-      '7',
-      '8',
-      '9',
-      '10',
-      '11',
-      '12',
-      'Graduation',
-    ]),
+    study_level: Yup.string().required('Study level is required'),
     subjects: Yup.string().required('Subject selection is required'),
     education_qualification: Yup.string().required(
       'Education qualification is required'
     ),
-    member_since: Yup.date().max(new Date()),
+    member_since: Yup.date()
+      .max(new Date())
+      .required('Member since is required'),
     mode_of_teaching: Yup.string()
       .required('Teaching mode is required')
       .oneOf([
@@ -1499,16 +1558,18 @@ export const validationSchemas = {
         'Physical(group)',
         'Home Visits',
       ]),
-    service_available_cities: Yup.string().required('Service city is required'),
-    travel_upto: Yup.string().nullable(),
+    service_available_cities: Yup.string(),
+    travel_upto: Yup.string().required('Travel upto is required'),
   }),
 
   'Career counselling': Yup.object().shape({
     ...commonValidations,
-    education_qualification: Yup.string().required(
-      'Education qualification is required'
+    education_qualification: Yup.string().notRequired().default(''),
+    study_level: Yup.string().required('Study level is required'),
+
+    service_provided_since: Yup.date().required(
+      'Service provided since is required'
     ),
-    member_since: Yup.date().max(new Date()),
     counselling_duration: Yup.string().required(
       'Counselling duration is required'
     ),
@@ -1516,7 +1577,7 @@ export const validationSchemas = {
     study_destination_countries: Yup.string().required(
       'Study destination is required'
     ),
-    service_delivery: Yup.string().oneOf(['Online', 'Offline']),
+    service_delivery: Yup.string().required('Service delivery is required'),
   }),
 
   'Summer courses': Yup.object().shape({
@@ -1526,52 +1587,52 @@ export const validationSchemas = {
     program_eligibility: Yup.string().required(
       'Program eligibility is required'
     ),
-    scholarship_available: Yup.string().oneOf(['Yes', 'No']),
+    scholarship_available: Yup.string().required(
+      'Scholarship available is required'
+    ),
     study_destination_countries: Yup.string().required(
       'Study destination is required'
     ),
     service_available_cities: Yup.string().required('Service city is required'),
-    service_delivery: Yup.string().oneOf(['Online', 'Offline']),
+    service_delivery: Yup.string().required('Service delivery is required'),
     scholarship_description: Yup.string()
       .min(50, 'Description must be at least 50 characters')
-      .max(1000, 'Description must not exceed 1000 characters'),
+      .max(1500, 'Description must not exceed 1000 characters')
+      .required('Scholarship description is required'),
   }),
 
   Events: Yup.object().shape({
     // product_title: Yup.string()
     // .required("Product title is required")
     // .min(3, "Product title must be at least 3 characters"),
-    price: Yup.number()
-      .required('Price is required')
-      .positive('Price must be positive'),
-    currency: Yup.string()
-      .required('Currency is required')
-      .oneOf(['INR', 'USD']),
+    price: Yup.number().positive('Price must be positive'),
+    currency: Yup.string().oneOf(['INR', 'USD']),
     discount: Yup.number()
       .min(0, 'Discount cannot be negative')
       .max(100, 'Discount cannot exceed 100%'),
-    final_price: Yup.number()
-      .required('Final price is required')
-      .test(
-        'is-less-than-price',
-        'Final price must be less than or equal to the original price',
-        function (value) {
-          const price = this.parent.price || 0;
-          return !value || value <= price;
-        }
-      ),
+    final_price: Yup.number().test(
+      'is-less-than-price',
+      'Final price must be less than or equal to the original price',
+      function (value) {
+        const price = this.parent.price || 0;
+        return !value || value <= price;
+      }
+    ),
     hsn_code: Yup.string()
       .matches(/^\d{6}$/, 'HSN code must be exactly 6 digits')
       .required('HSN code is required'),
     gst_rate: Yup.number()
       .min(0, 'GST rate cannot be negative')
-      .max(100, 'GST rate cannot exceed 100%'),
+      .max(100, 'GST rate cannot exceed 100%')
+      .required('GST rate is required'),
     product_description: Yup.string()
       .min(50, 'Description must be at least 50 characters')
-      .max(1000, 'Description must not exceed 1000 characters'),
+      .max(1500, 'Description must not exceed 1000 characters')
+      .required('Description is required'),
     product_unique_selling_point: Yup.string()
       .min(50, 'USP must be at least 50 characters')
-      .max(1000, 'USP must not exceed 1000 characters'),
+      .max(1500, 'USP must not exceed 1000 characters')
+      .required('USP is required'),
     google_reviews: Yup.string().matches(
       /^[0-5](\.[0-9]{1,2})?$/,
       'Rating must be a number between 0 and 5, with up to two decimal places'
@@ -1604,11 +1665,10 @@ export const validationSchemas = {
     event_location: Yup.string().required('Event location is required'),
     event_category: Yup.string().required('Event category is required'),
     age_group: Yup.string().required('Age group is required'),
-    event_delivery: Yup.string().oneOf(['Online', 'Offline']),
-    event_registration_deadline: Yup.date().min(
-      new Date(),
-      'Registration deadline must be in the future'
-    ),
+    event_delivery: Yup.string().required('Event delivery is required'),
+    event_registration_deadline: Yup.date()
+      .min(new Date(), 'Registration deadline must be in the future')
+      .required('Registration deadline is required'),
   }),
 
   'Study Finance': Yup.object().shape({
@@ -1618,11 +1678,12 @@ export const validationSchemas = {
     loan_duration: Yup.string().required('Loan duration is required'),
     loan_eligibility: Yup.string().required('Loan eligibility is required'),
     full_financing_available: Yup.string().oneOf(['Yes', 'No']),
-    loan_available_countries: Yup.string().required(
-      'Country selection is required'
+    // loan_available_countries: Yup.string(),
+    study_destination_countries: Yup.string().required(
+      'Study destination is required'
     ),
-    service_delivery: Yup.string().oneOf(['Online', 'Offline']),
-    service_available_cities: Yup.string().required('Service city is required'),
+    service_delivery: Yup.string().required('Service delivery is required'),
+    service_available_cities: Yup.string(),
   }),
 
   Merchandise: Yup.object().shape({

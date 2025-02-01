@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 function TermsCheckbox({
   checked = false,
   onChange,
-  termsText = "",
-  privacyText = "",
+  termsText = '',
+  privacyText = '',
   onTermsClick,
   onPrivacyClick,
 }) {
@@ -18,18 +18,18 @@ function TermsCheckbox({
       />
 
       <span className="text-white text-sm">
-        I agree to{" "}
+        I agree to{' '}
         <span
-          style={{ color: "#2F2759" }}
-          className="font-medium cursor-pointer"
+          style={{ color: '#2F2759' }}
+          className="font-medium cursor-pointer hover:underline"
           onClick={onTermsClick}
         >
           {termsText}
-        </span>{" "}
-        and{" "}
+        </span>{' '}
+        and{' '}
         <span
-          style={{ color: "#2F2759" }}
-          className="font-medium cursor-pointer"
+          style={{ color: '#2F2759' }}
+          className="font-medium cursor-pointer hover:underline"
           onClick={onPrivacyClick}
         >
           {privacyText}

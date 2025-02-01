@@ -270,6 +270,8 @@ export default function ProfilePage() {
       setEditingCard(false);
       setFormData({})
       toast.success(updateresp.data.message)
+      //navigate('/home/profile')
+      location.reload()
     }
     else{
       (!!updateresp.data.message)?toast.info(updateresp.data.message):toast.error('Something went wrong')

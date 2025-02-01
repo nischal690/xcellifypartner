@@ -3,15 +3,15 @@ import * as yup from 'yup';
 const signupValidationSchemas = [
   // Step 1: Company Details
   yup.object().shape({
-    company_name: yup.string().required('Company name is required.'),
-    company_type: yup.string().nullable(), // Optional
-    website: yup
-      .string()
-      .matches(
-        /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/,
-        'Website must be a valid URL.'
-      )
-      .nullable(),
+    company_name: yup.string().when('company_type', {
+      is: (value) => value === 'Individual',
+      then: () => yup.string().nullable(),
+      otherwise: () => yup.string().required('Company name is required'),
+    }),
+    company_type: yup.string().required('Company type is required'),
+
+    // Optional
+    website: yup.string().nullable(),
     landline_number: yup
       .string()
       .nullable()
@@ -34,18 +34,14 @@ const signupValidationSchemas = [
         originalValue === '' ? null : value
       )
       .required("Contact person's mobile number is required."),
-    owner_name: yup.string().required('CEO/Owner name is required.'),
-    owner_email: yup
-      .string()
-      .email("CEO/Owner's email must be valid.")
-      .required("CEO/Owner's email is required."),
+    owner_name: yup.string(),
+    owner_email: yup.string().email("CEO/Owner's email must be valid."),
     owner_mobile: yup
       .number()
       .nullable()
       .transform((value, originalValue) =>
         originalValue === '' ? null : value
-      )
-      .required("CEO/Owner's mobile number is required."),
+      ),
     country: yup.string().required('Country is required.'),
     pincode: yup
       .string()
@@ -55,11 +51,16 @@ const signupValidationSchemas = [
     city: yup.string().required('City is required.'),
     address_line_1: yup.string().required('Address line 1 is required.'),
     address_line_2: yup.string().nullable(),
+    digital_signature: yup
+      .mixed()
+      .test('required', 'Digital signature is required', (value) => {
+        return value && value instanceof File;
+      }),
   }),
   // Step 2: Compliance Details
   yup.object().shape({
-    bank_name: yup.string().nullable(),
-    account_type: yup.string().nullable(),
+    bank_name: yup.string().required('Bank name is required.'),
+    bank_account_type: yup.string().required('Account type is required.'),
     bank_account_number: yup
       .string()
       .required('Bank account number is required.')
@@ -70,9 +71,28 @@ const signupValidationSchemas = [
       .matches(/^/, 'Invalid IFSC number.'),
     PAN: yup.string().nullable().matches(/^/, 'Invalid PAN format.'),
     CIN: yup.string().nullable(),
-    GST: yup.string().nullable().matches(/^/, 'Invalid GST format.'),
+    GST: yup.string().when('company_type', {
+      is: (value) => value === 'Individual',
+      then: () => yup.string().nullable(),
+      otherwise: () =>
+        yup
+          .string()
+          .required('GST is required')
+          .matches(
+            /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+            'Invalid GST format'
+          ),
+    }),
     MSME_registered: yup.string().required('Please specify MSME registration.'),
-    msme_certificate: yup.mixed().nullable(),
+
+    msme_certificate: yup.mixed().when('MSME_registered', {
+      is: (value) => value === 'Yes',
+      then: () =>
+        yup
+          .mixed()
+          .required('MSME Certificate is required when registered under MSME'),
+      otherwise: () => yup.mixed().nullable(),
+    }),
   }),
   // Step 3: Product Details
   yup.object().shape({
