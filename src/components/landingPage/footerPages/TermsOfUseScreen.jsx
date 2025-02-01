@@ -1,8 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import Logo from '../../../assets/logo-primary.png';
 
 const TermsOfUseScreen = () => {
+  useEffect(() => {
+    const scrollToSection = () => {
+      const hash = window.location.hash;
+      if (hash) {
+        const element = document.getElementById(hash.substring(1));
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    };
+
+    scrollToSection();
+
+    window.addEventListener('hashchange', scrollToSection);
+
+    return () => {
+      window.removeEventListener('hashchange', scrollToSection);
+    };
+  }, []);
   return (
     <div className="max-w-3xl mx-auto p-6 text-gray-800 h-screen pt-20">
       {/*  Header */}
@@ -1389,7 +1408,7 @@ const TermsOfUseScreen = () => {
           unauthorized access, use, or disclosure of such information by
           Counselors.
         </p>{' '}
-        <p>
+        <p id="refund-policy">
           (e) Users are prohibited from engaging in abusive, inappropriate, or
           unlawful conduct during interactions with Counselors. The Company
           reserves the right to terminate a user’s access to the Platform for

@@ -56,7 +56,7 @@ const FooterSection = () => {
                 </li>
                 <li>
                   <a
-                    href="https://xcellify.com/PrivacyPolicy"
+                    href="/TermsOfUse#refund-policy"
                     className="hover:underline"
                   >
                     Refund policy
