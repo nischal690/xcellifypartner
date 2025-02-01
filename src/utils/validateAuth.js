@@ -21,13 +21,9 @@ export const validateAndSetAuthStatus = async (appStore) => {
 
         // Step 2: Check if all required details are submitted
         const requiredDetails = [
-            'company_name',
-            'owner_name',
-            'owner_email',
-            'address_line_1',
-            'country',
-            'state',
-            'city',
+            'company_type',
+            'contact_person_name',
+            'contact_person_email',
             'pincode',
         ];
         const hasIncompleteProfile = requiredDetails.some((field) => !partnerInfo[field]);
