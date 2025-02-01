@@ -12,5 +12,5 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "dev-partner.xcellify.com"
+    - "partner.xcellify.com"
 

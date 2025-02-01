@@ -5,7 +5,7 @@ metadata:
   namespace: xcellify-partner
 spec:
   hosts:
-  - "dev-partner.xcellify.com"
+  - "partner.xcellify.com"
   gateways:
   - xcellify-partner-gateway
   http:
