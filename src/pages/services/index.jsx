@@ -128,7 +128,8 @@ function Services() {
                     />
                 </div>
 
-                {servicesLoading && <div> Loading.... </div>}
+                {servicesLoading && <div className="w-full text-center"> Loading.... </div>}
+                {!servicesLoading && !servicesData?.length && <div className=" w-full text-center"> No services found </div>}
 
                 {!servicesLoading && servicesData?.length > 0 && (
                     <div className="bg-white rounded-lg shadow">
