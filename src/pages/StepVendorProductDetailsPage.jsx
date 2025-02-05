@@ -77,6 +77,7 @@ const StepVendorProductDetailsPage = () => {
     'Europe',
     'Australia',
     'Asia',
+    'Others',
   ].map((country) => ({
     value: country,
     label: country,

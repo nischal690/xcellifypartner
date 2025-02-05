@@ -27,10 +27,10 @@ const steps = [
           },
           { label: 'Website', name: 'website', type: 'url', required: false },
           {
-            label: 'Landline number',
+            label: 'STD Code',
             name: 'landline_number',
             type: 'text',
-            required: false,
+            required: true,
           },
         ],
       },
