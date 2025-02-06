@@ -37,12 +37,12 @@ export const ProductDetailsData = [
               type: 'text',
               required: false,
             },
-            {
-              label: 'Product code (if applicable)',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code (if applicable)',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',
@@ -183,12 +183,12 @@ export const ProductDetailsData = [
               type: 'text',
               required: false,
             },
-            {
-              label: 'Product code (if applicable)',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code (if applicable)',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',

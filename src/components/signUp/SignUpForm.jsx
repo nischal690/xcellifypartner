@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import TextInput from "../commonComponents/TextInput";
-import TermsCheckbox from "../commonComponents/TermsCheckbox";
-import PasswordStrengthChecker from "./PasswordStrengthChecker";
+import TextInput from '../commonComponents/TextInput';
+import TermsCheckbox from '../commonComponents/TermsCheckbox';
+import PasswordStrengthChecker from './PasswordStrengthChecker';
 
-import { useSignUp } from "../../hooks/auth/useSignUp";
-import Captcha from "../Captcha";
+import PasswordStrengthPopover from './PasswordStrengthPopover';
+
+import { useSignUp } from '../../hooks/auth/useSignUp';
+import Captcha from '../Captcha';
 
 const SignUpForm = () => {
   const {
@@ -65,9 +67,9 @@ const SignUpForm = () => {
         )}
 
         {/* Password Input with Eye Icon */}
-        <div className="relative w-full md:mr-4">
+        <PasswordStrengthPopover password={formData.password}>
           <TextInput
-            type={isPasswordVisible.password ? "text" : "password"}
+            type={isPasswordVisible.password ? 'text' : 'password'}
             name="password"
             placeholder="Enter your Password"
             value={formData.password}
@@ -77,7 +79,7 @@ const SignUpForm = () => {
           />
           <span
             className="absolute right-3 top-5 cursor-pointer text-gray-600"
-            onClick={() => togglePasswordVisibility("password")}
+            onClick={() => togglePasswordVisibility('password')}
           >
             {isPasswordVisible.password ? (
               <svg
@@ -116,12 +118,12 @@ const SignUpForm = () => {
               </svg>
             )}
           </span>
-        </div>
+        </PasswordStrengthPopover>
 
         {/* Confirm Password Input with Eye Icon */}
         <div className="relative w-full">
           <TextInput
-            type={isPasswordVisible.confirmPassword ? "text" : "password"}
+            type={isPasswordVisible.confirmPassword ? 'text' : 'password'}
             name="confirmPassword"
             placeholder="Enter your Confirm Password"
             value={formData.confirmPassword}
@@ -131,7 +133,7 @@ const SignUpForm = () => {
           />
           <span
             className="absolute right-3 top-5 cursor-pointer text-gray-600"
-            onClick={() => togglePasswordVisibility("confirmPassword")}
+            onClick={() => togglePasswordVisibility('confirmPassword')}
           >
             {isPasswordVisible.confirmPassword ? (
               <svg
@@ -171,10 +173,10 @@ const SignUpForm = () => {
             )}
           </span>
         </div>
-        <PasswordStrengthChecker
+        {/* <PasswordStrengthChecker
           password={formData.password}
           confirmPassword={formData.confirmPassword}
-        />
+        /> */}
         {errors.password && (
           <p className=" text-red-500 text-sm">{errors.password}</p>
         )}
@@ -223,7 +225,7 @@ const SignUpForm = () => {
               <span className="sr-only">Loading...</span>
             </div>
           ) : (
-            "Create Account"
+            'Create Account'
           )}
         </button>
       </form>
