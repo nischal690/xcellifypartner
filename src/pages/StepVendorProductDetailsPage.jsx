@@ -13,7 +13,18 @@ import {
   loadIndianStates,
 } from '../utils/geocoding';
 
-import { hsnCodeMapping } from '../utils/productsCodes';
+import {
+  hsnCodeMapping,
+  gstRateMapping,
+  OptionCountries,
+  loadServiceDelivary,
+  loadStudyLevel,
+  loadTutorStudyLevel,
+  loadModeOfTeaching,
+  loadSubjects,
+  loadCounsellingLevel,
+  loadLoanStudyLevel,
+} from '../utils/productsCodes';
 
 import { AuthStatuses, ProfileStatuses } from '../utils/constants';
 
@@ -69,86 +80,6 @@ const StepVendorProductDetailsPage = () => {
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-
-  const OptionCountries = [
-    'US',
-    'Canada',
-    'UK',
-    'Europe',
-    'Australia',
-    'Asia',
-    'Others',
-  ].map((country) => ({
-    value: country,
-    label: country,
-  }));
-
-  const loadServiceDelivary = ['Online', 'Physical'].map((service) => ({
-    value: service,
-    label: service,
-  }));
-
-  const loadStudyLevel = ['UG', 'PG'].map((level) => ({
-    value: level,
-    label: level,
-  }));
-
-  const loadTutorStudyLevel = [
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    'Graduation',
-  ].map((level) => ({
-    value: level,
-    label: level,
-  }));
-
-  const loadModeOfTeaching = [
-    'Online(1 on 1)',
-    'Online(group)',
-    'Physical(1 on 1)',
-    'Physical(group)',
-    'Home Visits',
-  ].map((mode) => ({
-    value: mode,
-    label: mode,
-  }));
-
-  const loadSubjects = [
-    'Maths',
-    'Science',
-    'Physics',
-    'Chemistry',
-    'Biology',
-    'Economics',
-    'History',
-    'Geography',
-  ].map((subject) => ({
-    value: subject,
-    label: subject,
-  }));
-
-  const loadCounsellingLevel = [
-    'Under grade 6',
-    '6th to 8th',
-    '9th & 10th',
-    '11th & 12th',
-    'UG',
-  ].map((level) => ({
-    value: level,
-    label: level,
-  }));
-
-  const loadLoanStudyLevel = ['School', 'College', 'Diploma', 'UG', 'PG'].map(
-    (level) => ({
-      value: level,
-      label: level,
-    })
-  );
 
   const fetchStates = () => {
     const states = loadIndianStates();
@@ -272,6 +203,7 @@ const StepVendorProductDetailsPage = () => {
       formData: {
         ...prev.formData,
         hsn_code: hsnCodeMapping[selectedCategory] || '',
+        gst_rate: gstRateMapping[selectedCategory] || '',
       },
     }));
   };
@@ -1337,7 +1269,8 @@ const StepVendorProductDetailsPage = () => {
                               {renderErrorMessage(product.errors, field.name)}
                             </div>
                           </>
-                        ) : field.name === 'hsn_code' ? (
+                        ) : field.name === 'hsn_code' ||
+                          field.name === 'gst_rate' ? (
                           <>
                             <input
                               type="text"
