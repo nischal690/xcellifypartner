@@ -351,6 +351,16 @@ export const ProductDetailsData = [
               required: true,
             },
             {
+              label: 'Service provided since',
+              name: 'service_provided_since',
+              type: 'select',
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
+              required: true,
+            },
+            {
               label: 'Mode of teaching',
               name: 'mode_of_teaching',
               type: 'multiselect',
@@ -1033,7 +1043,7 @@ export const ProductDetailsData = [
               label: 'Scholarship eligibility',
               name: 'loan_eligibility',
               type: 'text',
-              required: false,
+              required: true,
             },
             {
               label: 'Select Country/Origin',
@@ -1138,13 +1148,13 @@ export const ProductDetailsData = [
               options: [],
               required: false,
             },
-            {
-              label: 'Service delivery',
-              name: 'service_delivery',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: false,
-            },
+            // {
+            //   label: 'Service delivery',
+            //   name: 'service_delivery',
+            //   type: 'select',
+            //   options: ['Online', 'Offline'],
+            //   required: false,
+            // },
           ],
         },
         {
@@ -1249,7 +1259,7 @@ export const ProductDetailsData = [
               label: 'Loan eligibility',
               name: 'loan_eligibility',
               type: 'text',
-              required: false,
+              required: true,
             },
             {
               label: 'Whether 100% Financing Available',
@@ -1475,7 +1485,12 @@ export const ProductDetailsData = [
         {
           heading: 'Pricing',
           fields: [
-            { label: 'Price', name: 'price', type: 'number', required: true },
+            {
+              label: 'Price per hour',
+              name: 'price',
+              type: 'number',
+              required: true,
+            },
             {
               label: 'Currency',
               name: 'currency',
@@ -1696,15 +1711,10 @@ export const validationSchemas = {
     member_since: Yup.date()
       .max(new Date())
       .required('Member since is required'),
-    mode_of_teaching: Yup.string()
-      .required('Teaching mode is required')
-      .oneOf([
-        'Online(1 on 1)',
-        'Online(group)',
-        'Physical(1 on 1)',
-        'Physical(group)',
-        'Home Visits',
-      ]),
+    mode_of_teaching: Yup.string().required('Teaching mode is required'),
+    service_provided_since: Yup.date().required(
+      'Service provided since is required'
+    ),
     service_available_cities: Yup.string().required(
       'Destination city is required'
     ),
@@ -1737,9 +1747,9 @@ export const validationSchemas = {
     program_eligibility: Yup.string().required(
       'Program eligibility is required'
     ),
-    application_deadline: Yup.date().required(
-      'Application deadline is required'
-    ),
+    application_deadline: Yup.date()
+      .min(new Date(), 'Registration deadline must be in the future')
+      .required('Registration deadline is required'),
     scholarship_available: Yup.string().required(
       'Scholarship available is required'
     ),
