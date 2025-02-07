@@ -135,6 +135,12 @@ export const ProductDetailsData = [
               required: false,
             },
             {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
+              type: 'text',
+              required: false,
+            },
+            {
               label: 'Upload product images',
               name: 'product_images',
               type: 'file',
@@ -206,13 +212,13 @@ export const ProductDetailsData = [
         {
           heading: 'Service locations',
           fields: [
-            {
-              label: 'Study destination states',
-              name: 'study_destination_states',
-              type: 'multiselect',
-              options: [],
-              required: false,
-            },
+            // {
+            //   label: 'Study destination states',
+            //   name: 'study_destination_states',
+            //   type: 'multiselect',
+            //   options: [],
+            //   required: false,
+            // },
             {
               label: 'Cities where service is available',
               name: 'service_available_cities',
@@ -277,6 +283,12 @@ export const ProductDetailsData = [
             {
               label: 'Google reviews/rating',
               name: 'google_reviews',
+              type: 'text',
+              required: false,
+            },
+            {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
               type: 'text',
               required: false,
             },
@@ -358,12 +370,12 @@ export const ProductDetailsData = [
               options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
               required: true,
             },
-            {
-              label: 'Product code',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',
@@ -386,7 +398,7 @@ export const ProductDetailsData = [
               name: 'service_available_cities',
               type: 'multiselect',
               options: [],
-              required: false,
+              required: true,
             },
             {
               label: 'Can travel up to in km',
@@ -449,6 +461,12 @@ export const ProductDetailsData = [
               required: false,
             },
             {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
+              type: 'text',
+              required: false,
+            },
+            {
               label: 'Upload product images',
               name: 'product_images',
               type: 'file',
@@ -503,12 +521,12 @@ export const ProductDetailsData = [
               type: 'number',
               required: true,
             },
-            {
-              label: 'Product code',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',
@@ -539,7 +557,7 @@ export const ProductDetailsData = [
                 'Australia',
                 'Asia',
               ],
-              required: false,
+              required: true,
             },
             {
               label: 'Cities where service is available',
@@ -614,6 +632,12 @@ export const ProductDetailsData = [
               required: false,
             },
             {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
+              type: 'text',
+              required: false,
+            },
+            {
               label: 'Upload product images',
               name: 'product_images',
               type: 'file',
@@ -640,10 +664,33 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Age group',
+              label: 'Age group(based on grade)',
               name: 'age_group',
               type: 'select',
               options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
+              required: true,
+            },
+            {
+              label: 'Discipline',
+              name: 'discipline',
+              type: 'select',
+              options: [
+                'Arts, design and architecture',
+                'Business Management',
+                'Computer Science & IT',
+                'Education & Training',
+                'Engineering & Technology',
+                ' Environmental Studies',
+                ' Hospitality',
+                'Sports',
+                'Humanities',
+                'Journalism & Media',
+                'Law',
+                'Medicine & Health',
+                'Mathematics',
+                'Social Science',
+                'Others',
+              ],
               required: true,
             },
             {
@@ -660,18 +707,24 @@ export const ProductDetailsData = [
               required: true,
             },
             {
+              label: 'Application deadline',
+              name: 'application_deadline',
+              type: 'date',
+              required: true,
+            },
+            {
               label: 'Scholarship available ',
               name: 'scholarship_available',
               type: 'select',
               options: ['Yes', 'No'],
               required: true,
             },
-            {
-              label: 'Product code',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',
@@ -770,6 +823,12 @@ export const ProductDetailsData = [
               required: false,
             },
             {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
+              type: 'text',
+              required: false,
+            },
+            {
               label: 'Upload product images',
               name: 'product_images',
               type: 'file',
@@ -820,8 +879,20 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Age group',
-              name: 'age_group',
+              label: 'Age group min',
+              name: 'age_group_min',
+              type: 'number',
+              required: true,
+            },
+            {
+              label: 'Age group max',
+              name: 'age_group_max',
+              type: 'number',
+              required: true,
+            },
+            {
+              label: 'Event Eligibility',
+              name: 'event_eligibility',
               type: 'text',
               required: true,
             },
@@ -903,12 +974,6 @@ export const ProductDetailsData = [
           heading: 'Marketing materials',
           fields: [
             {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'number',
-              required: false,
-            },
-            {
               label: 'Upload product images',
               name: 'product_images',
               type: 'file',
@@ -970,6 +1035,50 @@ export const ProductDetailsData = [
               type: 'text',
               required: false,
             },
+            {
+              label: 'Select Country/Origin',
+              name: 'country_origin',
+              type: 'select',
+              options: ['national', 'international'],
+              required: true,
+            },
+            {
+              label: 'Category',
+              name: 'scholarship_category',
+              type: 'select',
+              options: [
+                'All',
+                'General',
+                'SC/ST/OBC',
+                'Minority',
+                'Girls',
+                'Physically Challenged',
+                'BPL',
+              ],
+              required: false,
+            },
+            {
+              label: 'Type',
+              name: 'scholarship_type',
+              type: 'select',
+              options: ['All', 'Scholarship', 'Fellowship'],
+              required: false,
+            },
+            {
+              label: 'Course',
+              name: 'scholarship_course',
+              type: 'select',
+              options: [
+                'All',
+                'Engineering',
+                'Medical',
+                'Management',
+                'Talent',
+                'Sports',
+                'Others',
+              ],
+              required: false,
+            },
             // {
             //   label: 'Whether 100% Financing Available',
             //   name: 'full_financing_available',
@@ -977,12 +1086,12 @@ export const ProductDetailsData = [
             //   options: ['Yes', 'No'],
             //   required: false,
             // },
-            {
-              label: 'Product code',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',
@@ -1015,9 +1124,16 @@ export const ProductDetailsData = [
               options: [],
               required: true,
             },
+            // {
+            //   label: 'Cities where service is available',
+            //   name: 'service_available_cities',
+            //   type: 'multiselect',
+            //   options: [],
+            //   required: false,
+            // },
             {
-              label: 'Cities where service is available',
-              name: 'service_available_cities',
+              label: 'Study destination states',
+              name: 'study_destination_states',
               type: 'multiselect',
               options: [],
               required: false,
@@ -1049,32 +1165,32 @@ export const ProductDetailsData = [
             },
           ],
         },
-        {
-          heading: 'Pricing (Scholarship)',
-          subcategory: 'Student Education Scholarship',
-          fields: [
-            { label: 'Price', name: 'price', type: 'number', required: false },
-            {
-              label: 'Currency',
-              name: 'currency',
-              type: 'select',
-              options: ['INR', 'USD'],
-              required: false,
-            },
-            {
-              label: 'Discount',
-              name: 'discount',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Final price',
-              name: 'final_price',
-              type: 'number',
-              required: false,
-            },
-          ],
-        },
+        // {
+        //   heading: 'Pricing (Scholarship)',
+        //   subcategory: 'Student Education Scholarship',
+        //   fields: [
+        //     { label: 'Price', name: 'price', type: 'number', required: false },
+        //     {
+        //       label: 'Currency',
+        //       name: 'currency',
+        //       type: 'select',
+        //       options: ['INR', 'USD'],
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Discount',
+        //       name: 'discount',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Final price',
+        //       name: 'final_price',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //   ],
+        // },
         {
           heading: 'Marketing materials (Scholarship)',
           subcategory: 'Student Education Scholarship',
@@ -1083,6 +1199,12 @@ export const ProductDetailsData = [
               label: 'Google reviews/rating',
               name: 'google_reviews',
               type: 'number',
+              required: false,
+            },
+            {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
+              type: 'text',
               required: false,
             },
             {
@@ -1136,12 +1258,12 @@ export const ProductDetailsData = [
               options: ['Yes', 'No'],
               required: false,
             },
-            {
-              label: 'Product code',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',
@@ -1213,21 +1335,33 @@ export const ProductDetailsData = [
           subcategory: 'Student Education loan',
           fields: [
             {
-              label: 'Minimum fees',
-              name: 'price',
+              label: 'Minimum Fees Range',
+              name: 'fee_range_min',
               type: 'number',
               required: false,
             },
             {
-              label: 'Currency',
-              name: 'currency',
-              type: 'select',
-              options: ['INR', 'USD'],
+              label: 'Maximum Fees Range',
+              name: 'fee_range_max',
+              type: 'number',
+              required: false,
+            },
+            // {
+            //   label: 'Currency',
+            //   name: 'currency',
+            //   type: 'select',
+            //   options: ['INR', 'USD'],
+            //   required: false,
+            // },
+            {
+              label: 'Loan Interest %',
+              name: 'loan_interest_percentage',
+              type: 'number',
               required: false,
             },
             {
-              label: 'Loan Interest %',
-              name: 'discount',
+              label: 'Loan Amount Range',
+              name: 'loan_amount_range',
               type: 'number',
               required: false,
             },
@@ -1246,6 +1380,12 @@ export const ProductDetailsData = [
             {
               label: 'Google reviews/rating',
               name: 'google_reviews',
+              type: 'text',
+              required: false,
+            },
+            {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
               type: 'text',
               required: false,
             },
@@ -1295,12 +1435,12 @@ export const ProductDetailsData = [
               options: ['Online', 'Offline'],
               required: false,
             },
-            {
-              label: 'Product code',
-              name: 'product_code',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'HSN code',
               name: 'hsn_code',
@@ -1364,6 +1504,12 @@ export const ProductDetailsData = [
               label: 'Google reviews/rating',
               name: 'google_reviews',
               type: 'number',
+              required: false,
+            },
+            {
+              label: 'Enter link for Google rating',
+              name: 'google_rating_url',
+              type: 'text',
               required: false,
             },
             {
@@ -1456,6 +1602,7 @@ const commonValidations = {
     /^[0-5](\.[0-9]{1,2})?$/,
     'Rating must be a number between 0 and 5, with up to two decimal places'
   ),
+  google_rating_url: Yup.string().url('Invalid URL'),
   product_images: Yup.array()
     .nullable()
     .of(
@@ -1530,9 +1677,9 @@ export const validationSchemas = {
     service_provided_since: Yup.date().required(
       'Service provided since is required'
     ),
-    study_destination_states: Yup.string().required(
-      'Destination State is required'
-    ),
+    // study_destination_states: Yup.string().required(
+    //   'Destination State is required'
+    // ),
     service_available_cities: Yup.string().required(
       'Destination city is required'
     ),
@@ -1558,7 +1705,9 @@ export const validationSchemas = {
         'Physical(group)',
         'Home Visits',
       ]),
-    service_available_cities: Yup.string(),
+    service_available_cities: Yup.string().required(
+      'Destination city is required'
+    ),
     travel_upto: Yup.string().required('Travel upto is required'),
   }),
 
@@ -1583,9 +1732,13 @@ export const validationSchemas = {
   'Summer courses': Yup.object().shape({
     ...commonValidations,
     age_group: Yup.string().required('Age group is required'),
+    discipline: Yup.string().required('Discipline is required'),
     duration: Yup.string().required('Duration is required'),
     program_eligibility: Yup.string().required(
       'Program eligibility is required'
+    ),
+    application_deadline: Yup.date().required(
+      'Application deadline is required'
     ),
     scholarship_available: Yup.string().required(
       'Scholarship available is required'
@@ -1664,7 +1817,9 @@ export const validationSchemas = {
     event_title: Yup.string().required('Event title is required'),
     event_location: Yup.string().required('Event location is required'),
     event_category: Yup.string().required('Event category is required'),
-    age_group: Yup.string().required('Age group is required'),
+    age_group_min: Yup.string().required('Age group min is required'),
+    age_group_max: Yup.string().required('Age group max is required'),
+    event_eligibility: Yup.string().required('Event eligibility is required'),
     event_delivery: Yup.string().required('Event delivery is required'),
     event_registration_deadline: Yup.date()
       .min(new Date(), 'Registration deadline must be in the future')
@@ -1683,7 +1838,18 @@ export const validationSchemas = {
       'Study destination is required'
     ),
     service_delivery: Yup.string().required('Service delivery is required'),
-    service_available_cities: Yup.string(),
+    study_destination_states: Yup.string(),
+    country_origin: Yup.string(),
+    scholarship_category: Yup.string(),
+    loan_interest_percentage: Yup.number().min(
+      0,
+      'Interest rate must be positive'
+    ),
+    loan_amount_range: Yup.string(),
+    scholarship_type: Yup.string(),
+    scholarship_course: Yup.string(),
+    fee_range_min: Yup.number(),
+    fee_range_max: Yup.number(),
   }),
 
   Merchandise: Yup.object().shape({
