@@ -75,6 +75,7 @@ export const loadSubjects = [
   'Economics',
   'History',
   'Geography',
+  'Others',
 ].map((subject) => ({
   value: subject,
   label: subject,
