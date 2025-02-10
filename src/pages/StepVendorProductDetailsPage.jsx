@@ -210,6 +210,9 @@ const StepVendorProductDetailsPage = () => {
 
   const handleProductChange = async (e, categoryIndex, productIndex) => {
     const { name, value, type, files } = e.target;
+    if (name === 'hsn_code') {
+      return;
+    }
 
     if (name === 'study_destination_states' && value) {
       fetchCities(value);
