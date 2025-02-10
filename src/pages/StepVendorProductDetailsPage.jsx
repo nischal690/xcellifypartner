@@ -226,6 +226,9 @@ const StepVendorProductDetailsPage = () => {
 
     if (categoryIndex !== undefined) {
       const updatedCategories = [...categories];
+      updatedFormData.price = updatedFormData.price || 0;
+      updatedFormData.discount = updatedFormData.discount || 0;
+      updatedFormData.final_price = updatedFormData.final_price || 0;
       const product = updatedCategories[categoryIndex].products[productIndex];
 
       product.formData[name] = type === 'file' ? files[0] : value;
@@ -235,6 +238,9 @@ const StepVendorProductDetailsPage = () => {
         const discount = parseFloat(product.formData['discount']) || 0;
         const finalPrice = price - (price * discount) / 100;
         product.formData['final_price'] = finalPrice >= 0 ? finalPrice : 0;
+
+        product.formData['price'] = price || 0;
+        product.formData['discount'] = discount || 0;
       }
 
       const { isValid, error } = await validateField(
@@ -941,6 +947,10 @@ const StepVendorProductDetailsPage = () => {
               ? { id: formData.product_videos.id }
               : null,
           };
+
+          processedData.price = formData.price || 0;
+          processedData.discount = formData.discount || 0;
+          processedData.final_price = formData.final_price || 0;
 
           if (processedData.refund_policy !== false) {
             delete processedData.refund_policy_media;

@@ -983,12 +983,18 @@ export const ProductDetailsData = [
               label: 'Age group min',
               name: 'age_group_min',
               type: 'number',
+              attributes: {
+                min: 0,
+              },
               required: true,
             },
             {
               label: 'Age group max',
               name: 'age_group_max',
               type: 'number',
+              attributes: {
+                min: 0,
+              },
               required: true,
             },
             {
@@ -1733,14 +1739,16 @@ const commonValidations = {
   discount: Yup.number()
     .min(0, 'Discount cannot be negative')
     .max(100, 'Discount cannot exceed 100%'),
-  final_price: Yup.number().test(
-    'is-less-than-price',
-    'Final price must be less than or equal to the original price',
-    function (value) {
-      const price = this.parent.price || 0;
-      return !value || value <= price;
-    }
-  ),
+  final_price: Yup.number()
+    .min(0, 'Final price cannot be negative')
+    .test(
+      'is-less-than-price',
+      'Final price must be less than or equal to the original price',
+      function (value) {
+        const price = this.parent.price || 0;
+        return !value || value <= price;
+      }
+    ),
   hsn_code: Yup.string()
     .matches(/^\d{6}$/, 'HSN code must be exactly 6 digits')
     .required('HSN code is required'),
@@ -1971,8 +1979,15 @@ export const validationSchemas = {
     event_title: Yup.string().required('Event title is required'),
     event_location: Yup.string().required('Event location is required'),
     event_category: Yup.string().required('Event category is required'),
-    age_group_min: Yup.string().required('Age group min is required'),
-    age_group_max: Yup.string().required('Age group max is required'),
+    age_group_min: Yup.number()
+      .min(0, 'Age group min cannot be negative')
+      .max(200, 'Age group max cannot exceed 200')
+      .required('Age group min is required'),
+    age_group_max: Yup.number()
+      .min(0, 'Age group max cannot be negative')
+      .max(200, 'Age group max cannot exceed 200')
+      .required('Age group max is required'),
+
     event_eligibility: Yup.string().required('Event eligibility is required'),
     event_delivery: Yup.string().required('Event delivery is required'),
     event_registration_deadline: Yup.date()
