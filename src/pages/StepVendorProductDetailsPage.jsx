@@ -287,9 +287,16 @@ const StepVendorProductDetailsPage = () => {
         return;
       }
 
-      const savedFormData = { ...product.formData };
+      const savedFormData = {
+        ...product.formData,
 
-      //  category-specific fields
+        product_images: product.formData.product_images
+          ? [...product.formData.product_images]
+          : [],
+        product_videos: product.formData.product_videos || null,
+        refund_policy_media: product.formData.refund_policy_media || null,
+      };
+
       const fieldMap = {
         'Study overseas': ['study_level', 'study_destination_countries'],
         'Study India': ['study_level', 'study_destination_states'],
@@ -305,15 +312,13 @@ const StepVendorProductDetailsPage = () => {
         Competitions: ['event_delivery', 'event_location'],
       };
 
-      // Only include relevant fields for the category
       const relevantFields = fieldMap[category] || [];
       relevantFields.forEach((field) => {
         savedFormData[field] = product.formData[field] || '';
       });
 
-      // Handle media fields which are common across categories
-      savedFormData.product_images =
-        product.formData.product_images?.map((file) => ({
+      savedFormData.product_images = savedFormData.product_images.map(
+        (file) => ({
           id: file.id || null,
           preview:
             file instanceof File
@@ -323,26 +328,44 @@ const StepVendorProductDetailsPage = () => {
           name: file.name || `Image ${Date.now()}`,
           size: file.size,
           type: file instanceof File ? file.type : 'image',
-        })) || [];
+        })
+      );
 
-      savedFormData.product_videos = product.formData.product_videos
+      savedFormData.product_videos = savedFormData.product_videos
         ? {
-            id: product.formData.product_videos.id || null,
+            id: savedFormData.product_videos.id || null,
             preview:
-              product.formData.product_videos instanceof File
-                ? URL.createObjectURL(product.formData.product_videos)
-                : filePreviewMap.videos[product.formData.product_videos.id],
+              savedFormData.product_videos instanceof File
+                ? URL.createObjectURL(savedFormData.product_videos)
+                : filePreviewMap.videos[savedFormData.product_videos.id],
             file:
-              product.formData.product_videos instanceof File
-                ? product.formData.product_videos
+              savedFormData.product_videos instanceof File
+                ? savedFormData.product_videos
                 : null,
-            name: product.formData.product_videos.name || `Video ${Date.now()}`,
-            size: product.formData.product_videos.size,
+            name: savedFormData.product_videos.name || `Video ${Date.now()}`,
+            size: savedFormData.product_videos.size,
             type: 'video',
           }
         : null;
 
-      // Update preview maps
+      if (
+        savedFormData.refund_policy === 'false' &&
+        !savedFormData.refund_policy_media?.id
+      ) {
+        toast.error(
+          'Please upload a refund policy file if you have your own policy.'
+        );
+        return;
+      }
+
+      savedFormData.refund_policy = product.formData.refund_policy || null;
+      savedFormData.refund_policy_media = product.formData.refund_policy_media
+        ? {
+            id: product.formData.refund_policy_media.id,
+            name: product.formData.refund_policy_media.name,
+          }
+        : null;
+
       const newPreviewMap = {
         images: { ...filePreviewMap.images },
         videos: { ...filePreviewMap.videos },
@@ -364,8 +387,10 @@ const StepVendorProductDetailsPage = () => {
       }
 
       setFilePreviewMap(newPreviewMap);
+
       product.formData = savedFormData;
       product.isOpen = false;
+
       setCategories(updatedCategories);
       toast.success('Product saved successfully!');
     });
@@ -382,7 +407,7 @@ const StepVendorProductDetailsPage = () => {
           return false;
         }
         if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-          toast.error(`${file.name} must be JPG, JPEG or PNG`);
+          toast.error(`${file.name} must be JPG, JPEG, or PNG`);
           return false;
         }
       } else if (fieldName === 'product_videos') {
@@ -392,6 +417,15 @@ const StepVendorProductDetailsPage = () => {
         }
         if (file.type !== 'video/mp4') {
           toast.error(`${file.name} must be MP4 format`);
+          return false;
+        }
+      } else if (fieldName === 'refund_policy_media') {
+        if (file.size > MAX_FILE_SIZE) {
+          toast.error(`File ${file.name} exceeds 5MB limit`);
+          return false;
+        }
+        if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+          toast.error(`${file.name} must be a PDF file`);
           return false;
         }
       }
@@ -451,7 +485,34 @@ const StepVendorProductDetailsPage = () => {
       }));
     }
 
+    if (fieldName === 'refund_policy_media') {
+      if (categoryIndex !== undefined) {
+        const updatedCategories = [...categories];
+        const product = updatedCategories[categoryIndex].products[productIndex];
+
+        product.formData[fieldName] = {
+          id: Date.now(),
+          name: validFiles[0].name,
+          file: validFiles[0],
+        };
+        setCategories(updatedCategories);
+      } else {
+        setCurrentForm((prev) => ({
+          ...prev,
+          formData: {
+            ...prev.formData,
+            [fieldName]: {
+              id: Date.now(),
+              name: validFiles[0].name,
+              file: validFiles[0],
+            },
+          },
+        }));
+      }
+    }
+
     handleFileUpload(validFiles, fieldName, categoryIndex, productIndex);
+
     if (fileInputRef.current) {
       fileInputRef.current.value = null;
     }
@@ -491,12 +552,13 @@ const StepVendorProductDetailsPage = () => {
       const uploadedFiles = uploadResponses
         .filter((response) => response.success)
         .map((response, index) => ({
-          id: response.id, // The `id` from the server
+          id: response.id,
+          name: validFiles[index].name,
           preview: URL.createObjectURL(validFiles[index]),
         }));
 
       if (!uploadedFiles.length) {
-        toast.error('Failed to upload files.');
+        toast.error('Failed to upload files. Please try again.');
         return;
       }
 
@@ -518,9 +580,7 @@ const StepVendorProductDetailsPage = () => {
           const product =
             updatedCategories[categoryIndex].products[productIndex];
 
-          product.formData[fieldName] = {
-            id: uploadedFiles[0].id,
-          };
+          product.formData[fieldName] = { id: uploadedFiles[0].id };
           setCategories(updatedCategories);
         } else {
           setCurrentForm((prev) => ({
@@ -553,6 +613,32 @@ const StepVendorProductDetailsPage = () => {
                 ...(prev.formData[fieldName] || []),
                 ...uploadedFiles.map((f) => ({ id: f.id })),
               ],
+            },
+          }));
+        }
+      }
+
+      if (fieldName === 'refund_policy_media') {
+        if (categoryIndex !== undefined) {
+          const updatedCategories = [...categories];
+          const product =
+            updatedCategories[categoryIndex].products[productIndex];
+
+          product.formData[fieldName] = {
+            id: uploadedFiles[0].id,
+            name: uploadedFiles[0].name,
+          };
+
+          setCategories(updatedCategories);
+        } else {
+          setCurrentForm((prev) => ({
+            ...prev,
+            formData: {
+              ...prev.formData,
+              [fieldName]: {
+                id: uploadedFiles[0].id,
+                name: uploadedFiles[0].name,
+              },
             },
           }));
         }
@@ -604,15 +690,17 @@ const StepVendorProductDetailsPage = () => {
         const product =
           categories[categoryIndex].products[productIndex].formData;
         category = categories[categoryIndex].name;
+
         fileToDelete =
-          fieldName === 'product_videos'
+          fieldName === 'product_videos' || fieldName === 'refund_policy_media'
             ? product[fieldName]
             : product[fieldName][index];
       } else {
         const formData = currentForm.formData;
         category = currentForm.category;
+
         fileToDelete =
-          fieldName === 'product_videos'
+          fieldName === 'product_videos' || fieldName === 'refund_policy_media'
             ? formData[fieldName]
             : formData[fieldName][index];
       }
@@ -640,7 +728,10 @@ const StepVendorProductDetailsPage = () => {
           const images = [...product.formData[fieldName]];
           images.splice(index, 1);
           product.formData[fieldName] = images;
-        } else if (fieldName === 'product_videos') {
+        } else if (
+          fieldName === 'product_videos' ||
+          fieldName === 'refund_policy_media'
+        ) {
           product.formData[fieldName] = null;
         }
 
@@ -652,7 +743,10 @@ const StepVendorProductDetailsPage = () => {
             const images = [...updatedForm.formData[fieldName]];
             images.splice(index, 1);
             updatedForm.formData[fieldName] = images;
-          } else if (fieldName === 'product_videos') {
+          } else if (
+            fieldName === 'product_videos' ||
+            fieldName === 'refund_policy_media'
+          ) {
             updatedForm.formData[fieldName] = null;
           }
           return updatedForm;
@@ -663,6 +757,7 @@ const StepVendorProductDetailsPage = () => {
         categoryIndex !== undefined
           ? `${fieldName}-upload-${categoryIndex}-${productIndex}`
           : `${fieldName}-upload`;
+
       const fileInput = document.getElementById(fileInputId);
       if (fileInput) {
         fileInput.value = '';
@@ -828,6 +923,17 @@ const StepVendorProductDetailsPage = () => {
           let processedData = {
             ...normalizedData,
             category: category.name,
+            refund_policy:
+              formData.refund_policy === 'true'
+                ? true
+                : formData.refund_policy === 'false'
+                ? false
+                : null,
+            refund_policy_media:
+              formData.refund_policy === 'false' &&
+              formData.refund_policy_media?.id
+                ? { id: formData.refund_policy_media.id }
+                : null,
             product_images: formData.product_images
               ? formData.product_images.map((img) => ({ id: img.id }))
               : [],
@@ -835,6 +941,10 @@ const StepVendorProductDetailsPage = () => {
               ? { id: formData.product_videos.id }
               : null,
           };
+
+          if (processedData.refund_policy !== false) {
+            delete processedData.refund_policy_media;
+          }
 
           if (!processedData.product_images.length) {
             delete processedData.product_images;
@@ -849,7 +959,7 @@ const StepVendorProductDetailsPage = () => {
       .filter(validateProduct);
 
     if (!productsDetails.length) {
-      toast.error('No valid products to submit add atleat one');
+      toast.error('No valid products to submit. Add at least one product.');
       return null;
     }
 
@@ -884,6 +994,12 @@ const StepVendorProductDetailsPage = () => {
         normalizedProduct[field] = Number(normalizedProduct[field]);
       }
     });
+    // Normalize boolean fields
+    if ('refund_policy' in normalizedProduct) {
+      normalizedProduct.refund_policy =
+        normalizedProduct.refund_policy === 'true' ||
+        normalizedProduct.refund_policy === true;
+    }
     if ('scholarship_available' in normalizedProduct) {
       normalizedProduct.scholarship_available =
         normalizedProduct.scholarship_available === 'Yes';
@@ -891,6 +1007,11 @@ const StepVendorProductDetailsPage = () => {
     if ('full_financing_available' in normalizedProduct) {
       normalizedProduct.full_financing_available =
         normalizedProduct.full_financing_available === 'Yes';
+    }
+    if (normalizedProduct.refund_policy_media) {
+      normalizedProduct.refund_policy_media = {
+        id: normalizedProduct.refund_policy_media.id,
+      };
     }
 
     return normalizedProduct;
@@ -906,7 +1027,20 @@ const StepVendorProductDetailsPage = () => {
         if (key === 'product_images' || key === 'product_videos') {
           continue;
         }
+        if (key === 'refund_policy') {
+          continue;
+        }
         console.error(`Validation failed for product: ${key}`);
+        return false;
+      }
+
+      if (
+        product.refund_policy === false &&
+        (!product.refund_policy_media || !product.refund_policy_media.id)
+      ) {
+        console.error(
+          'Validation failed: refund_policy_media is required when refund_policy is false.'
+        );
         return false;
       }
     }
@@ -1281,7 +1415,6 @@ const StepVendorProductDetailsPage = () => {
                               type="text"
                               name={field.name}
                               value={product.formData[field.name] || ''}
-                              readOnly
                               className="w-full p-2 border rounded-md bg-gray-100"
                             />
                             {renderErrorMessage(product.errors, field.name)}
@@ -1440,6 +1573,101 @@ const StepVendorProductDetailsPage = () => {
                             />
                             {renderErrorMessage(product.errors, field.name)}
                           </div>
+                        ) : field.type === 'radio' ? (
+                          <>
+                            <div className="flex flex-col gap-2">
+                              {field.options.map((option, optionIndex) => (
+                                <div
+                                  key={optionIndex}
+                                  className="flex items-center"
+                                >
+                                  <input
+                                    type="radio"
+                                    id={`${field.name}-${option.value}-${categoryIndex}-${productIndex}`}
+                                    name={field.name}
+                                    value={option.value}
+                                    checked={
+                                      product.formData[field.name] ===
+                                      option.value
+                                    }
+                                    onChange={(e) =>
+                                      handleProductChange(
+                                        e,
+                                        categoryIndex,
+                                        productIndex
+                                      )
+                                    }
+                                    className="mr-2"
+                                  />
+                                  <label
+                                    htmlFor={`${field.name}-${option.value}-${categoryIndex}-${productIndex}`}
+                                    className="text-gray-700"
+                                  >
+                                    {option.label}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
+
+                            {renderErrorMessage(product.errors, field.name)}
+
+                            {/* Only display refund_policy_media if refund_policy is 'false' */}
+                            {field.name === 'refund_policy' &&
+                              product.formData[field.name] === 'false' && (
+                                <div className="mt-4">
+                                  <div className="flex flex-col gap-2">
+                                    <label className="text-gray-700">
+                                      Upload Refund Policy Document{' '}
+                                      <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                      type="file"
+                                      name="refund_policy_media"
+                                      accept="application/pdf, image/*"
+                                      onChange={(e) =>
+                                        handleFileChange(
+                                          e,
+                                          'refund_policy_media',
+                                          categoryIndex,
+                                          productIndex
+                                        )
+                                      }
+                                      className={`w-full p-2 border rounded-md ${
+                                        product.errors['refund_policy_media']
+                                          ? 'border-red-500'
+                                          : ''
+                                      }`}
+                                    />
+                                    {product.formData['refund_policy_media']
+                                      ?.name && (
+                                      <div className="flex items-center gap-2 mt-2">
+                                        <span className="text-sm text-gray-700">
+                                          {
+                                            product.formData[
+                                              'refund_policy_media'
+                                            ].name
+                                          }
+                                        </span>
+                                        <button
+                                          type="button"
+                                          className="text-red-500 text-sm"
+                                          onClick={() =>
+                                            handleFileRemove(
+                                              'refund_policy_media',
+                                              0,
+                                              categoryIndex,
+                                              productIndex
+                                            )
+                                          }
+                                        >
+                                          Delete
+                                        </button>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                          </>
                         ) : (
                           <>
                             <input
@@ -1834,6 +2062,108 @@ const StepVendorProductDetailsPage = () => {
                                     field.name
                                   )}
                                 </div>
+                              ) : field.type === 'radio' ? (
+                                <>
+                                  <div className="flex flex-col gap-2">
+                                    {field.options.map(
+                                      (option, optionIndex) => (
+                                        <div
+                                          key={optionIndex}
+                                          className="flex items-center"
+                                        >
+                                          <input
+                                            type="radio"
+                                            id={`${field.name}-${option.value}-${currentForm.category}`}
+                                            name={field.name}
+                                            value={option.value}
+                                            checked={
+                                              currentForm.formData[
+                                                field.name
+                                              ] === option.value
+                                            }
+                                            onChange={handleProductChange}
+                                            className="mr-2"
+                                          />
+                                          <label
+                                            htmlFor={`${field.name}-${option.value}-${currentForm.category}`}
+                                            className="text-gray-700"
+                                          >
+                                            {option.label}
+                                          </label>
+                                        </div>
+                                      )
+                                    )}
+                                  </div>
+
+                                  {renderErrorMessage(
+                                    currentForm.errors,
+                                    field.name
+                                  )}
+
+                                  {/* Show file upload only if refund_policy is 'false' */}
+                                  {field.name === 'refund_policy' &&
+                                    currentForm.formData[field.name] ===
+                                      'false' && (
+                                      <div className="mt-4">
+                                        <div className="flex flex-col gap-2">
+                                          <label className="text-gray-700">
+                                            Upload Refund Policy Document{' '}
+                                            <span className="text-red-500">
+                                              *
+                                            </span>
+                                          </label>
+                                          <input
+                                            type="file"
+                                            name="refund_policy_media"
+                                            id={`refund_policy_media-${currentForm.category}`}
+                                            onChange={(e) =>
+                                              handleFileChange(
+                                                e,
+                                                'refund_policy_media'
+                                              )
+                                            }
+                                            accept="application/pdf, image/*"
+                                            className={`w-full p-2 border rounded-md ${
+                                              currentForm.errors[
+                                                'refund_policy_media'
+                                              ]
+                                                ? 'border-red-500'
+                                                : ''
+                                            }`}
+                                          />
+                                          {currentForm.formData[
+                                            'refund_policy_media'
+                                          ]?.name && (
+                                            <div className="flex items-center gap-2 mt-2">
+                                              <span className="text-sm text-gray-700">
+                                                {
+                                                  currentForm.formData[
+                                                    'refund_policy_media'
+                                                  ].name
+                                                }
+                                              </span>
+                                              <button
+                                                type="button"
+                                                className="text-red-500 text-sm"
+                                                onClick={() =>
+                                                  handleFileRemove(
+                                                    'refund_policy_media',
+                                                    0
+                                                  )
+                                                }
+                                              >
+                                                Delete
+                                              </button>
+                                            </div>
+                                          )}
+                                          {renderErrorMessage(
+                                            currentForm.errors,
+                                            'refund_policy_media'
+                                          )}
+                                        </div>
+                                      </div>
+                                    )}
+                                </>
                               ) : (
                                 <>
                                   <input

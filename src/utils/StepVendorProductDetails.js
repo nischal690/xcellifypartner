@@ -47,6 +47,7 @@ export const ProductDetailsData = [
               label: 'HSN code',
               name: 'hsn_code',
               type: 'text',
+              readOnly: true,
               required: false,
             },
             {
@@ -150,6 +151,24 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
               required: false,
             },
           ],
@@ -302,6 +321,24 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
               required: false,
             },
           ],
@@ -490,6 +527,24 @@ export const ProductDetailsData = [
             },
           ],
         },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
+              required: false,
+            },
+          ],
+        },
       ],
 
       'Career counselling': [
@@ -657,6 +712,24 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
               required: false,
             },
           ],
@@ -852,6 +925,24 @@ export const ProductDetailsData = [
             },
           ],
         },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
+              required: false,
+            },
+          ],
+        },
       ],
 
       Events: [
@@ -993,6 +1084,24 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
               required: false,
             },
           ],
@@ -1230,6 +1339,23 @@ export const ProductDetailsData = [
               required: false,
             },
           ],
+
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
+              required: false,
+            },
+          ],
         },
         // Education Loan Form
         {
@@ -1409,6 +1535,23 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+          ],
+
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
               required: false,
             },
           ],
@@ -1618,6 +1761,7 @@ const commonValidations = {
     'Rating must be a number between 0 and 5, with up to two decimal places'
   ),
   google_rating_url: Yup.string().url('Invalid URL'),
+  refund_policy: Yup.string().oneOf(['true', 'false']),
   product_images: Yup.array()
     .nullable()
     .of(
