@@ -950,11 +950,11 @@ const StepVendorProductDetailsPage = () => {
               ? { id: formData.product_videos.id }
               : null,
           };
-
-          processedData.price = formData.price || 0;
-          processedData.discount = formData.discount || 0;
-          processedData.final_price = formData.final_price || 0;
-
+          if (category.name !== 'Study Finance') {
+            processedData.price = formData.price || 0;
+            processedData.discount = formData.discount || 0;
+            processedData.final_price = formData.final_price || 0;
+          }
           if (processedData.refund_policy !== false) {
             delete processedData.refund_policy_media;
           }
@@ -1532,6 +1532,8 @@ const StepVendorProductDetailsPage = () => {
                                   ? loadServiceDelivary
                                   : field.name === 'loan_for_study_level'
                                   ? loadLoanStudyLevel
+                                  : field.name === 'scholarship_study_level'
+                                  ? loadLoanStudyLevel
                                   : field.name === 'study_destination_countries'
                                   ? OptionCountries
                                   : field.name === 'mode_of_teaching'
@@ -2006,6 +2008,9 @@ const StepVendorProductDetailsPage = () => {
                                         : field.name === 'event_delivery'
                                         ? loadServiceDelivary
                                         : field.name === 'loan_for_study_level'
+                                        ? loadLoanStudyLevel
+                                        : field.name ===
+                                          'scholarship_study_level'
                                         ? loadLoanStudyLevel
                                         : field.name ===
                                           'study_destination_countries'
