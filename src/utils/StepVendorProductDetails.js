@@ -169,7 +169,7 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -339,7 +339,7 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -541,7 +541,7 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -730,7 +730,7 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -939,7 +939,7 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -1108,7 +1108,7 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -1122,10 +1122,7 @@ export const ProductDetailsData = [
               label: 'Subcategory',
               name: 'subcategory',
               type: 'select',
-              options: [
-                'Student Education loan',
-                'Student Education Scholarship',
-              ],
+              options: ['Education Loan', 'Scholarship'],
               required: true,
             },
           ],
@@ -1133,7 +1130,7 @@ export const ProductDetailsData = [
         // Scholarship Form
         {
           heading: 'Basic details (education Scholarship)',
-          subcategory: 'Student Education Scholarship', // Render only for Scholarship
+          subcategory: 'Scholarship', // Render only for Scholarship
           fields: [
             {
               label: 'Product Title',
@@ -1143,20 +1140,20 @@ export const ProductDetailsData = [
             },
             {
               label: 'Scholarship For Study Level',
-              name: 'loan_for_study_level',
+              name: 'scholarship_study_level',
               type: 'multiselect',
               options: [],
               required: true,
             },
             {
               label: 'Scholarship duration',
-              name: 'loan_duration',
-              type: 'text',
+              name: 'scholarship_duration',
+              type: 'number',
               required: true,
             },
             {
               label: 'Scholarship eligibility',
-              name: 'loan_eligibility',
+              name: 'scholarship_eligibility',
               type: 'text',
               required: true,
             },
@@ -1164,9 +1161,17 @@ export const ProductDetailsData = [
               label: 'Select Country/Origin',
               name: 'country_origin',
               type: 'select',
-              options: ['national', 'international'],
+              options: ['National', 'International'],
               required: true,
             },
+            {
+              label: 'State',
+              name: 'scholarship_states',
+              type: 'text',
+              // options: [],
+              required: true,
+            },
+
             {
               label: 'Category',
               name: 'scholarship_category',
@@ -1180,14 +1185,14 @@ export const ProductDetailsData = [
                 'Physically Challenged',
                 'BPL',
               ],
-              required: false,
+              required: true,
             },
             {
               label: 'Type',
               name: 'scholarship_type',
               type: 'select',
               options: ['All', 'Scholarship', 'Fellowship'],
-              required: false,
+              required: true,
             },
             {
               label: 'Course',
@@ -1202,7 +1207,7 @@ export const ProductDetailsData = [
                 'Sports',
                 'Others',
               ],
-              required: false,
+              required: true,
             },
             // {
             //   label: 'Whether 100% Financing Available',
@@ -1233,7 +1238,7 @@ export const ProductDetailsData = [
         },
         {
           heading: 'Service locations (Scholarship)',
-          subcategory: 'Student Education Scholarship',
+          subcategory: 'Scholarship',
           fields: [
             // {
             //   label: 'List of Countries Loan Available for',
@@ -1274,7 +1279,7 @@ export const ProductDetailsData = [
         },
         {
           heading: 'Additional details (Scholarship)',
-          subcategory: 'Student Education Scholarship',
+          subcategory: 'Scholarship',
           fields: [
             {
               label: 'Product description',
@@ -1292,7 +1297,7 @@ export const ProductDetailsData = [
         },
         // {
         //   heading: 'Pricing (Scholarship)',
-        //   subcategory: 'Student Education Scholarship',
+        //   subcategory: 'Scholarship',
         //   fields: [
         //     { label: 'Price', name: 'price', type: 'number', required: false },
         //     {
@@ -1318,7 +1323,7 @@ export const ProductDetailsData = [
         // },
         {
           heading: 'Marketing materials (Scholarship)',
-          subcategory: 'Student Education Scholarship',
+          subcategory: 'Scholarship',
           fields: [
             {
               label: 'Google reviews/rating',
@@ -1345,8 +1350,10 @@ export const ProductDetailsData = [
               required: false,
             },
           ],
-
+        },
+        {
           heading: 'Refund Policy',
+          subcategory: 'Scholarship',
           fields: [
             {
               label: 'Refund Policy',
@@ -1359,14 +1366,14 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
         // Education Loan Form
         {
           heading: 'Basic details (Education Loan)',
-          subcategory: 'Student Education loan',
+          subcategory: 'Education Loan',
           fields: [
             {
               label: 'Product Title',
@@ -1385,7 +1392,7 @@ export const ProductDetailsData = [
               label: 'Loan duration',
               name: 'loan_duration',
               type: 'number',
-              required: false,
+              required: true,
             },
             {
               label: 'Loan eligibility',
@@ -1398,7 +1405,7 @@ export const ProductDetailsData = [
               name: 'full_financing_available',
               type: 'select',
               options: ['Yes', 'No'],
-              required: false,
+              required: true,
             },
             // {
             //   label: 'Product code',
@@ -1422,7 +1429,7 @@ export const ProductDetailsData = [
         },
         {
           heading: 'Service locations (Education Loan)',
-          subcategory: 'Student Education loan',
+          subcategory: 'Education Loan',
           fields: [
             // {
             //   label: 'List of Countries Loan Available for',
@@ -1445,18 +1452,18 @@ export const ProductDetailsData = [
             //   options: ['City 1', 'City 2'],
             //   required: false,
             // },
-            {
-              label: 'Service delivery',
-              name: 'service_delivery',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: true,
-            },
+            // {
+            //   label: 'Service delivery',
+            //   name: 'service_delivery',
+            //   type: 'select',
+            //   options: ['Online', 'Offline'],
+            //   required: true,
+            // },
           ],
         },
         {
           heading: 'Additional details (Education Loan)',
-          subcategory: 'Student Education loan',
+          subcategory: 'Education Loan',
           fields: [
             {
               label: 'Product description',
@@ -1474,19 +1481,19 @@ export const ProductDetailsData = [
         },
         {
           heading: 'Processing/Origination fees',
-          subcategory: 'Student Education loan',
+          subcategory: 'Education Loan',
           fields: [
             {
               label: 'Minimum Fees Range',
               name: 'fee_range_min',
               type: 'number',
-              required: false,
+              required: true,
             },
             {
               label: 'Maximum Fees Range',
               name: 'fee_range_max',
               type: 'number',
-              required: false,
+              required: true,
             },
             // {
             //   label: 'Currency',
@@ -1499,13 +1506,13 @@ export const ProductDetailsData = [
               label: 'Loan Interest %',
               name: 'loan_interest_percentage',
               type: 'number',
-              required: false,
+              required: true,
             },
             {
               label: 'Loan Amount Range',
               name: 'loan_amount_range',
               type: 'number',
-              required: false,
+              required: true,
             },
             // {
             //   label: 'Final price',
@@ -1517,7 +1524,7 @@ export const ProductDetailsData = [
         },
         {
           heading: 'Marketing materials (Education Loan)',
-          subcategory: 'Student Education loan',
+          subcategory: 'Education Loan',
           fields: [
             {
               label: 'Google reviews/rating',
@@ -1544,8 +1551,10 @@ export const ProductDetailsData = [
               required: false,
             },
           ],
-
+        },
+        {
           heading: 'Refund Policy',
+          subcategory: 'Education Loan',
           fields: [
             {
               label: 'Refund Policy',
@@ -1558,7 +1567,7 @@ export const ProductDetailsData = [
                 },
                 { label: 'I have my own refund policy', value: 'false' },
               ],
-              required: false,
+              required: true,
             },
           ],
         },
@@ -1769,7 +1778,9 @@ const commonValidations = {
     'Rating must be a number between 0 and 5, with up to two decimal places'
   ),
   google_rating_url: Yup.string().url('Invalid URL'),
-  refund_policy: Yup.string().oneOf(['true', 'false']),
+  refund_policy: Yup.string()
+    .oneOf(['true', 'false'])
+    .required('Refund policy is required'),
   product_images: Yup.array()
     .nullable()
     .of(
@@ -1998,27 +2009,115 @@ export const validationSchemas = {
   'Study Finance': Yup.object().shape({
     ...commonValidations,
     subcategory: Yup.string().required('Subcategory is required'),
-    loan_for_study_level: Yup.string().required('Study level is required'),
-    loan_duration: Yup.string().required('Loan duration is required'),
-    loan_eligibility: Yup.string().required('Loan eligibility is required'),
-    full_financing_available: Yup.string().oneOf(['Yes', 'No']),
-    // loan_available_countries: Yup.string(),
-    study_destination_countries: Yup.string().required(
-      'Study destination is required'
-    ),
-    service_delivery: Yup.string().required('Service delivery is required'),
-    study_destination_states: Yup.string(),
-    country_origin: Yup.string(),
-    scholarship_category: Yup.string(),
-    loan_interest_percentage: Yup.number().min(
-      0,
-      'Interest rate must be positive'
-    ),
-    loan_amount_range: Yup.string(),
-    scholarship_type: Yup.string(),
-    scholarship_course: Yup.string(),
-    fee_range_min: Yup.number(),
-    fee_range_max: Yup.number(),
+    // Fields specific to "Student Education loan"
+    loan_for_study_level: Yup.string().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) => schema.required('Study level is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    loan_duration: Yup.string().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) => schema.required('Loan duration is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    loan_eligibility: Yup.string().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) => schema.required('Loan eligibility is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    full_financing_available: Yup.string().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) =>
+        schema
+          .oneOf(['Yes', 'No'], 'Please select Yes or No')
+          .required('Full financing availability is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    fee_range_min: Yup.number().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) =>
+        schema
+          .min(0, 'Minimum fee must be positive')
+          .required('Minimum fee range is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    fee_range_max: Yup.number().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) =>
+        schema
+          .min(0, 'Maximum fee must be positive')
+          .required('Maximum fee range is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    loan_interest_percentage: Yup.number().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) =>
+        schema
+          .min(0, 'Interest percentage must be a positive number')
+          .required('Interest percentage is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    loan_amount_range: Yup.number().when('subcategory', {
+      is: 'Education Loan',
+      then: (schema) =>
+        schema
+          .min(0, 'Loan amount range must be a positive number')
+          .required('Loan amount range is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    // Fields specific to "Scholarship"
+    scholarship_category: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Scholarship category is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    scholarship_study_level: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Scholarship study level is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    scholarship_duration: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Scholarship duration is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    scholarship_eligibility: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Scholarship eligibility is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+
+    scholarship_states: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Scholarship state is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    study_destination_countries: Yup.string()
+      .transform((value) => (value === '' ? null : value))
+      .nullable()
+      .when('subcategory', {
+        is: (value) => ['Education Loan', 'Scholarship'].includes(value),
+        then: (schema) =>
+          schema.required('Study destination countries is required'),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+
+    scholarship_type: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Scholarship type is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    scholarship_course: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Scholarship course is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    country_origin: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema.required('Country of origin is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
   }),
 
   Merchandise: Yup.object().shape({
