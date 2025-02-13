@@ -24,6 +24,9 @@ import {
   loadSubjects,
   loadCounsellingLevel,
   loadLoanStudyLevel,
+  loadScholarShipCategories,
+  loadScholarShipTypes,
+  loadScholarShipCourses,
 } from '../utils/productsCodes';
 
 import { AuthStatuses, ProfileStatuses } from '../utils/constants';
@@ -1534,6 +1537,14 @@ const StepVendorProductDetailsPage = () => {
                                   ? loadLoanStudyLevel
                                   : field.name === 'scholarship_study_level'
                                   ? loadLoanStudyLevel
+                                  : field.name === 'scholarship_states'
+                                  ? states
+                                  : field.name === 'scholarship_category'
+                                  ? loadScholarShipCategories
+                                  : field.name === 'scholarship_type'
+                                  ? loadScholarShipTypes
+                                  : field.name === 'scholarship_course'
+                                  ? loadScholarShipCourses
                                   : field.name === 'study_destination_countries'
                                   ? OptionCountries
                                   : field.name === 'mode_of_teaching'
@@ -2015,6 +2026,14 @@ const StepVendorProductDetailsPage = () => {
                                         : field.name ===
                                           'study_destination_countries'
                                         ? OptionCountries
+                                        : field.name === 'scholarship_states'
+                                        ? states
+                                        : field.name === 'scholarship_category'
+                                        ? loadScholarShipCategories
+                                        : field.name === 'scholarship_type'
+                                        ? loadScholarShipTypes
+                                        : field.name === 'scholarship_course'
+                                        ? loadScholarShipCourses
                                         : field.name === 'mode_of_teaching'
                                         ? loadModeOfTeaching
                                         : field.name === 'subjects'

@@ -56,6 +56,26 @@ const signupValidationSchemas = [
       .test('required', 'Digital signature is required', (value) => {
         return value && value instanceof File;
       }),
+    brand_logo: yup
+      .mixed()
+      .nullable()
+      .test(
+        'fileType',
+        'Unsupported file format. Only images and SVGs are allowed.',
+        (value) => {
+          if (!value) return true;
+          return (
+            value &&
+            ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'].includes(
+              value.type
+            )
+          );
+        }
+      )
+      .test('fileSize', 'File size should not exceed 2MB.', (value) => {
+        if (!value) return true;
+        return value && value.size <= 2 * 1024 * 1024;
+      }),
   }),
   // Step 2: Compliance Details
   yup.object().shape({
