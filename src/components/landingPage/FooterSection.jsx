@@ -72,7 +72,7 @@ const FooterSection = () => {
 
             <div>
               <h3 className="text-lg text-[#F5F5F5] font-bold font-dmsans mb-4">
-                Make money with us
+                Become Xcellify Partner
               </h3>
               <ul className="space-y-2 text-sm text-[#F5F5F5] font-medium font-dmsans">
                 <li>
@@ -80,7 +80,7 @@ const FooterSection = () => {
                     href="https://partner.xcellify.com/"
                     className="hover:underline"
                   >
-                    Sell on Xcellify
+                    List Your Services
                   </a>
                 </li>
                 <li>
