@@ -1167,46 +1167,30 @@ export const ProductDetailsData = [
             {
               label: 'State',
               name: 'scholarship_states',
-              type: 'text',
-              // options: [],
+              type: 'multiselect',
+              options: [],
               required: true,
             },
 
             {
               label: 'Category',
               name: 'scholarship_category',
-              type: 'select',
-              options: [
-                'All',
-                'General',
-                'SC/ST/OBC',
-                'Minority',
-                'Girls',
-                'Physically Challenged',
-                'BPL',
-              ],
+              type: 'multiselect',
+              options: [],
               required: true,
             },
             {
               label: 'Type',
               name: 'scholarship_type',
-              type: 'select',
-              options: ['All', 'Scholarship', 'Fellowship'],
+              type: 'multiselect',
+              options: [],
               required: true,
             },
             {
               label: 'Course',
               name: 'scholarship_course',
-              type: 'select',
-              options: [
-                'All',
-                'Engineering',
-                'Medical',
-                'Management',
-                'Talent',
-                'Sports',
-                'Others',
-              ],
+              type: 'multiselect',
+              options: [],
               required: true,
             },
             // {
@@ -2091,6 +2075,11 @@ export const validationSchemas = {
     scholarship_states: Yup.string().when('subcategory', {
       is: 'Scholarship',
       then: (schema) => schema.required('Scholarship state is required'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    study_destination_states: Yup.string().when('subcategory', {
+      is: 'Scholarship',
+      then: (schema) => schema,
       otherwise: (schema) => schema.notRequired(),
     }),
     study_destination_countries: Yup.string()

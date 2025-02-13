@@ -102,3 +102,36 @@ export const loadLoanStudyLevel = [
   value: level,
   label: level,
 }));
+
+export const loadScholarShipCategories = [
+  'All',
+  'General',
+  'SC/ST/OBC',
+  'Minority',
+  'Girls',
+  'Physically Challenged',
+  'BPL',
+].map((category) => ({
+  value: category,
+  label: category,
+}));
+
+export const loadScholarShipTypes = ['All', 'Scholarship', 'Fellowship'].map(
+  (type) => ({
+    value: type,
+    label: type,
+  })
+);
+
+export const loadScholarShipCourses = [
+  'All',
+  'Engineering',
+  'Medical',
+  'Management',
+  'Talent',
+  'Sports',
+  'Others',
+].map((course) => ({
+  value: course,
+  label: course,
+}));
