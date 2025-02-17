@@ -2126,6 +2126,17 @@ const StepVendorProductDetailsPage = () => {
                                             className="text-gray-700"
                                           >
                                             {option.label}
+                                            {field.name === 'refund_policy' &&
+                                              option.value === 'true' && (
+                                                <a
+                                                  href="https://xcellify.com/TermsOfUse#refund-policy"
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  className="text-blue-500 underline hover:text-blue-700 ml-2"
+                                                >
+                                                  (Link)
+                                                </a>
+                                              )}
                                           </label>
                                         </div>
                                       )

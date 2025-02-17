@@ -24,7 +24,8 @@ export const OptionCountries = [
   'UK',
   'Europe',
   'Australia',
-  'Asia',
+  'India',
+  'Other Asian Countries',
   'Others',
 ].map((country) => ({
   value: country,
@@ -104,7 +105,6 @@ export const loadLoanStudyLevel = [
 }));
 
 export const loadScholarShipCategories = [
-  'All',
   'General',
   'SC/ST/OBC',
   'Minority',
@@ -116,7 +116,7 @@ export const loadScholarShipCategories = [
   label: category,
 }));
 
-export const loadScholarShipTypes = ['All', 'Scholarship', 'Fellowship'].map(
+export const loadScholarShipTypes = ['Scholarship', 'Fellowship'].map(
   (type) => ({
     value: type,
     label: type,
@@ -124,7 +124,6 @@ export const loadScholarShipTypes = ['All', 'Scholarship', 'Fellowship'].map(
 );
 
 export const loadScholarShipCourses = [
-  'All',
   'Engineering',
   'Medical',
   'Management',

@@ -6,6 +6,7 @@ import rightArrowIcon from '../assets/right-arrow.svg';
 import PrimaryLogo from '../assets/logo-primary.png';
 import { useNavigate } from 'react-router-dom';
 import steps from '../utils/MultiStepVendorSignupFormData'; // Updated data
+import { fileUploadInfo } from '../utils/MultiStepVendorSignupFormData';
 import { useStore } from '../stores';
 import { AuthStatuses } from '../utils/constants';
 import apiRequest from '../utils/apiRequest';
@@ -318,14 +319,16 @@ const MultiStepVendorSignupPage = () => {
                       <label className="block text-gray-700 mb-2">
                         {field.label}
                         {field.required &&
-                          (field.name !== 'company_name' ||
-                            formData.company_type !== 'Individual') &&
-                          (field.name !== 'msme_certificate' ||
-                            formData.MSME_registered === 'Yes') &&
-                          (field.name !== 'GST' ||
-                            formData.company_type !== 'Individual') && (
-                            <span className="text-red-500 ml-1">*</span>
-                          )}
+                          !(
+                            (field.name === 'company_name' &&
+                              formData.company_type === 'Individual') ||
+                            (field.name === 'CIN' &&
+                              formData.company_type === 'Individual') ||
+                            (field.name === 'GST' &&
+                              formData.company_type === 'Individual') ||
+                            (field.name === 'msme_certificate' &&
+                              formData.MSME_registered !== 'Yes')
+                          ) && <span className="text-red-500 ml-1">*</span>}
                       </label>
 
                       {field.type === 'select' ? (
@@ -371,6 +374,11 @@ const MultiStepVendorSignupPage = () => {
                       {errors[field.name] && (
                         <p className="text-red-500 text-sm mt-1">
                           {errors[field.name]}
+                        </p>
+                      )}
+                      {fileUploadInfo[field.name] && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          {fileUploadInfo[field.name].message}
                         </p>
                       )}
                     </div>

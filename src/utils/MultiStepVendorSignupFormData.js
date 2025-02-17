@@ -28,9 +28,15 @@ const steps = [
           { label: 'Website', name: 'website', type: 'url', required: false },
           {
             label: 'STD Code',
+            name: 'STD_code',
+            type: 'text',
+            required: false,
+          },
+          {
+            label: 'Landline number',
             name: 'landline_number',
             type: 'text',
-            required: true,
+            required: false,
           },
         ],
       },
@@ -192,9 +198,9 @@ const steps = [
       {
         heading: 'Other details',
         fields: [
-          { label: 'PAN', name: 'PAN', type: 'text', required: false },
-          { label: 'CIN', name: 'CIN', type: 'text', required: false },
-          { label: 'GST', name: 'GST', type: 'text', required: true },
+          { label: 'PAN Number', name: 'PAN', type: 'text', required: true },
+          { label: 'CIN Number', name: 'CIN', type: 'text', required: true },
+          { label: 'GST Number', name: 'GST', type: 'text', required: true },
           {
             label: 'Are you registered under MSME?',
             name: 'MSME_registered',
@@ -223,3 +229,21 @@ const steps = [
 ];
 
 export default steps;
+
+export const fileUploadInfo = {
+  digital_signature: {
+    message: 'Accepted: Only PNG, JPG, JPEG (Max: 2MB)',
+    maxSize: 2 * 1024 * 1024, // 2MB
+    acceptedTypes: ['image/png', 'image/jpeg', 'image/jpg'],
+  },
+  brand_logo: {
+    message: 'Accepted: Only PNG, JPG, JPEG, SVG (Max: 2MB)',
+    maxSize: 2 * 1024 * 1024, // 2MB
+    acceptedTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/svg'],
+  },
+  msme_certificate: {
+    message: 'Accepted: PDF & Images (Max: 5MB)',
+    maxSize: 5 * 1024 * 1024, // 5MB
+    acceptedTypes: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
+  },
+};
