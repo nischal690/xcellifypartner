@@ -42,6 +42,7 @@ const MultiStepVendorSignupPage = () => {
   const navigate = useNavigate();
   const { appStore } = useStore();
   const [currentStep, setCurrentStep] = useState(0);
+  const [sameAsAbove, setSameAsAbove] = useState(false);
 
   const userInfo = toJS(appStore.getUserInfo);
   console.log('userInfo', userInfo?.id);
@@ -226,6 +227,26 @@ const MultiStepVendorSignupPage = () => {
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
+    if (
+      sameAsAbove &&
+      [
+        'contact_person_name',
+        'contact_person_email',
+        'contact_person_mobile',
+      ].includes(name)
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        owner_name: name === 'contact_person_name' ? value : prev.owner_name,
+        owner_email: name === 'contact_person_email' ? value : prev.owner_email,
+        owner_mobile:
+          name === 'contact_person_mobile' ? value : prev.owner_mobile,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+
     if (files && files[0]) {
       const file = files[0];
       if (uploadFieldToApiMap[name]) {
@@ -384,6 +405,38 @@ const MultiStepVendorSignupPage = () => {
                     </div>
                   ))}
                 </div>
+                {/* ✅ Checkbox -  */}
+                {section.heading === "Contact person's details" && (
+                  <div className="mt-4 flex items-center">
+                    <input
+                      type="checkbox"
+                      id="sameAsAbove"
+                      checked={sameAsAbove}
+                      onChange={(e) => {
+                        setSameAsAbove(e.target.checked);
+                        if (e.target.checked) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            owner_name: prev.contact_person_name,
+                            owner_email: prev.contact_person_email,
+                            owner_mobile: prev.contact_person_mobile,
+                          }));
+                        } else {
+                          setFormData((prev) => ({
+                            ...prev,
+                            owner_name: '',
+                            owner_email: '',
+                            owner_mobile: '',
+                          }));
+                        }
+                      }}
+                      className="mr-2"
+                    />
+                    <label htmlFor="sameAsAbove" className="text-gray-700">
+                      Same as above (Auto-fill CEO/Owner details)
+                    </label>
+                  </div>
+                )}
               </div>
             ))}
           </>
