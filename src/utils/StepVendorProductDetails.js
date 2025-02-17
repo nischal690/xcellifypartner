@@ -1165,11 +1165,11 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'State',
+              label: 'State* (required only for Country/Origin: "National")',
               name: 'scholarship_states',
               type: 'multiselect',
               options: [],
-              required: true,
+              required: false,
             },
 
             {
@@ -1468,13 +1468,13 @@ export const ProductDetailsData = [
           subcategory: 'Education Loan',
           fields: [
             {
-              label: 'Minimum Fees Range',
+              label: 'Minimum Processing Fees',
               name: 'fee_range_min',
               type: 'number',
               required: true,
             },
             {
-              label: 'Maximum Fees Range',
+              label: 'Maximum Processing Fees',
               name: 'fee_range_max',
               type: 'number',
               required: true,
@@ -1876,9 +1876,10 @@ export const validationSchemas = {
     service_provided_since: Yup.date().required(
       'Service provided since is required'
     ),
-    counselling_duration: Yup.string().required(
-      'Counselling duration is required'
-    ),
+    counselling_duration: Yup.number()
+      .required('Counselling duration is required')
+      .min(0, 'Counselling duration cannot be negative'),
+
     service_available_cities: Yup.string().required('Service city is required'),
     study_destination_countries: Yup.string().required(
       'Study destination is required'
@@ -1999,11 +2000,16 @@ export const validationSchemas = {
       then: (schema) => schema.required('Study level is required'),
       otherwise: (schema) => schema.notRequired(),
     }),
-    loan_duration: Yup.string().when('subcategory', {
+    loan_duration: Yup.number().when('subcategory', {
       is: 'Education Loan',
-      then: (schema) => schema.required('Loan duration is required'),
-      otherwise: (schema) => schema.notRequired(),
+      then: (schema) =>
+        schema
+          .required('Loan duration is required')
+          .min(0, 'Loan duration cannot be negative'),
+      otherwise: (schema) =>
+        schema.notRequired().min(0, 'Loan duration cannot be negative'),
     }),
+
     loan_eligibility: Yup.string().when('subcategory', {
       is: 'Education Loan',
       then: (schema) => schema.required('Loan eligibility is required'),
@@ -2023,7 +2029,8 @@ export const validationSchemas = {
         schema
           .min(0, 'Minimum fee must be positive')
           .required('Minimum fee range is required'),
-      otherwise: (schema) => schema.notRequired(),
+      otherwise: (schema) =>
+        schema.notRequired().min(0, 'Minimum fee must be positive'),
     }),
     fee_range_max: Yup.number().when('subcategory', {
       is: 'Education Loan',
@@ -2031,7 +2038,8 @@ export const validationSchemas = {
         schema
           .min(0, 'Maximum fee must be positive')
           .required('Maximum fee range is required'),
-      otherwise: (schema) => schema.notRequired(),
+      otherwise: (schema) =>
+        schema.notRequired().min(0, 'Maximum fee must be positive'),
     }),
     loan_interest_percentage: Yup.number().when('subcategory', {
       is: 'Education Loan',
@@ -2039,7 +2047,10 @@ export const validationSchemas = {
         schema
           .min(0, 'Interest percentage must be a positive number')
           .required('Interest percentage is required'),
-      otherwise: (schema) => schema.notRequired(),
+      otherwise: (schema) =>
+        schema
+          .notRequired()
+          .min(0, 'Interest percentage must be a positive number'),
     }),
     loan_amount_range: Yup.number().when('subcategory', {
       is: 'Education Loan',
@@ -2047,7 +2058,10 @@ export const validationSchemas = {
         schema
           .min(0, 'Loan amount range must be a positive number')
           .required('Loan amount range is required'),
-      otherwise: (schema) => schema.notRequired(),
+      otherwise: (schema) =>
+        schema
+          .notRequired()
+          .min(0, 'Loan amount range must be a positive number'),
     }),
 
     // Fields specific to "Scholarship"
@@ -2061,10 +2075,16 @@ export const validationSchemas = {
       then: (schema) => schema.required('Scholarship study level is required'),
       otherwise: (schema) => schema.notRequired(),
     }),
-    scholarship_duration: Yup.string().when('subcategory', {
+    scholarship_duration: Yup.number().when('subcategory', {
       is: 'Scholarship',
-      then: (schema) => schema.required('Scholarship duration is required'),
-      otherwise: (schema) => schema.notRequired(),
+      then: (schema) =>
+        schema
+          .required('Scholarship duration is required')
+          .min(0, 'Scholarship duration must be a non-negative number'),
+      otherwise: (schema) =>
+        schema
+          .notRequired()
+          .min(0, 'Scholarship duration must be a non-negative number'),
     }),
     scholarship_eligibility: Yup.string().when('subcategory', {
       is: 'Scholarship',
@@ -2072,11 +2092,13 @@ export const validationSchemas = {
       otherwise: (schema) => schema.notRequired(),
     }),
 
-    scholarship_states: Yup.string().when('subcategory', {
-      is: 'Scholarship',
+    scholarship_states: Yup.string().when(['subcategory', 'country_origin'], {
+      is: (subcategory, country_origin) =>
+        subcategory === 'Scholarship' && country_origin === 'National',
       then: (schema) => schema.required('Scholarship state is required'),
       otherwise: (schema) => schema.notRequired(),
     }),
+
     study_destination_states: Yup.string().when('subcategory', {
       is: 'Scholarship',
       then: (schema) => schema,

@@ -20,6 +20,14 @@ const signupValidationSchemas = [
         'Landline number must contain only numbers.',
         (value) => !value || /^\d+$/.test(value) // Validates only if value is not empty
       ),
+    STD_code: yup
+      .string()
+      .nullable()
+      .test(
+        'is-valid-STD',
+        'STD code must contain only numbers.',
+        (value) => !value || /^\d+$/.test(value) // Validates only if value is not empty
+      ),
     contact_person_name: yup
       .string()
       .required('Contact person name is required.'),
@@ -89,19 +97,27 @@ const signupValidationSchemas = [
       .string()
       .required('IFSC number is required.')
       .matches(/^/, 'Invalid IFSC number.'),
-    PAN: yup.string().nullable().matches(/^/, 'Invalid PAN format.'),
-    CIN: yup.string().nullable(),
+    PAN: yup.string().when('company_type', {
+      then: () => yup.string().required('PAN is required.'), // Required for Individual
+      otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
+    }),
+    CIN: yup.string().when('company_type', {
+      is: (value) => value === 'Individual',
+      then: () => yup.string().nullable(), // Not required for Individual
+      otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
+    }),
+
     GST: yup.string().when('company_type', {
       is: (value) => value === 'Individual',
-      then: () => yup.string().nullable(),
+      then: () => yup.string().nullable(), // Not required for Individual
       otherwise: () =>
         yup
           .string()
-          .required('GST is required')
+          .required('GST is required for companies.')
           .matches(
             /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
             'Invalid GST format'
-          ),
+          ), // Required and validated for other companies
     }),
     MSME_registered: yup.string().required('Please specify MSME registration.'),
 
@@ -110,7 +126,13 @@ const signupValidationSchemas = [
       then: () =>
         yup
           .mixed()
-          .required('MSME Certificate is required when registered under MSME'),
+          .test(
+            'required',
+            'MSME Certificate is required when registered under MSME',
+            (value) => {
+              return value && value instanceof File; // Ensures a file is uploaded
+            }
+          ),
       otherwise: () => yup.mixed().nullable(),
     }),
   }),
