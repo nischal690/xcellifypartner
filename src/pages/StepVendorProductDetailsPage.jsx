@@ -65,6 +65,7 @@ const StepVendorProductDetailsPage = () => {
     isOpen: true,
   });
 
+  const [loading, setLoading] = useState(false);
   const [showMenu, setShowMenu] = useState(null);
   const [previewMedia, setPreviewMedia] = useState(null);
 
@@ -200,13 +201,16 @@ const StepVendorProductDetailsPage = () => {
 
   const handleProductCategoryChange = (e) => {
     const selectedCategory = e.target.value;
+    const gstRate = partnerInfo?.GST
+      ? gstRateMapping[selectedCategory] || ''
+      : '0';
     setCurrentForm((prev) => ({
       ...prev,
       category: selectedCategory,
       formData: {
         ...prev.formData,
         hsn_code: hsnCodeMapping[selectedCategory] || '',
-        gst_rate: gstRateMapping[selectedCategory] || '',
+        gst_rate: gstRate,
       },
     }));
   };
@@ -837,11 +841,107 @@ const StepVendorProductDetailsPage = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    try {
-      const formData = prepareFormData();
+  const prepareFormDataFromCurrentForm = () => {
+    const formData = currentForm.formData;
+    if (!formData || Object.keys(formData).length === 0) {
+      toast.error('No valid product to submit. Please enter product details.');
+      return null;
+    }
 
-      if (!formData) return;
+    const normalizedData = normalizeFields(formData);
+
+    const processedData = {
+      ...normalizedData,
+      category: currentForm.category,
+      refund_policy:
+        formData.refund_policy === 'true'
+          ? true
+          : formData.refund_policy === 'false'
+          ? false
+          : null,
+      refund_policy_media:
+        formData.refund_policy === 'false' && formData.refund_policy_media?.id
+          ? { id: formData.refund_policy_media.id }
+          : null,
+      product_images: formData.product_images
+        ? formData.product_images.map((img) => ({ id: img.id }))
+        : [],
+      product_videos: formData.product_videos?.id
+        ? { id: formData.product_videos.id }
+        : null,
+    };
+
+    if (currentForm.category !== 'Study Finance') {
+      processedData.price = formData.price || 0;
+      processedData.discount = formData.discount || 0;
+      processedData.final_price = formData.final_price || 0;
+    }
+    if (processedData.refund_policy !== false) {
+      delete processedData.refund_policy_media;
+    }
+
+    if (!processedData.product_images.length) {
+      delete processedData.product_images;
+    }
+    if (!processedData.product_videos) {
+      delete processedData.product_videos;
+    }
+
+    const requestBody = {
+      partner_id: partnerInfo.id,
+      products_details: [processedData],
+    };
+
+    //  console.log to check the single product submission body
+    console.log(
+      'Final Request Body for Single Product:',
+      JSON.stringify(requestBody, null, 2)
+    );
+
+    return requestBody;
+  };
+
+  const handleSubmit = async () => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+
+      let formData;
+
+      if (
+        currentForm.category &&
+        Object.keys(currentForm.formData).length > 0
+      ) {
+        console.log(
+          'Submitting only entered product without adding to categories...'
+        );
+
+        const validationResult = await validateForm(
+          currentForm.category,
+          currentForm.formData
+        );
+
+        if (!validationResult.isValid) {
+          console.log('Validation failed:', validationResult.errors);
+          setCurrentForm((prev) => ({
+            ...prev,
+            errors: validationResult.errors,
+          }));
+          toast.error('Please fill all required fields before submitting.');
+          setLoading(false);
+          return;
+        }
+
+        formData = prepareFormDataFromCurrentForm();
+      } else {
+        formData = prepareFormData();
+      }
+
+      if (!formData) {
+        setLoading(false);
+        return;
+      }
 
       console.log('Submitting with formData:', formData);
 
@@ -911,17 +1011,29 @@ const StepVendorProductDetailsPage = () => {
         );
       } else {
         toast.success('All products submitted successfully!');
+
+        setCurrentForm({
+          category: '',
+          formData: {},
+          errors: {},
+          isOpen: true,
+        });
+
         if (!redirectedFromDashboard) {
           appStore.setAppProperty(
             'profileStatus',
             ProfileStatuses.UNDER_REVIEW
           );
           navigate('/application-sent');
-        } else navigate('/home/products');
+        } else {
+          navigate('/home/products');
+        }
       }
     } catch (error) {
       console.error('Unexpected error during submission:', error);
       toast.error(`Unexpected error: ${error.message || 'Unknown error'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -2265,13 +2377,42 @@ const StepVendorProductDetailsPage = () => {
           </button>
           <button
             type="button"
-            className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md"
+            className={`h-10 w-60 ml-4 px-4 py-2 font-dmsans font-bold rounded-md flex items-center justify-center ${
+              loading ? 'cursor-not-allowed opacity-75' : ''
+            }`}
             style={{
               background: 'linear-gradient(to right, #876FFD, #6C59CA)',
             }}
             onClick={handleSubmit}
+            disabled={loading}
           >
-            Submit All Products
+            {loading ? (
+              <>
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  ></path>
+                </svg>
+                Processing...
+              </>
+            ) : (
+              'Submit All Products'
+            )}
           </button>
         </div>
 
