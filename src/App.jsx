@@ -137,11 +137,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/about-us',
-    element: <AboutusPage />
+    element: <AboutusPage />,
   },
   {
-    path:'/contact',
-    element: <ContactUs />
+    path: '/contact',
+    element: <ContactUs />,
   },
   {
     path: '*',
@@ -152,6 +152,19 @@ const router = createBrowserRouter([
 const App = () => {
   const { appStore } = useStore();
   const [loading, setLoading] = useState(true); // Add loading state
+
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    const checkIfMobileDevice = () => {
+      const hasTouch = navigator.maxTouchPoints > 1;
+      const screenWidth = window.screen.width < 768;
+
+      setIsMobileDevice(hasTouch && screenWidth);
+    };
+
+    checkIfMobileDevice();
+  }, []);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -165,6 +178,10 @@ const App = () => {
 
     initializeAuth();
   }, [appStore]);
+
+  if (isMobileDevice) {
+    return <ComingSoonPage />;
+  }
 
   return loading ? null : (
     <>
