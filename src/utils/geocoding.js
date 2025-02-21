@@ -91,18 +91,24 @@ export const loadCities = (state) => {
 
 export const loadIndianStates = () => {
   const statesList = State.getStatesOfCountry('IN');
-  return statesList.map((state) => ({
-    value: state.name,
-    label: state.name,
-  }));
+
+  return statesList
+    .map((state) => ({
+      value: state.name,
+      label: state.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 };
 
 export const loadAllIndianCities = () => {
   const citiesList = City.getAllCities().filter(
     (city) => city.countryCode === 'IN'
   );
-  return citiesList.map((city) => ({
-    value: city.name,
-    label: city.name,
-  }));
+
+  return citiesList
+    .map((city) => ({
+      value: city.name,
+      label: city.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 };
