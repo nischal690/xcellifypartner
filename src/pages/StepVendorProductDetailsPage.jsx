@@ -1109,7 +1109,6 @@ const StepVendorProductDetailsPage = () => {
       'google_reviews',
       'service_provided_since',
       'counselling_duration',
-      'travel_upto',
       'loan_interest_percentage',
       'fee_range_min',
       'fee_range_max',
