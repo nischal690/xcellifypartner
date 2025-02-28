@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useDispatch } from 'react-redux';
 import { data } from './loginPageData';
@@ -87,6 +87,7 @@ export default function Login() {
         saveJwtInLocal(response.data.token);
         await validateAndSetAuthStatus(appStore);
         navigate('/home');
+        toast.success('Login successful', { position: 'top-right' });
       } else {
         let statusCode = `${response.response.data.status_code}`;
         const errorMessage =
@@ -380,8 +381,6 @@ export default function Login() {
       >
         <EmailVerificationPwd closeDialog={closeDialog} />
       </dialog>
-
-      <ToastContainer autoClose={2000} />
     </div>
   );
 }

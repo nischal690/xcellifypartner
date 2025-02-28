@@ -13,6 +13,7 @@ import apiRequest from '../utils/apiRequest';
 import { validateStep } from '../utils/signupDetailsValidations';
 import Dropdown from '../components/commonComponents/Dropdown';
 import StepVendorProductDetailsPage from './StepVendorProductDetailsPage';
+import FileUploadPreviewCard from '../components/commonComponents/profileDetails/FileUploadPreviewCard';
 
 import signupValidationSchemas from '../utils/signupDetailsValidations';
 import {
@@ -105,7 +106,11 @@ const MultiStepVendorSignupPage = () => {
         },
       });
       console.log(`${fieldName} uploaded successfully`, response);
-      toast.success(`${fieldName} uploaded successfully`);
+      if (!toast.isActive(fieldName)) {
+        toast.success(`${fieldName} uploaded successfully`, {
+          toastId: fieldName,
+        });
+      }
     } catch (error) {
       console.error(`Error uploading ${fieldName}:`, error);
     }
@@ -226,6 +231,29 @@ const MultiStepVendorSignupPage = () => {
   // Update your handleChange function
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
+    if (files && files[0]) {
+      const file = files[0];
+
+      // File validation
+      const { maxSize, acceptedTypes } = fileUploadInfo[name] || {};
+      if (maxSize && file.size > maxSize) {
+        toast.error(`File size exceeds ${maxSize / 1024 / 1024}MB`);
+        return;
+      }
+      if (acceptedTypes && !acceptedTypes.includes(file.type)) {
+        toast.error(`Invalid file type. Accepted: ${acceptedTypes.join(', ')}`);
+        return;
+      }
+
+      // Upload file
+      if (uploadFieldToApiMap[name]) {
+        uploadFile(name, userInfo?.id, file);
+      }
+
+      // Update form data with the uploaded file
+      setFormData((prev) => ({ ...prev, [name]: file }));
+    }
 
     if (
       sameAsAbove &&
@@ -376,12 +404,32 @@ const MultiStepVendorSignupPage = () => {
                           rows={4}
                         />
                       ) : field.type === 'file' ? (
-                        <input
-                          type="file"
-                          name={field.name}
-                          onChange={handleChange}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
-                        />
+                        <div>
+                          <input
+                            type="file"
+                            name={field.name}
+                            onChange={handleChange}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
+                          />
+
+                          {/* Show preview card if file is uploaded */}
+                          {['digital_signature', 'brand_logo'].includes(
+                            field.name
+                          ) &&
+                            formData[field.name] && (
+                              <FileUploadPreviewCard
+                                file={formData[field.name]}
+                                fieldName={field.name}
+                                onUpload={uploadFile}
+                                onRemove={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    [field.name]: null,
+                                  }))
+                                }
+                              />
+                            )}
+                        </div>
                       ) : (
                         <input
                           type={field.type}
@@ -392,6 +440,7 @@ const MultiStepVendorSignupPage = () => {
                           placeholder={`Enter ${field.label.toLowerCase()}`}
                         />
                       )}
+
                       {errors[field.name] && (
                         <p className="text-red-500 text-sm mt-1">
                           {errors[field.name]}
