@@ -1989,6 +1989,9 @@ export const validationSchemas = {
     event_registration_deadline: Yup.date()
       .min(new Date(), 'Registration deadline must be in the future')
       .required('Registration deadline is required'),
+    refund_policy: Yup.string()
+      .oneOf(['true', 'false'])
+      .required('Refund policy is required'),
   }),
 
   'Study Finance': Yup.object().shape({

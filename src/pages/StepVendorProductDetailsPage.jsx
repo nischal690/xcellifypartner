@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
 
@@ -2376,7 +2376,7 @@ const StepVendorProductDetailsPage = () => {
           </button>
           <button
             type="button"
-            className={`h-10 w-60 ml-4 px-4 py-2 font-dmsans font-bold rounded-md flex items-center justify-center ${
+            className={`h-10 w-60 ml-4 px-4 py-2 font-dmsans text-[#F3F1FF] font-bold rounded-md flex items-center justify-center ${
               loading ? 'cursor-not-allowed opacity-75' : ''
             }`}
             style={{

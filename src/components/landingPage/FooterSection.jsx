@@ -42,7 +42,12 @@ const FooterSection = () => {
                   </a>
                 </li>
                 <li>
-                  <a href="#careers" className="hover:underline">
+                  <a
+                    href="https://xcellify.com/carrers-page"
+                    className="hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Careers
                   </a>
                 </li>
@@ -50,6 +55,8 @@ const FooterSection = () => {
                   <a
                     href="https://education.economictimes.indiatimes.com/news/breaking-barriers-in-education-xcellify-indias-first-comprehensive-student-marketplace-makes-high-quality-career-and-lifestyle-resources-accessible-to-every-student-in-india/117737536"
                     className="hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     In the news
                   </a>
@@ -57,6 +64,8 @@ const FooterSection = () => {
                 <li>
                   <a
                     href="/TermsOfUse#refund-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="hover:underline"
                   >
                     Refund policy
@@ -104,24 +113,32 @@ const FooterSection = () => {
                 <a
                   href="https://www.facebook.com/share/17tv5Rta4h/?mibextid=LQQJ4d"
                   className="hover:text-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <FaFacebook />
                 </a>
                 <a
                   href="https://www.instagram.com/xcellify_official/"
                   className="hover:text-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <FaInstagram />
                 </a>
                 <a
                   href="https://www.x.com/xcellify"
                   className="hover:text-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <FaSquareXTwitter />
                 </a>
                 <a
                   href="https://www.linkedin.com/company/xcellify"
                   className="hover:text-white"
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
                   <FaLinkedin />
                 </a>
@@ -139,22 +156,18 @@ const FooterSection = () => {
               <div className="flex space-x-4">
                 <a
                   href="/PrivacyPolicy"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:underline"
-                  // onClick={(e) => {
-                  //   e.preventDefault();
-                  //   navigate('/PrivacyPolicy');
-                  // }}
                 >
                   Privacy Policy
                 </a>
                 <span>|</span>
                 <a
                   href="/TermsOfUse"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:underline"
-                  // onClick={(e) => {
-                  //   e.preventDefault();
-                  //   navigate('/TermsOfUse');
-                  // }}
                 >
                   Terms Of Use
                 </a>
