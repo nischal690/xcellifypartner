@@ -39,7 +39,7 @@ function Sidebar() {
   };
 
   const goToHome = () => {
-    navigate('/home');
+    navigate('/home/dashboard');
     return;
   };
 
