@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
+import Joyride from 'react-joyride';
+
 import { toJS } from 'mobx';
 
 import rightArrowIcon from '../assets/right-arrow.svg';
 import PrimaryLogo from '../assets/logo-primary.png';
 import { useNavigate } from 'react-router-dom';
 import steps from '../utils/MultiStepVendorSignupFormData'; // Updated data
+import { tourSteps } from '../utils/MultiStepVendorSignupFormData';
 import { fileUploadInfo } from '../utils/MultiStepVendorSignupFormData';
 import { useStore } from '../stores';
 import { AuthStatuses } from '../utils/constants';
@@ -23,6 +26,7 @@ import {
   loadStates,
 } from '../utils/geocoding';
 import { toast } from 'react-toastify';
+import OnBoardingHeader from '../components/onboardingPage/OnBoardingHeader';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -45,8 +49,9 @@ const MultiStepVendorSignupPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [sameAsAbove, setSameAsAbove] = useState(false);
 
-  const userInfo = toJS(appStore.getUserInfo);
-  console.log('userInfo', userInfo?.id);
+  const userInfo = toJS(appStore.userInfo);
+  const partnerInfo = toJS(appStore.partnerInfo);
+  // console.log('partnerInfo==', partnerInfo?.first_name);
 
   // Dynamically initialize form data
   const initialFormData = steps
@@ -306,15 +311,53 @@ const MultiStepVendorSignupPage = () => {
     }
   };
 
+  const handleLogout = () => {
+    // Navigate first to prevent re-executing the useEffect logic before logout completes
+    navigate('/login');
+
+    // Clear authentication & user info
+    appStore.setAppProperty('authStatus', AuthStatuses.UNAUTHENTICATED);
+    appStore.updatePartnerInfo({});
+    localStorage.removeItem('token');
+
+    // Show logout success message
+    toast.success('Logout Successfully');
+  };
+
   return (
     <div className="w-full bg-white rounded-md p-6">
+      <Joyride
+        steps={tourSteps}
+        continuous={true}
+        showProgress={true}
+        showSkipButton={true}
+        styles={{
+          options: {
+            arrowColor: '#fff',
+            backgroundColor: '#fff',
+            overlayColor: 'rgba(0, 0, 0, 0.5)',
+            primaryColor: '#876FFD',
+            textColor: '#333',
+            width: 400,
+            zIndex: 1000,
+          },
+          buttonClose: {
+            color: '#876FFD',
+          },
+          buttonNext: {
+            backgroundColor: '#876FFD',
+          },
+          buttonBack: {
+            color: '#876FFD',
+          },
+        }}
+      />
+
       {/* Header */}
-      <div className="px-3 mb-5 w-fit" onClick={() => navigate('/')}>
-        <img src={PrimaryLogo} className="w-24 lg:w-32" alt="Xcellify" />
-      </div>
+      <OnBoardingHeader partnerInfo={partnerInfo} handleLogout={handleLogout} />
 
       {/* Step Indicators */}
-      <div className="flex items-center justify-center space-x-5 mb-6">
+      <div className="step-indicators  flex items-center justify-center space-x-5 mb-6">
         {steps.map((step, index) => (
           <React.Fragment key={step.title}>
             <div className="flex items-center" style={{ marginLeft: '5px' }}>

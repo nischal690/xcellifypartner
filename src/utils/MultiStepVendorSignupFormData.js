@@ -247,3 +247,31 @@ export const fileUploadInfo = {
     acceptedTypes: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
   },
 };
+
+export const tourSteps = [
+  {
+    target: 'body',
+    content: 'Welcome to the onboarding! Let’s guide you through the process.',
+    placement: 'center',
+  },
+  {
+    target: '.step-indicators',
+    content: 'Fill in all required details before proceeding to the next step.',
+    placement: 'top',
+  },
+  {
+    target: '.onboarding-logo',
+    content: 'Click here to access the home dashboard and fill details later.',
+    placement: 'bottom',
+  },
+  {
+    target: '.profile-card',
+    content: 'Click here to access your profile page and fill details later.',
+    placement: 'bottom',
+  },
+  {
+    target: '.logout-button',
+    content: 'Click here to logout anytime.',
+    placement: 'bottom',
+  },
+];

@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
 
 import { ProductDetailsData } from '../utils/StepVendorProductDetails';
+import PrimaryLogo from '../assets/logo-primary.png';
+
 import {
   loadCountries,
   loadAllIndianCities,
@@ -1866,6 +1868,12 @@ const StepVendorProductDetailsPage = () => {
   return (
     <ErrorBoundary>
       <div>
+        <div
+          className="w-fit cursor-pointer m-10"
+          onClick={() => navigate('/home/dashboard')}
+        >
+          <img src={PrimaryLogo} className="w-24 lg:w-32" alt="Xcellify" />
+        </div>
         {categories.map((category, categoryIndex) => (
           <div key={categoryIndex} className="mb-6 border rounded-md m-10">
             <div
