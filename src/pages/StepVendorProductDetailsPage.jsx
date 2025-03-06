@@ -442,8 +442,18 @@ const StepVendorProductDetailsPage = () => {
           toast.error(`File ${file.name} exceeds 5MB limit`);
           return false;
         }
-        if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
-          toast.error(`${file.name} must be a PDF file`);
+        if (
+          ![
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'image/jpeg',
+            'image/png',
+          ].includes(file.type)
+        ) {
+          toast.error(
+            `${file.name} must be a PDF, DOC, DOCX, JPG, or PNG file`
+          );
           return false;
         }
       }
@@ -1113,6 +1123,7 @@ const StepVendorProductDetailsPage = () => {
       'counselling_duration',
       'loan_interest_percentage',
       'fee_range_min',
+      'travel_upto',
       'fee_range_max',
       'loan_duration',
       'loan_amount_range',
@@ -1383,6 +1394,9 @@ const StepVendorProductDetailsPage = () => {
                                   : ''
                               }`}
                             ></textarea>
+                            <p className="text-xs text-gray-500 mt-1">
+                              50 to 1000 characters
+                            </p>
                             {renderErrorMessage(product.errors, field.name)}
                           </>
                         ) : field.type === 'select' ? (
@@ -1974,6 +1988,9 @@ const StepVendorProductDetailsPage = () => {
                                         : ''
                                     }`}
                                   />
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    50 to 1000 characters
+                                  </p>
                                   {renderErrorMessage(
                                     currentForm.errors,
                                     field.name
@@ -2289,7 +2306,7 @@ const StepVendorProductDetailsPage = () => {
                                                 'refund_policy_media'
                                               )
                                             }
-                                            accept="application/pdf, image/*"
+                                            accept="application/pdf, .pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, .doc, .docx, image/*"
                                             className={`w-full p-2 border rounded-md ${
                                               currentForm.errors[
                                                 'refund_policy_media'
@@ -2364,32 +2381,26 @@ const StepVendorProductDetailsPage = () => {
             </div>
           )}
         </div>
-        <div className="flex justify-end gap-10 mt-9">
+        <div className="flex justify-end gap-10 m-9">
           <button
             type="button"
-            className="w-96 px-4 py-2 bg-[#F3F1FF] text-blue-primary font-dmsans font-bold rounded-md  border border-blue-primary"
+            className="w-96 px-4 py-2  text-[#F3F1FF] font-dmsans font-bold rounded-md bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary"
             onClick={handleAddProductForm}
           >
             Save & add product
           </button>
           <button
             type="button"
-            className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md"
-            style={{
-              background: 'linear-gradient(to right, #876FFD, #6C59CA)',
-            }}
+            className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary"
             onClick={handleSkipNow}
           >
             Skip as of now
           </button>
           <button
             type="button"
-            className={`h-10 w-60 ml-4 px-4 py-2 font-dmsans text-[#F3F1FF] font-bold rounded-md flex items-center justify-center ${
+            className={`h-10 w-60 ml-4 px-4 py-2 font-dmsans text-[#F3F1FF] font-bold rounded-md flex items-center justify-center bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary ${
               loading ? 'cursor-not-allowed opacity-75' : ''
             }`}
-            style={{
-              background: 'linear-gradient(to right, #876FFD, #6C59CA)',
-            }}
             onClick={handleSubmit}
             disabled={loading}
           >
