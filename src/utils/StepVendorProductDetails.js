@@ -451,7 +451,7 @@ export const ProductDetailsData = [
               label: 'Can travel up to in km',
               name: 'travel_upto',
               type: 'select',
-              options: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+              options: [5, 10, 20, 50],
               required: true,
             },
           ],
