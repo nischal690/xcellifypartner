@@ -451,7 +451,7 @@ export const ProductDetailsData = [
               label: 'Can travel up to in km',
               name: 'travel_upto',
               type: 'select',
-              options: ['Upto 5KM', 'Upto 10KM', 'Upto 20KM', 'Upto 50KM'],
+              options: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50],
               required: true,
             },
           ],
@@ -777,7 +777,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Duration',
+              label: 'Duration in hours',
               name: 'duration',
               type: 'text',
               required: true,
@@ -1246,7 +1246,7 @@ export const ProductDetailsData = [
             //   required: false,
             // },
             {
-              label: 'Study destination states',
+              label: 'States where service is available',
               name: 'study_destination_states',
               type: 'multiselect',
               options: [],

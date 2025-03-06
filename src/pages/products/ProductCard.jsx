@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import brandLogoPlaceholder from '../../assets/brandLogoPlaceholder.png'
+import brandLogoPlaceholder from '../../assets/brandLogoPlaceholder.png';
 
 export default function ProductCard({ product, brandLogo }) {
   const navigate = useNavigate();
@@ -17,13 +17,14 @@ export default function ProductCard({ product, brandLogo }) {
 
   let productImage = brandLogoPlaceholder;
 
-  if(!!product_images?.length && !!product_images[0]?.url){
-    if(!!product_images[0]?.formats?.small?.url){
-      productImage = import.meta.env?.VITE_STRAPI_URL + product_images[0]?.formats?.small?.url;
-    }
-    else productImage = import.meta.env?.VITE_STRAPI_URL + product_images[0]?.url;
+  if (!!product_images?.length && !!product_images[0]?.url) {
+    if (!!product_images[0]?.formats?.small?.url) {
+      productImage =
+        import.meta.env?.VITE_STRAPI_URL +
+        product_images[0]?.formats?.small?.url;
+    } else
+      productImage = import.meta.env?.VITE_STRAPI_URL + product_images[0]?.url;
   }
-                  
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden max-w-[370px] w-full flex flex-col justify-between h-full">

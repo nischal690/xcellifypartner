@@ -84,6 +84,7 @@ const signupValidationSchemas = [
         if (!value) return true;
         return value && value.size <= 2 * 1024 * 1024;
       }),
+    referred_by: yup.string().nullable(),
   }),
   // Step 2: Compliance Details
   yup.object().shape({

@@ -251,7 +251,8 @@ export const fileUploadInfo = {
 export const tourSteps = [
   {
     target: 'body',
-    content: 'Welcome to the onboarding! Let’s guide you through the process.',
+    content:
+      'Welcome to the onboarding journey! Let`s guide you through each step.',
     placement: 'center',
   },
   {
