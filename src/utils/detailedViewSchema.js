@@ -183,8 +183,8 @@ export const detailedViewSchemaData = {
           //   name: 'study_destination_states',
           // },
           {
-            label: 'Study destination cities',
-            name: 'study_destination_cities',
+            label: 'Cities Where Service Is Available',
+            name: 'service_available_cities',
           },
           // {
           //   label: 'Service delivery',

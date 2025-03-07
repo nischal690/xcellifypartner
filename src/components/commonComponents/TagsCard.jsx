@@ -9,7 +9,7 @@ export default function TagsCard({
   cardStyle = 'shadow-md shadow-gray-400 p-3 rounded-md',
   keyValuePairStyle = 'mb-3 last:mb-0',
   keyStyle = 'font-semibold mb-2',
-  tagStyle = 'px-3 py-0.5 bg-[#CFC5FE] text-[#242424] rounded-md mx-1 font-medium text-sm',
+  tagStyle = 'px-3 py-0.5 bg-[#CFC5FE] text-[#242424] rounded-md mx-1 font-medium text-sm break-words overflow-hidden text-ellipsis',
   containerStyle = 'min-w-96',
   defaultValue = 'N/A',
   onEditClick,
