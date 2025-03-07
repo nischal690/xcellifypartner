@@ -463,6 +463,20 @@ const StepVendorProductDetailsPage = () => {
     if (validFiles.length === 0) return;
 
     if (fieldName === 'product_images') {
+      const existingFiles =
+        categoryIndex !== undefined
+          ? categories[categoryIndex].products[productIndex].formData[
+              fieldName
+            ] || []
+          : currentForm.formData[fieldName] || [];
+
+      if (existingFiles.length + validFiles.length > 5) {
+        toast.error('You can upload a maximum of 5 images.');
+        return;
+      }
+    }
+
+    if (fieldName === 'product_images') {
       if (categoryIndex !== undefined) {
         const updatedCategories = [...categories];
         const product = updatedCategories[categoryIndex].products[productIndex];
@@ -1485,6 +1499,17 @@ const StepVendorProductDetailsPage = () => {
                                       : '20MB'}
                                     )
                                   </p>
+                                  {/* Upload limit text */}
+                                  {field.name === 'product_images' && (
+                                    <p className="text-gray-500 text-xs mt-1">
+                                      Up to 5 images are accepted.
+                                    </p>
+                                  )}
+                                  {field.name === 'product_videos' && (
+                                    <p className="text-gray-500 text-xs mt-1">
+                                      Only 1 video is accepted.
+                                    </p>
+                                  )}
                                 </label>
                               </div>
                               {/* Preview section */}
@@ -2073,8 +2098,23 @@ const StepVendorProductDetailsPage = () => {
                                           Click to upload
                                         </p>
                                         <p className="text-purple-primary text-xs">
-                                          (Max 20mb)
+                                          (Max{' '}
+                                          {field.name === 'product_images'
+                                            ? '5MB'
+                                            : '20MB'}
+                                          )
                                         </p>
+                                        {/* Upload limit text */}
+                                        {field.name === 'product_images' && (
+                                          <p className="text-gray-500 text-xs mt-1">
+                                            Up to 5 images are accepted.
+                                          </p>
+                                        )}
+                                        {field.name === 'product_videos' && (
+                                          <p className="text-gray-500 text-xs mt-1">
+                                            Only 1 video is accepted.
+                                          </p>
+                                        )}
                                       </label>
                                     </div>
 
@@ -2315,6 +2355,11 @@ const StepVendorProductDetailsPage = () => {
                                                 : ''
                                             }`}
                                           />
+                                          <p className="text-xs text-gray-500">
+                                            Only PDFs, DOCX files, and images
+                                            (JPG, PNG) up to 5MB are accepted.
+                                          </p>
+
                                           {currentForm.formData[
                                             'refund_policy_media'
                                           ]?.name && (
