@@ -186,10 +186,10 @@ export const detailedViewSchemaData = {
             label: 'Cities Where Service Is Available',
             name: 'service_available_cities',
           },
-          // {
-          //   label: 'Service delivery',
-          //   name: 'service_delivery',
-          // },
+          {
+            label: 'Service delivery',
+            name: 'service_delivery',
+          },
         ],
       },
     ],

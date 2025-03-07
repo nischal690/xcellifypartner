@@ -245,13 +245,13 @@ export const ProductDetailsData = [
               options: [],
               required: true,
             },
-            // {
-            //   label: 'Service delivery',
-            //   name: 'service_delivery',
-            //   type: 'select',
-            //   options: ['Online', 'Offline'],
-            //   required: false,
-            // },
+            {
+              label: 'Service delivery',
+              name: 'service_delivery',
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
           ],
         },
         {
@@ -1845,7 +1845,7 @@ export const validationSchemas = {
     service_available_cities: Yup.string().required(
       'Destination city is required'
     ),
-    // service_delivery: Yup.string().oneOf(['Online', 'Offline']),
+    service_delivery: Yup.string().required('Service delivery is required'),
   }),
 
   Tutoring: Yup.object().shape({
