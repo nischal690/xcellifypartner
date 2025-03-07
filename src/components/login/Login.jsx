@@ -84,12 +84,31 @@ export default function Login() {
         response?.status == HTTP_CODE.SUCCESS &&
         `${response?.data?.status_code}` === '112'
       ) {
+        if (
+          response?.data?.role === 'parent' ||
+          response?.data?.role === 'student'
+        ) {
+          toast.warn(
+            "You are registered as 'Customer' with us with this email. Please use another email to access the Features of this portal",
+            { position: 'top-right' }
+          );
+          setLoading(false);
+          return;
+        }
+        if (response?.data?.role === 'admin') {
+          toast.info('This account is linked to the admin portal', {
+            position: 'top-right',
+          });
+          setLoading(false);
+          return;
+        }
+
         saveJwtInLocal(response.data.token);
         await validateAndSetAuthStatus(appStore);
         navigate('/home');
         toast.success('Login successful', { position: 'top-right' });
       } else {
-        let statusCode = `${response.response.data.status_code}`;
+        let statusCode = `${response?.data?.status_code}`;
         const errorMessage =
           statusCode === '111'
             ? 'User not registered'
@@ -99,7 +118,7 @@ export default function Login() {
         toast.error(errorMessage, { position: 'top-right' });
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Login error:', error?.response?.data || error);
       toast.error('An error occurred. Please try again.', {
         position: 'top-right',
       });
@@ -121,7 +140,20 @@ export default function Login() {
       });
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;
+
       if (res && res.status == HTTP_CODE.SUCCESS && user_type_code === 1002) {
+        if (res?.data?.role == 'parent' || res?.data?.role == 'student') {
+          toast.warn(
+            "You are registered as 'Customer' with us with this email. Please use another email to access the Features of this portal"
+          );
+          setLoading(false);
+          return;
+        }
+        if (res?.data?.role == 'admin') {
+          toast.info('This account is linked to the admin portal');
+          setLoading(false);
+          return;
+        }
         if (res?.data?.role == 'student' || res?.data?.role == 'parent') {
           appStore.setAppProperty('authStatus', AuthStatuses.FORBIDDEN);
           toast.error('Access Denied', { position: 'top-right' });
@@ -160,7 +192,20 @@ export default function Login() {
       });
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;
+
       if (res && res.status == HTTP_CODE.SUCCESS && user_type_code === 1002) {
+        if (res?.data?.role == 'parent' || res?.data?.role == 'student') {
+          toast.warn(
+            "You are registered as 'Customer' with us with this email. Please use another email to access the Features of this portal"
+          );
+          setLoading(false);
+          return;
+        }
+        if (res?.data?.role == 'admin') {
+          toast.info('This account is linked to the admin portal');
+          setLoading(false);
+          return;
+        }
         if (res?.data?.role == 'student' || res?.data?.role == 'parent') {
           appStore.setAppProperty('authStatus', AuthStatuses.FORBIDDEN);
           toast.error('Access Denied', { position: 'top-right' });

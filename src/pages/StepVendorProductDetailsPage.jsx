@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
 
 import { ProductDetailsData } from '../utils/StepVendorProductDetails';
+import RichTextEditor from '../components/commonComponents/RichTextEditor';
 import PrimaryLogo from '../assets/logo-primary.png';
 
 import {
@@ -1998,20 +1999,25 @@ const StepVendorProductDetailsPage = () => {
                                   <span className="text-red-500">*</span>
                                 )}
                               </label>
-                              {field.type === 'textarea' ? (
+                              {[
+                                'product_description',
+                                'product_unique_selling_point',
+                                'scholarship_description',
+                              ].includes(field.name) ? (
                                 <>
-                                  <textarea
-                                    name={field.name}
-                                    placeholder={`Enter ${field.label}`}
+                                  <RichTextEditor
                                     value={
                                       currentForm.formData[field.name] || ''
                                     }
-                                    onChange={handleProductChange}
-                                    className={`w-full p-2 border rounded-md ${
-                                      currentForm.errors[field.name]
-                                        ? 'border-red-500'
-                                        : ''
-                                    }`}
+                                    onChange={(content) =>
+                                      handleProductChange({
+                                        target: {
+                                          name: field.name,
+                                          value: content,
+                                        },
+                                      })
+                                    }
+                                    placeholder={`Enter ${field.label}`}
                                   />
                                   <p className="text-xs text-gray-500 mt-1">
                                     50 to 1000 characters

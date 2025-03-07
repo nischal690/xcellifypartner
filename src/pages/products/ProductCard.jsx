@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { FaArrowRight } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.bubble.css';
+
+import { truncateHTML } from '../../utils/HelperFunction';
 import brandLogoPlaceholder from '../../assets/brandLogoPlaceholder.png';
 
 export default function ProductCard({ product, brandLogo }) {
@@ -57,11 +62,13 @@ export default function ProductCard({ product, brandLogo }) {
               {product_title}
             </h3>
           </div>
-          <p className="text-sm text-gray-600 mb-4">
-            {product_description
-              ? `${product_description.slice(0, 145)}....`
-              : ''}
-          </p>
+          <div className="quill-readonly-container">
+            <ReactQuill
+              value={truncateHTML(product_description, 145)}
+              readOnly={true}
+              theme="bubble"
+            />
+          </div>
         </div>
       </div>
 
