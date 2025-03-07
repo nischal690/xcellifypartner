@@ -9,7 +9,7 @@ export default function KeyValuePairCard({
   cardStyle = 'shadow-md shadow-gray-300 p-3 rounded-md bg-white',
   keyValuePairStyle = 'flex justify-between flex-row mb-3 last:mb-0',
   keyStyle = 'font-medium max-w-[48%]',
-  valueStyle = 'max-w-[48%]',
+  valueStyle = 'max-w-[48%] break-words overflow-hidden text-ellipsis',
   defaultValue = '-',
   containerStyle = 'min-w-96',
   onEditClick,
