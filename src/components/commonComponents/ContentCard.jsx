@@ -1,4 +1,7 @@
 import React from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
 import { MdOutlineEdit } from 'react-icons/md';
 
 export default function ContentCard({
@@ -24,7 +27,8 @@ export default function ContentCard({
         )}
       </div>
       <div className={cardStyle}>
-        <p className="break-words overflow-hidden text-ellipsis">{content}</p>
+        {/*  Render Rich Text Properly */}
+        <ReactQuill value={content} readOnly={true} theme="bubble" />
       </div>
     </div>
   );
