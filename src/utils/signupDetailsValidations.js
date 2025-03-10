@@ -109,17 +109,18 @@ const signupValidationSchemas = [
     }),
 
     GST: yup.string().when('company_type', {
-      is: (value) => value === 'Individual',
-      then: () => yup.string().nullable(), // Not required for Individual
+      is: (value) => value === 'sole_proprietership' || value === 'Individual',
+      then: () => yup.string().notRequired(),
       otherwise: () =>
         yup
           .string()
-          .required('GST is required for companies.')
+          .required('GST is required for this company type.')
           .matches(
             /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
             'Invalid GST format'
-          ), // Required and validated for other companies
+          ),
     }),
+
     MSME_registered: yup.string().required('Please specify MSME registration.'),
 
     msme_certificate: yup.mixed().when('MSME_registered', {
