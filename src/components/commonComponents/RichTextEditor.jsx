@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Resizable } from 'react-resizable';
+import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
 const toolbarOptions = [
@@ -19,32 +19,71 @@ const toolbarOptions = [
 
 const RichTextEditor = ({ value, onChange, placeholder }) => {
   const [editorHeight, setEditorHeight] = useState(200);
+  const quillRef = useRef(null);
 
-  const handleResize = (event, { size }) => {
-    setEditorHeight(size.height);
+  //  Handle Undo
+  const handleUndo = () => {
+    if (quillRef.current) {
+      quillRef.current.getEditor().history.undo();
+    }
+  };
+
+  //  Handle Redo
+  const handleRedo = () => {
+    if (quillRef.current) {
+      quillRef.current.getEditor().history.redo();
+    }
   };
 
   return (
-    <Resizable
-      height={editorHeight}
-      width={Infinity}
-      onResize={handleResize}
-      axis="y"
-      minConstraints={[100, 100]}
-      maxConstraints={[Infinity, 600]}
-    >
-      <div className="w-full border rounded-md relative">
-        <ReactQuill
-          theme="snow"
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          className="bg-white rounded-md"
-          modules={{ toolbar: toolbarOptions }}
-          style={{ height: editorHeight, overflow: 'auto' }}
-        />
+    <div className="w-full border rounded-md relative bg-white">
+      {/* ✅ Sticky Toolbar */}
+      <div className="sticky top-0 bg-white z-1 border-b shadow-sm p-2">
+        <div className="flex justify-between items-center">
+          <span className="font-medium">Text Editor</span>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleUndo}
+              className="px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md"
+            >
+              Undo ↩
+            </button>
+            <button
+              onClick={handleRedo}
+              className="px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md"
+            >
+              Redo ↪
+            </button>
+          </div>
+        </div>
       </div>
-    </Resizable>
+
+      {/* ✅ Resizable Editor Content */}
+      <ResizableBox
+        height={editorHeight}
+        width="100%"
+        axis="y"
+        minConstraints={[100, 100]} // Min height
+        maxConstraints={[Infinity, 600]} // Max height
+        onResizeStop={(e, { size }) => setEditorHeight(size.height)}
+      >
+        <div style={{ height: editorHeight, overflow: 'auto' }}>
+          <ReactQuill
+            ref={quillRef} // Attach ref to Quill
+            theme="snow"
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            modules={{
+              toolbar: toolbarOptions,
+              history: { delay: 2000, maxStack: 500, userOnly: true }, // Enable History Module
+            }}
+            className="bg-white rounded-md"
+            style={{ height: '100%' }} // Ensure full height of resizable box
+          />
+        </div>
+      </ResizableBox>
+    </div>
   );
 };
 

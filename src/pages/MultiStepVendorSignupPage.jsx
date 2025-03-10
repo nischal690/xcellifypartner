@@ -417,7 +417,9 @@ const MultiStepVendorSignupPage = () => {
                             (field.name === 'CIN' &&
                               formData.company_type === 'Individual') ||
                             (field.name === 'GST' &&
-                              formData.company_type === 'Individual') ||
+                              (formData.company_type === 'Individual' ||
+                                formData.company_type ===
+                                  'sole_proprietership')) ||
                             (field.name === 'msme_certificate' &&
                               formData.MSME_registered !== 'Yes')
                           ) && <span className="text-red-500 ml-1">*</span>}
