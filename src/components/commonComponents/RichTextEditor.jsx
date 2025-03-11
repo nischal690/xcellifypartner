@@ -18,7 +18,7 @@ const toolbarOptions = [
 ];
 
 const RichTextEditor = ({ value, onChange, placeholder }) => {
-  const [editorHeight, setEditorHeight] = useState(200);
+  const [editorHeight, setEditorHeight] = useState(600);
   const quillRef = useRef(null);
 
   //  Handle Undo

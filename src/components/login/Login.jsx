@@ -80,43 +80,47 @@ export default function Login() {
       });
       console.log('Login response:', response);
 
+      // ✅ Handle forbidden roles
       if (
-        response?.status == HTTP_CODE.SUCCESS &&
-        `${response?.data?.status_code}` === '112'
+        response?.response?.data?.role === 'parent' ||
+        response?.response?.data?.role === 'student'
       ) {
-        if (
-          response?.data?.role === 'parent' ||
-          response?.data?.role === 'student'
-        ) {
-          toast.warn(
-            "You are registered as 'Customer' with us with this email. Please use another email to access the Features of this portal",
-            { position: 'top-right' }
-          );
-          setLoading(false);
-          return;
-        }
-        if (response?.data?.role === 'admin') {
-          toast.info('This account is linked to the admin portal', {
-            position: 'top-right',
-          });
-          setLoading(false);
-          return;
-        }
+        toast.warn(
+          "You are registered as 'Customer' with us. Please use another email to access the Partner Portal.",
+          { position: 'top-right' }
+        );
+        setLoading(false);
+        return;
+      }
+      if (response?.response?.data?.role === 'admin') {
+        toast.info('This account is linked to the admin portal', {
+          position: 'top-right',
+        });
+        setLoading(false);
+        return;
+      }
 
+      // ✅ Handle successful login correctly
+      if (
+        response?.data?.success === true &&
+        response?.data?.status_code === 112
+      ) {
         saveJwtInLocal(response.data.token);
         await validateAndSetAuthStatus(appStore);
         navigate('/home');
         toast.success('Login successful', { position: 'top-right' });
-      } else {
-        let statusCode = `${response?.data?.status_code}`;
-        const errorMessage =
-          statusCode === '111'
-            ? 'User not registered'
-            : statusCode === '113'
-            ? 'Incorrect email or password'
-            : 'Internal Server error';
-        toast.error(errorMessage, { position: 'top-right' });
+        return;
       }
+
+      // ✅ Handle other API errors properly
+      let statusCode = `${response?.data?.status_code}`;
+      const errorMessage =
+        statusCode === '111'
+          ? 'User not registered'
+          : statusCode === '113'
+          ? 'Incorrect email or password'
+          : response?.data?.message || 'Internal Server error';
+      toast.error(errorMessage, { position: 'top-right' });
     } catch (error) {
       console.error('Login error:', error?.response?.data || error);
       toast.error('An error occurred. Please try again.', {

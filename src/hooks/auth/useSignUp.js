@@ -125,6 +125,10 @@ export const useSignUp = () => {
       if (user_type_code == 1003) {
         //1001 : Signup creation success
         // saveJwtInLocal(response.data.token);
+        toast.success(`Sign-Up successful for ${formData.email}!`, {
+          position: 'top-right',
+        });
+
         appStore.setAppProperty('profileStatus', ProfileStatuses.UNVERIFIED);
         navigate('/email-sent/email-verification');
       } else if (user_type_code == 1002) {
@@ -180,7 +184,10 @@ export const useSignUp = () => {
         //1001 : Signup creation success
         saveJwtInLocal(response.data.token);
         appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
-        toast.success('Sign-Up successful!', { position: 'top-right' });
+        toast.success(`Sign-Up successful for ${response.data.email}!`, {
+          position: 'top-right',
+        });
+
         // navigate("/settings/profile");
         navigate('/onboarding');
       } else if (user_type_code === 1002) {
@@ -217,7 +224,10 @@ export const useSignUp = () => {
       if (user_type_code === 1001) {
         //1001 : Signup creation success
         saveJwtInLocal(response.data.token);
-        toast.success('Sign-up successful!', { position: 'top-right' });
+        toast.success(`Sign-Up successful for ${response.data.email}!`, {
+          position: 'top-right',
+        });
+
         navigate('/settings/profile');
         appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
       } else if (user_type_code === 1002) {
