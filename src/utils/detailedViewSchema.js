@@ -22,7 +22,7 @@ export const detailedViewSchemaData = {
           },
           {
             label: 'Product code',
-            name: 'product_code',
+            name: 'product_id',
           },
           {
             label: 'HSN code',
@@ -122,7 +122,7 @@ export const detailedViewSchemaData = {
           },
           {
             label: 'Product code',
-            name: 'product_code',
+            name: 'product_id',
           },
           {
             label: 'HSN code',
@@ -230,7 +230,7 @@ export const detailedViewSchemaData = {
           },
           {
             label: 'Product code',
-            name: 'product_code',
+            name: 'product_id',
           },
           {
             label: 'HSN code',
@@ -329,7 +329,7 @@ export const detailedViewSchemaData = {
           },
           {
             label: 'Product code',
-            name: 'product_code',
+            name: 'product_id',
           },
           {
             label: 'HSN code',
@@ -436,7 +436,7 @@ export const detailedViewSchemaData = {
           },
           {
             label: 'Product code',
-            name: 'product_code',
+            name: 'product_id',
           },
           {
             label: 'HSN code',
@@ -537,7 +537,7 @@ export const detailedViewSchemaData = {
           },
           {
             label: 'Product code',
-            name: 'product_code',
+            name: 'product_id',
           },
           {
             label: 'HSN code',
@@ -622,6 +622,10 @@ export const detailedViewSchemaData = {
               name: 'full_financing_available',
             },
             {
+              label: 'Product code',
+              name: 'product_id',
+            },
+            {
               label: 'HSN code',
               name: 'hsn_code',
             },
@@ -701,6 +705,10 @@ export const detailedViewSchemaData = {
             {
               label: 'Course',
               name: 'scholarship_course',
+            },
+            {
+              label: 'Product code',
+              name: 'product_id',
             },
             {
               label: 'HSN code',
