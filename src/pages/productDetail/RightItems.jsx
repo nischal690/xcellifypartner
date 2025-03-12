@@ -45,7 +45,10 @@ export default function RightItems({ product, category, subcategory, schema }) {
         )}
 
         <TagsCard title="Service locations" data={serviceLocations} />
-        <RefundPolicyCard product={product} category={category} />
+        {!(
+          category === 'Study Finance' &&
+          ['Education Loan', 'Scholarship'].includes(subcategory)
+        ) && <RefundPolicyCard product={product} category={category} />}
       </div>
     </div>
   );

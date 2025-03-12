@@ -497,7 +497,10 @@ const StepVendorProductDetailsPage = () => {
         });
       }
 
-      setCropperImage(URL.createObjectURL(validFiles[0]));
+      setCropperImage({
+        src: URL.createObjectURL(validFiles[0]),
+        file: validFiles[0],
+      });
       return;
     }
 
@@ -717,6 +720,24 @@ const StepVendorProductDetailsPage = () => {
       console.error('Error during cropping/upload process:', error);
       toast.error('Failed to upload cropped image. Please try again.');
     }
+  };
+
+  const handleCroppedImage = (croppedBlob) => {
+    if (!croppedBlob) {
+      toast.error('Error cropping image. Please try again.');
+      return;
+    }
+
+    const croppedFile = new File([croppedBlob], 'cropped-image.jpg', {
+      type: 'image/jpeg',
+    });
+
+    const { categoryIndex, productIndex, fieldName } = currentFileInfo;
+
+    handleFileUpload([croppedFile], fieldName, categoryIndex, productIndex);
+
+    setCropperImage(null); //  Close the cropper
+    setCurrentFileInfo(null); // Reset file info
   };
 
   const handleFileRemove = async (
@@ -1892,9 +1913,9 @@ const StepVendorProductDetailsPage = () => {
           currentFileInfo?.categoryIndex === categoryIndex &&
           currentFileInfo?.productIndex === productIndex && (
             <ImageCropper
-              image={cropperImage}
-              aspect={4 / 3}
-              onCropComplete={handleCropComplete}
+              image={cropperImage.src} //  Pass the image source
+              aspect={16 / 9}
+              onCropComplete={handleCroppedImage} //  Use the new crop handler
               onCancel={() => {
                 setCropperImage(null);
                 setCurrentFileInfo(null);
@@ -2514,17 +2535,18 @@ const StepVendorProductDetailsPage = () => {
         )}
 
         {/* Add cropper before ToastContainer */}
-        {cropperImage && !currentFileInfo?.categoryIndex && (
+        {cropperImage && (
           <ImageCropper
-            image={cropperImage}
+            image={cropperImage.src} //  Pass the image source
             aspect={16 / 9}
-            onCropComplete={handleCropComplete}
+            onCropComplete={handleCroppedImage} //  Use the new crop handler
             onCancel={() => {
               setCropperImage(null);
               setCurrentFileInfo(null);
             }}
           />
         )}
+
         {/* <ToastContainer autoClose={2000} /> */}
       </div>
     </ErrorBoundary>

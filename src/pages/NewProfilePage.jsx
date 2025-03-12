@@ -359,14 +359,6 @@ export default function ProfilePage() {
   return (
     <div className="w-full">
       <h2 className="text-3xl font-bold text-gray-800 mb-5">Partner Profile</h2>
-      <p>
-        <span class="text-red-500">*</span>
-        <span class="text-black">
-          {' '}
-          For any company or compliance-related changes and support, please
-          contact Partner Care.
-        </span>
-      </p>
 
       <main className="w-full bg-gray-50">
         {!editingCard && (
@@ -387,6 +379,14 @@ export default function ProfilePage() {
               ))}
             </div>
             <div className="flex flex-col justify-between">
+              <p className="mb-10 font-semibold text-gray-700">
+                <span class="text-red-500">*</span>
+                <span>
+                  {' '}
+                  For any company or compliance-related changes and support,
+                  please contact Partner Care.
+                </span>
+              </p>
               <div className="flex flex-row justify-between">
                 {renderTabContent()}
               </div>
