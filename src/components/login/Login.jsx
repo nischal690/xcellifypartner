@@ -100,7 +100,7 @@ export default function Login() {
         return;
       }
 
-      // ✅ Handle successful login correctly
+      //  Handle successful login correctly
       if (
         response?.data?.success === true &&
         response?.data?.status_code === 112
@@ -112,7 +112,7 @@ export default function Login() {
         return;
       }
 
-      // ✅ Handle other API errors properly
+      //  Handle other API errors properly
       let statusCode = `${response?.data?.status_code}`;
       const errorMessage =
         statusCode === '111'
@@ -145,29 +145,30 @@ export default function Login() {
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;
 
+      if (
+        res?.response?.data?.role === 'parent' ||
+        res?.response?.data?.role === 'student'
+      ) {
+        toast.warn(
+          "You are registered as 'Customer' with us. Please use another email to access the Partner Portal.",
+          { position: 'top-right' }
+        );
+        setLoading(false);
+        return;
+      }
+      if (res?.response?.data?.role === 'admin') {
+        toast.info('This account is linked to the admin portal', {
+          position: 'top-right',
+        });
+        setLoading(false);
+        return;
+      }
+
       if (res && res.status == HTTP_CODE.SUCCESS && user_type_code === 1002) {
-        if (res?.data?.role == 'parent' || res?.data?.role == 'student') {
-          toast.warn(
-            "You are registered as 'Customer' with us with this email. Please use another email to access the Features of this portal"
-          );
-          setLoading(false);
-          return;
-        }
-        if (res?.data?.role == 'admin') {
-          toast.info('This account is linked to the admin portal');
-          setLoading(false);
-          return;
-        }
-        if (res?.data?.role == 'student' || res?.data?.role == 'parent') {
-          appStore.setAppProperty('authStatus', AuthStatuses.FORBIDDEN);
-          toast.error('Access Denied', { position: 'top-right' });
-          return;
-        } else {
-          saveJwtInLocal(res.data.token);
-          appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
-          await validateAndSetAuthStatus(appStore);
-          navigate('/');
-        }
+        saveJwtInLocal(res.data.token);
+        appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
+        await validateAndSetAuthStatus(appStore);
+        navigate('/');
       } else {
         const errorMessage =
           `${user_type_code}` === '1004'
@@ -197,29 +198,30 @@ export default function Login() {
       const user_type_code =
         res?.data?.user_type_code || res?.response?.data?.user_type_code;
 
+      if (
+        res?.response?.data?.role === 'parent' ||
+        res?.response?.data?.role === 'student'
+      ) {
+        toast.warn(
+          "You are registered as 'Customer' with us. Please use another email to access the Partner Portal.",
+          { position: 'top-right' }
+        );
+        setLoading(false);
+        return;
+      }
+      if (res?.response?.data?.role === 'admin') {
+        toast.info('This account is linked to the admin portal', {
+          position: 'top-right',
+        });
+        setLoading(false);
+        return;
+      }
+
       if (res && res.status == HTTP_CODE.SUCCESS && user_type_code === 1002) {
-        if (res?.data?.role == 'parent' || res?.data?.role == 'student') {
-          toast.warn(
-            "You are registered as 'Customer' with us with this email. Please use another email to access the Features of this portal"
-          );
-          setLoading(false);
-          return;
-        }
-        if (res?.data?.role == 'admin') {
-          toast.info('This account is linked to the admin portal');
-          setLoading(false);
-          return;
-        }
-        if (res?.data?.role == 'student' || res?.data?.role == 'parent') {
-          appStore.setAppProperty('authStatus', AuthStatuses.FORBIDDEN);
-          toast.error('Access Denied', { position: 'top-right' });
-          return;
-        } else {
-          saveJwtInLocal(res.data.token);
-          appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
-          await validateAndSetAuthStatus(appStore);
-          navigate('/');
-        }
+        saveJwtInLocal(res.data.token);
+        appStore.setAppProperty('authStatus', AuthStatuses.LOGIN_SUCCESS);
+        await validateAndSetAuthStatus(appStore);
+        navigate('/');
       } else {
         const errorMessage =
           `${user_type_code}` === '1004'
@@ -392,12 +394,12 @@ export default function Login() {
           >
             <img src={GoogleAuthIcon} alt="Google" className="w-full" />
           </button>
-          {/*<button
+          <button
             className="w-10 h-10 flex items-center justify-center border-2 border-white py-2 px-2 rounded-full text-white transition-all bg-white "
             onClick={continueWithFacebook}
           >
             <img src={FacebookAuthIcon} alt="Facebook" className="w-full" />
-          </button>*/}
+          </button>
         </div>
         {/* <div className="w-full max-w-md mt-6 space-y-3">
 					<button
