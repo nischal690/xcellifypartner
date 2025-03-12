@@ -187,7 +187,7 @@ const App = () => {
     <>
       <RouterProvider router={router} />
       <ToastContainer
-        autoClose={1500}
+        autoClose={5000}
         pauseOnFocusLoss={false}
         pauseOnHover={false}
         position="top-right"

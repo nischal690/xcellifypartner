@@ -1335,25 +1335,7 @@ export const ProductDetailsData = [
             },
           ],
         },
-        {
-          heading: 'Refund Policy',
-          subcategory: 'Scholarship',
-          fields: [
-            {
-              label: 'Refund Policy',
-              name: 'refund_policy',
-              type: 'radio',
-              options: [
-                {
-                  label: 'I agree with Xcellify`s refund policy.',
-                  value: 'true',
-                },
-                { label: 'I have my own refund policy', value: 'false' },
-              ],
-              required: true,
-            },
-          ],
-        },
+
         // Education Loan Form
         {
           heading: 'Basic details (Education Loan)',
@@ -1533,25 +1515,6 @@ export const ProductDetailsData = [
               name: 'product_videos',
               type: 'file',
               required: false,
-            },
-          ],
-        },
-        {
-          heading: 'Refund Policy',
-          subcategory: 'Education Loan',
-          fields: [
-            {
-              label: 'Refund Policy',
-              name: 'refund_policy',
-              type: 'radio',
-              options: [
-                {
-                  label: 'I agree with Xcellify`s refund policy.',
-                  value: 'true',
-                },
-                { label: 'I have my own refund policy', value: 'false' },
-              ],
-              required: true,
             },
           ],
         },
@@ -1762,9 +1725,7 @@ const commonValidations = {
     'Rating must be a number between 0 and 5, with up to two decimal places'
   ),
   google_rating_url: Yup.string().url('Invalid URL'),
-  refund_policy: Yup.string()
-    .oneOf(['true', 'false'])
-    .required('Refund policy is required'),
+
   product_images: Yup.array()
     .nullable()
     .of(
@@ -1829,6 +1790,9 @@ export const validationSchemas = {
       ),
 
     service_delivery: Yup.string().required('Service delivery is required'),
+    refund_policy: Yup.string()
+      .oneOf(['true', 'false'])
+      .required('Refund policy is required'),
   }),
 
   'Study India': Yup.object().shape({
@@ -1846,6 +1810,9 @@ export const validationSchemas = {
       'Destination city is required'
     ),
     service_delivery: Yup.string().required('Service delivery is required'),
+    refund_policy: Yup.string()
+      .oneOf(['true', 'false'])
+      .required('Refund policy is required'),
   }),
 
   Tutoring: Yup.object().shape({
@@ -1866,6 +1833,9 @@ export const validationSchemas = {
       'Destination city is required'
     ),
     travel_upto: Yup.string().required('Travel upto is required'),
+    refund_policy: Yup.string()
+      .oneOf(['true', 'false'])
+      .required('Refund policy is required'),
   }),
 
   'Career counselling': Yup.object().shape({
@@ -1885,6 +1855,9 @@ export const validationSchemas = {
       'Study destination is required'
     ),
     service_delivery: Yup.string().required('Service delivery is required'),
+    refund_policy: Yup.string()
+      .oneOf(['true', 'false'])
+      .required('Refund policy is required'),
   }),
 
   'Summer courses': Yup.object().shape({
@@ -1910,6 +1883,9 @@ export const validationSchemas = {
       .min(50, 'Description must be at least 50 characters')
       .max(1500, 'Description must not exceed 1000 characters')
       .required('Scholarship description is required'),
+    refund_policy: Yup.string()
+      .oneOf(['true', 'false'])
+      .required('Refund policy is required'),
   }),
 
   Events: Yup.object().shape({
