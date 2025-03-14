@@ -51,6 +51,9 @@ const StepVendorProductDetailsPage = () => {
   const navigate = useNavigate();
   const partnerInfo = toJS(appStore.getPartnerInfo);
 
+  const company_name = partnerInfo?.company_name;
+  const company_website = partnerInfo?.website;
+
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const origin = params.get('origin');
@@ -901,6 +904,8 @@ const StepVendorProductDetailsPage = () => {
     const processedData = {
       ...normalizedData,
       category: currentForm.category,
+      company_name: partnerInfo?.company_name || '',
+      company_website: partnerInfo?.website || '',
       refund_policy:
         formData.refund_policy === 'true'
           ? true
@@ -1095,6 +1100,8 @@ const StepVendorProductDetailsPage = () => {
           let processedData = {
             ...normalizedData,
             category: category.name,
+            company_name: partnerInfo?.company_name || '',
+            company_website: partnerInfo?.website || '',
             refund_policy:
               formData.refund_policy === 'true'
                 ? true
