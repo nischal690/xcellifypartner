@@ -9,7 +9,7 @@ export default function KeyInfo({ product, category, subcategory }) {
           {category}
         </span>
         <span className="font-semibold">Subcategory</span>
-        <span className="font-semibold">{subcategory}</span>
+        <span className="font-semibold">{subcategory || 'Not Available'}</span>
       </div>
       <div className="flex flex-col space-y-2">
         <span className="font-semibold">Product status</span>

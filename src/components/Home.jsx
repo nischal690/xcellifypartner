@@ -28,13 +28,20 @@ const HomePage = () => {
   }, [appStore?.partnerInfo?.id]);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
-      <main className="flex-1">
+    <div className="flex flex-col sm:flex-row min-h-screen bg-gray-50">
+      {/* Sidebar: Automatically hides on small screens */}
+      <div className="w-full sm:w-64 md:w-72 lg:w-80 ">
+        <Sidebar />
+      </div>
+
+      <main className="flex-1 flex flex-col">
+        {/* Navbar: Always visible at the top */}
         <div className="w-full border-b border-gray-200">
           <NavBar />
         </div>
-        <div className="mx-auto p-10 overflow-y-auto max-h-screen">
+
+        {/* Main Content: Fully responsive with proper padding */}
+        <div className="mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 overflow-y-auto max-h-screen w-full">
           <Routes>
             <Route index element={<Dashboard />} />
             <Route path="profile" element={<NewProfilePage />} />

@@ -2460,24 +2460,29 @@ const StepVendorProductDetailsPage = () => {
             </div>
           )}
         </div>
-        <div className="flex justify-end gap-10 m-9">
+        <div className="flex flex-col sm:flex-row justify-center sm:justify-end gap-4 sm:gap-6 md:gap-10 m-4 sm:m-6">
+          {/* Save & Add Product Button */}
           <button
             type="button"
-            className="w-96 px-4 py-2  text-[#F3F1FF] font-dmsans font-bold rounded-md bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base md:text-lg text-white font-dmsans font-bold rounded-md bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary transition duration-200"
             onClick={handleAddProductForm}
           >
             Save & add product
           </button>
+
+          {/* Skip As of Now Button */}
           <button
             type="button"
-            className="h-10 w-60 ml-4 px-4 py-2 text-[#F3F1FF] font-dmsans font-bold rounded-md bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary"
+            className="w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base md:text-lg text-white font-dmsans font-bold rounded-md bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary transition duration-200"
             onClick={handleSkipNow}
           >
             Skip as of now
           </button>
+
+          {/* Submit All Products Button */}
           <button
             type="button"
-            className={`h-10 w-60 ml-4 px-4 py-2 font-dmsans text-[#F3F1FF] font-bold rounded-md flex items-center justify-center bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary ${
+            className={`w-full sm:w-auto px-3 sm:px-4 py-2 text-sm sm:text-base md:text-lg font-dmsans text-white font-bold rounded-md flex items-center justify-center bg-[#876FFD] hover:bg-[#F3F1FF] hover:text-blue-primary hover:border hover:border-blue-primary transition duration-200 ${
               loading ? 'cursor-not-allowed opacity-75' : ''
             }`}
             onClick={handleSubmit}

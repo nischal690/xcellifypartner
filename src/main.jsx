@@ -13,11 +13,11 @@ import { FacebookProvider } from 'react-facebook';
 import { registerSW } from 'virtual:pwa-register';
 
 registerSW({
-  onNeedRefresh() {
-    if (confirm('New update available. Reload now?')) {
-      location.reload();
-    }
-  },
+  // onNeedRefresh() {
+  //   if (confirm('New update available. Reload now?')) {
+  //     location.reload();
+  //   }
+  // },
   onOfflineReady() {
     console.log('PWA is ready to work offline.');
   },

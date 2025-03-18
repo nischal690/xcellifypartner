@@ -30,11 +30,11 @@ export default function RightItems({ product, category, subcategory, schema }) {
   console.log(serviceLocations);
 
   return (
-    <div className="w-1/2 py-10">
+    <div className="w-full lg:w-1/2 py-4">
       <div className="space-y-10">
         <ContentCard title="Product description" content={productDescription} />
         <ContentCard
-          title="Product unique selling point"
+          title="Unique Selling Proposition"
           content={productUniqueSellingPoint}
         />
         {category === 'Summer courses' && (

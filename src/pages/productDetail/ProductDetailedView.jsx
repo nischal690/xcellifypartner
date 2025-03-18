@@ -95,40 +95,30 @@ export default function ProductDetailedView() {
 
   return (
     <div className="max-w-7xl mx-auto px-10 font-dmsans">
-      <div className="flex justify-between items-center my-4">
-        <div className="flex item-center">
-          <span className="text-lg mr-3">Products</span>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center my-4 space-y-3 sm:space-y-0">
+        {/* Breadcrumbs */}
+        <div className="flex items-center flex-wrap">
+          <span className="text-lg mr-2">Products</span>
           <span>{'>'}</span>
-          <span className="text-lg font-semibold ml-3">Product Details</span>
+          <span className="text-lg font-semibold ml-2">Product Details</span>
         </div>
-        <div className="space-x-5">
+
+        {/* Buttons */}
+        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 w-auto">
           {product?.product_status === 'Rejected' && (
-            <button className="border border-purple-primary px-4 py-1 text-purple-primary rounded-md hover:text-white hover:bg-purple-primary transition-colors duration-300">
+            <button className="border border-purple-500 px-3 py-1 text-purple-500 rounded-md hover:bg-purple-500 hover:text-white transition-colors duration-300 w-auto sm:w-auto min-w-[120px]">
               Re-submit
             </button>
           )}
           <button
-            className="text-white bg-[#F04C4D] rounded-md px-4 py-1"
+            className="text-white bg-red-500 rounded-md px-3 py-1 w-auto sm:w-auto min-w-[120px] text-center"
             onClick={handleDelete}
           >
             Delete product
           </button>
         </div>
       </div>
-      {/* <div>
-        <div>
-          <img
-            src={productImage}
-            alt="banner"
-            className="h-52 w-full object-cover rounded-lg"
-          />
-        </div>
-        <img
-          src={appStore?.brandLogo || placeholderImg}
-          alt=""
-          className="w-16 h-16 rounded-full mr-3 object-cover -mt-10 ms-10"
-        />
-      </div> */}
+
       <ProductSlider product={product} brandLogo={appStore?.brandLogo} />
 
       <KeyInfo

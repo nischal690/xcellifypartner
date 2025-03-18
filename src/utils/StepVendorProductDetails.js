@@ -94,7 +94,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
@@ -264,7 +264,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
@@ -466,7 +466,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
@@ -650,7 +650,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
@@ -858,7 +858,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
@@ -1027,7 +1027,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
@@ -1272,7 +1272,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
@@ -1438,7 +1438,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Product unique selling point',
+              label: 'Unique Selling Proposition',
               name: 'product_unique_selling_point',
               type: 'textarea',
               required: true,
