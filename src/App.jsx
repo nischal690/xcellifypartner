@@ -5,46 +5,64 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-
-import SellerLandingPage from './pages/SellerLandingPage';
-import LoginPage from './pages/LoginPage';
-import SignUpPage from './pages/SignUpPage';
-import HomePage from './pages/HomePage';
-import NotFoundPage from './pages/NotFoundPage';
-import ComingSoonPage from './pages/ComingSoonPage';
-import VerificationSentPage from './pages/accounStatusPages/VerificationSentPage';
-import EmailVerifiedPage from './pages/EmailVerifiedPage';
-import ResetPassword from './pages/ResetPassword';
-import EmailVerificationPwd from './pages/EmailVerificationPwd';
-import MultiStepVendorSignupPage from './pages/MultiStepVendorSignupPage';
-import StepVendorProductDetailsPage from './pages/StepVendorProductDetailsPage';
-import AdminApprovalRequestSentPage from './pages/accounStatusPages/AdminApprovalRequestSentPage';
-import UnderReviewPage from './pages/accounStatusPages/UnderReviewPage';
-import DashboardPage from './pages/DashboardPage';
-import ProductDetail from './pages/ProductPage';
-import AddNewProductPage from './pages/AddNewProductPage';
-import LessonPreviewPage from './pages/LessonsPreviewPage';
-import PrivacyPolicyScreen from './components/landingPage/footerPages/PrivacyPolicyScreen';
-import TermsOfUseScreen from './components/landingPage/footerPages/TermsOfUseScreen';
-import ProfilePage1 from './pages/ProfilePage1';
+import { useEffect, useState, lazy } from 'react';
 import { observer } from 'mobx-react';
 import { useStore } from './stores';
 import apiRequest from './utils/apiRequest';
 import { AuthStatuses } from './utils/constants';
 import { toJS } from 'mobx';
-import AllProductsPage from './pages/AllProductsPage';
-import AddNewProductPage1 from './pages/AddNewProductPage1';
-import VerifyEmailPage from './pages/accounStatusPages/VerifyEmailPage';
 import { validateAndSetAuthStatus } from './utils/validateAuth';
-import NewProfilePage from './pages/NewProfilePage';
 import { ToastContainer } from 'react-toastify';
 
+const SellerLandingPage = lazy(() => import('./pages/SellerLandingPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const SignUpPage = lazy(() => import('./pages/SignUpPage'));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const ComingSoonPage = lazy(() => import('./pages/ComingSoonPage'));
+const VerificationSentPage = lazy(() =>
+  import('./pages/accounStatusPages/VerificationSentPage')
+);
+const EmailVerifiedPage = lazy(() => import('./pages/EmailVerifiedPage'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
+const EmailVerificationPwd = lazy(() => import('./pages/EmailVerificationPwd'));
+const MultiStepVendorSignupPage = lazy(() =>
+  import('./pages/MultiStepVendorSignupPage')
+);
+const StepVendorProductDetailsPage = lazy(() =>
+  import('./pages/StepVendorProductDetailsPage')
+);
+const AdminApprovalRequestSentPage = lazy(() =>
+  import('./pages/accounStatusPages/AdminApprovalRequestSentPage')
+);
+const UnderReviewPage = lazy(() =>
+  import('./pages/accounStatusPages/UnderReviewPage')
+);
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const ProductDetail = lazy(() => import('./pages/ProductPage'));
+const AddNewProductPage = lazy(() => import('./pages/AddNewProductPage'));
+const LessonPreviewPage = lazy(() => import('./pages/LessonsPreviewPage'));
+const PrivacyPolicyScreen = lazy(() =>
+  import('./components/landingPage/footerPages/PrivacyPolicyScreen')
+);
+const TermsOfUseScreen = lazy(() =>
+  import('./components/landingPage/footerPages/TermsOfUseScreen')
+);
+const ProfilePage1 = lazy(() => import('./pages/ProfilePage1'));
+const AllProductsPage = lazy(() => import('./pages/AllProductsPage'));
+const AddNewProductPage1 = lazy(() => import('./pages/AddNewProductPage1'));
+const VerifyEmailPage = lazy(() =>
+  import('./pages/accounStatusPages/VerifyEmailPage')
+);
+const NewProfilePage = lazy(() => import('./pages/NewProfilePage'));
 import ProtectedRoute from './components/ProtectedRoute';
-import Products from './pages/products/index';
-import ProductDetailedView from './pages/productDetail/ProductDetailedView';
-import ContactUs from './pages/ContactusPage';
-import AboutusPage from './pages/AboutusPage';
+
+const Products = lazy(() => import('./pages/products/index'));
+const ProductDetailedView = lazy(() =>
+  import('./pages/productDetail/ProductDetailedView')
+);
+const ContactUs = lazy(() => import('./pages/ContactusPage'));
+const AboutusPage = lazy(() => import('./pages/AboutusPage'));
 
 const router = createBrowserRouter([
   {
@@ -179,9 +197,9 @@ const App = () => {
     initializeAuth();
   }, [appStore]);
 
-  if (isMobileDevice) {
-    return <ComingSoonPage />;
-  }
+  // if (isMobileDevice) {
+  //   return <ComingSoonPage />;
+  // }
 
   return loading ? null : (
     <>

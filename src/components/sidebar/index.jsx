@@ -12,6 +12,7 @@ import NavItem from './NavItem';
 import { useStore } from '../../stores';
 import { AuthStatuses } from '../../utils/constants';
 import { useEffect, useState } from 'react';
+import { RiMenu3Fill, RiCloseFill } from 'react-icons/ri';
 import { getProfilePicture_API } from '../../utils/getProfilePicture_API';
 import { observer } from 'mobx-react';
 import { toast } from 'react-toastify';
@@ -20,6 +21,7 @@ function Sidebar() {
   const navigate = useNavigate();
   const { appStore } = useStore();
   const [profilePicture, setProfilePicture] = useState('');
+  const [isOpen, setIsOpen] = useState(false); //  Sidebar toggle state
 
   const partnerInfo = appStore.getPartnerInfo;
   const display_name =
@@ -40,16 +42,19 @@ function Sidebar() {
 
   const goToHome = () => {
     navigate('/home/dashboard');
+    setIsOpen(false);
     return;
   };
 
   const goToDashboard = () => {
     navigate('/home/dashboard');
+    setIsOpen(false);
     return;
   };
 
   const goToProductsView = () => {
     navigate('/home/products');
+    setIsOpen(false);
     return;
   };
 
@@ -60,11 +65,13 @@ function Sidebar() {
 
   const goToServicesView = () => {
     navigate('/home/services');
+    setIsOpen(false);
     return;
   };
 
   const goToProfileView = () => {
     navigate('/home/profile');
+    setIsOpen(false);
     return;
   };
 
@@ -73,55 +80,84 @@ function Sidebar() {
   };
   console.log(appStore.partnerInfo);
   return (
-    <div className="w-64 min-h-screen bg-white border-r">
-      <div className="p-4">
-        <button onClick={goToHome}>
-          <img src={PrimaryLogo} alt="Xcellify" className="h-12" />
+    <>
+      {!isOpen && (
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 bg-blue-primary text-white p-2 rounded-full"
+          onClick={() => setIsOpen(true)}
+        >
+          <RiMenu3Fill size={24} />
         </button>
-      </div>
+      )}
 
-      <div className="p-4 cursor-pointer " onClick={goToProfileView}>
-        <div className="flex items-center space-x-2 p-2 bg-gray-100 rounded-md ">
-          <div className="w-8 h-8 flex items-center justify-center">
+      {/*  Sidebar Container */}
+      <div
+        className={`fixed md:relative w-64 min-h-screen bg-white border-r transform transition-transform ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 md:flex md:flex-col z-40`}
+      >
+        <button
+          className="absolute top-4 right-4 md:hidden bg-gray-300 p-2 rounded-full"
+          onClick={() => setIsOpen(false)}
+        >
+          <RiCloseFill size={24} />
+        </button>
+
+        {/*  Sidebar Header - Logo */}
+        <div className="p-4">
+          <button onClick={goToHome}>
+            <img src={PrimaryLogo} alt="Xcellify" className="h-12 mx-auto" />
+          </button>
+        </div>
+
+        {/*  Profile Section */}
+        <div className="p-4 cursor-pointer" onClick={goToProfileView}>
+          <div className="flex items-center space-x-2 p-2 bg-gray-100 rounded-md">
             <img
               src={profilePicture || profilePlaceholderImage}
               alt={partnerInfo.company_name}
               className="object-cover w-8 h-8 rounded-full"
-            />{' '}
-            {/** TODO : Update with company image URL */}
+            />
+            <span>{display_name}</span>
           </div>
-          <span>{display_name}</span>
         </div>
+
+        {/* ✅ Navigation Links */}
+        <nav className="mt-8">
+          <NavItem
+            icon={<RiDashboardLine />}
+            onClick={goToDashboard}
+            text="Dashboard"
+            active={isCurrentTabActive('dashboard')}
+          />
+          <NavItem
+            icon={<ProductsIcon />}
+            onClick={goToProductsView}
+            text="Product"
+            active={isCurrentTabActive('products')}
+          />
+          <NavItem
+            icon={<ProductsIcon />}
+            onClick={goToServicesView}
+            text="Services"
+            active={isCurrentTabActive('services')}
+          />
+          <NavItem
+            icon={<LogoutIcon />}
+            onClick={handleLogout}
+            text="Logout"
+            className="text-red-500"
+          />
+        </nav>
       </div>
 
-      <nav className="mt-8">
-        <NavItem
-          icon={<RiDashboardLine />}
-          onClick={goToDashboard}
-          text="Dashboard"
-          active={isCurrentTabActive('dashboard')}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black opacity-50 md:hidden"
+          onClick={() => setIsOpen(false)}
         />
-        <NavItem
-          icon={<ProductsIcon />}
-          onClick={goToProductsView}
-          text="Product"
-          active={isCurrentTabActive('products')}
-        />
-        <NavItem
-          icon={<ProductsIcon />}
-          onClick={goToServicesView}
-          text="Services"
-          active={isCurrentTabActive('services')}
-        />
-        {/*<NavItem icon={<PriceIcon />} onClick={goToPayoutsView} text="Payout" active={isCurrentTabActive('payout')} />*/}
-        <NavItem
-          icon={<LogoutIcon />}
-          onClick={handleLogout}
-          text="Logout"
-          className="text-red-500"
-        />
-      </nav>
-    </div>
+      )}
+    </>
   );
 }
 

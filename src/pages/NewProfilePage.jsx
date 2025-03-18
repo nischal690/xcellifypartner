@@ -315,11 +315,14 @@ export default function ProfilePage() {
                 <MdOutlineModeEdit />
             </button> */}
         </div>
-        <div key={index} className="mb-10 rounded-lg shadow p-6 bg-white">
+        <div
+          key={index}
+          className="mb-6 sm:mb-8 rounded-lg shadow p-6 bg-white w-full max-w-full sm:max-w-2xl lg:max-w-3xl"
+        >
           {subSection.fields.map((field, index) => (
             <div
               key={field.name}
-              className="flex flex-row justify-between mb-3"
+              className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0"
             >
               <label className="block text-sm font-medium text-gray-700 ">
                 {field.label}
@@ -336,7 +339,7 @@ export default function ProfilePage() {
     const currentSection = sections[activeTab];
     return (
       <>
-        <div className="w-1/2 flex flex-col pr-5">
+        <div className="w-full sm:w-1/2 flex flex-col pr-5 sm:pr-6 lg:pr-8">
           {currentSection.subSections.map(
             (subSection, index) =>
               index % 2 == 0 && (
@@ -344,7 +347,7 @@ export default function ProfilePage() {
               )
           )}
         </div>
-        <div className="w-1/2 flex flex-col pl-5">
+        <div className="w-full sm:w-1/2 flex flex-col pl-5 sm:pl-6 lg:pl-8">
           {currentSection.subSections.map(
             (subSection, index) =>
               index % 2 == 1 && (
@@ -379,7 +382,7 @@ export default function ProfilePage() {
               ))}
             </div>
             <div className="flex flex-col justify-between">
-              <p className="mb-10 font-semibold text-gray-700">
+              <p className="mb-6 sm:mb-10 font-semibold text-gray-700 text-center sm:text-left px-4 sm:px-0">
                 <span class="text-red-500">*</span>
                 <span>
                   {' '}
@@ -387,7 +390,7 @@ export default function ProfilePage() {
                   please contact Partner Care.
                 </span>
               </p>
-              <div className="flex flex-row justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-8">
                 {renderTabContent()}
               </div>
               {activeTab === 'complianceDetails' && (
@@ -395,7 +398,7 @@ export default function ProfilePage() {
                   <h3 className="text-lg font-semibold text-gray-700 mb-4">
                     Essential Documents
                   </h3>
-                  <div className="flex item-center gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-6 gap-4">
                     {msmeCertificate && (
                       <a
                         href={`data:application/pdf;base64,${msmeCertificate}`}

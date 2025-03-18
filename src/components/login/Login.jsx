@@ -12,6 +12,8 @@ import signUplastImg from '../../assets/signUpPageAssets/Img/signUplastImg.png';
 
 import { SignUpData } from '../../components/signUp/SignUpPageData';
 import GoogleAuthIcon from '../../assets/loginPageAssets/authIcons/google-auth-icon.png';
+import WhiteIcon from '../../assets/logo-white.png';
+
 import FacebookAuthIcon from '../../assets/loginPageAssets/authIcons/facebook-auth-icon.png';
 import { useLogin } from 'react-facebook';
 import Captcha from '../Captcha';
@@ -299,7 +301,17 @@ export default function Login() {
       </div>
 
       {/* Login Right Container */}
-      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 md:px-4 bg-gradient-to-b from-purple-primary to-[#6C59CA]">
+      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 px-8 md:px-4 bg-gradient-to-b from-purple-primary to-[#6C59CA]">
+        <div className="block md:hidden w-full mb-10">
+          <img
+            src={WhiteIcon}
+            alt="Xcellify Logo"
+            onClick={() => {
+              navigate('/');
+            }}
+            className="w-[80px] cursor-pointer"
+          />
+        </div>
         <h1 className="text-white text-4xl font-semibold mb-12">Login</h1>
         <form className="w-full max-w-lg" onSubmit={(e) => e.preventDefault()}>
           <div className="flex items-center rounded-xl bg-[#F5F5F5] mb-7">
