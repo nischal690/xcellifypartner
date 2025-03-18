@@ -36,7 +36,7 @@ export default function LeftItems({ product, category, subcategory, schema }) {
   }));
 
   return (
-    <div className="w-1/2 py-10">
+    <div className="w-full lg:w-1/2 py-4">
       <div className="space-y-10">
         <KeyValuePairCard title="Basic details" keyValuePairs={basicDetails} />
         <KeyValuePairCard

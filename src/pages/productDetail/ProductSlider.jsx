@@ -42,14 +42,14 @@ const ProductSlider = ({ product, brandLogo }) => {
                 <video
                   src={item}
                   controls
-                  className="w-full h-auto max-h-80 rounded-lg"
-                  onClick={(e) => e.stopPropagation()} // Fix: Allows seeking in video
+                  className="w-full h-80 sm:h-96 object-contain rounded-lg"
+                  onClick={(e) => e.stopPropagation()}
                 />
               ) : (
                 <img
                   src={item}
                   alt={`Slide ${index + 1}`}
-                  className="w-full h-80 object-contain rounded-lg"
+                  className="w-full h-80 sm:h-96 object-contain rounded-lg"
                 />
               )}
             </SwiperSlide>
