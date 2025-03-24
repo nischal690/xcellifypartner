@@ -31,6 +31,7 @@ import {
 import { toast } from 'react-toastify';
 import OnBoardingHeader from '../components/onboardingPage/OnBoardingHeader';
 import SupplierDeclarationCard from '../components/onboardingPage/SupplierDeclarationCard';
+import DigitalSignaturePad from '../components/onboardingPage/DigitalSignaturePad';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -441,6 +442,16 @@ const MultiStepVendorSignupPage = () => {
                           <span className="text-red-500 ml-1">*</span>
                         )}
                       </label>
+
+                      {field.type === 'file' && field.name === 'signature' && (
+                        <>
+                          <DigitalSignaturePad />
+                          <p className="text-gray-500 text-sm mt-2">
+                            {' '}
+                            Download the PNG after drawing and upload below
+                          </p>
+                        </>
+                      )}
 
                       {field.type === 'select' ? (
                         <Dropdown
