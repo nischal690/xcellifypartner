@@ -19,7 +19,7 @@ export const gstRateMapping = {
 };
 
 export const OptionCountries = [
-  'US',
+  'USA',
   'Canada',
   'UK',
   'Europe',

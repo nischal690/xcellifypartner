@@ -1203,16 +1203,15 @@ const StepVendorProductDetailsPage = () => {
   const validateProduct = (product) => {
     for (const key in product) {
       if (
-        product[key] === null ||
-        product[key] === undefined ||
-        product[key] === ''
+        (product[key] === null ||
+          product[key] === undefined ||
+          product[key] === '') &&
+        key !== 'company_name' &&
+        key !== 'company_website' &&
+        key !== 'product_images' &&
+        key !== 'product_videos' &&
+        key !== 'refund_policy'
       ) {
-        if (key === 'product_images' || key === 'product_videos') {
-          continue;
-        }
-        if (key === 'refund_policy') {
-          continue;
-        }
         console.error(`Validation failed for product: ${key}`);
         return false;
       }

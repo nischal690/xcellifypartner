@@ -9,7 +9,6 @@ export default function LeftItems({ product, category, subcategory, schema }) {
     if (!dateString) return '-'; // Handle undefined/null cases
     const date = new Date(dateString);
 
-    // Extract day, month (short format), and year (2-digit)
     const day = date.getDate().toString().padStart(2, '0'); // Ensure two digits
     const month = date.toLocaleString('en-GB', { month: 'short' }); // Short month
     const year = date.getFullYear().toString().slice(-2); // Get last 2 digits of the year
@@ -25,7 +24,7 @@ export default function LeftItems({ product, category, subcategory, schema }) {
         ? product[sec.name]
           ? 'Yes'
           : 'No'
-        : sec.name.includes('deadline') // Handle multiple deadline fields
+        : sec.name.includes('deadline') || sec.name === 'event_timeline'
         ? formatDate(product[sec.name])
         : product[sec.name] || '-', // Show '-' if value is missing
   }));

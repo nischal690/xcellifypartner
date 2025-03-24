@@ -448,11 +448,11 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Can travel up to in km',
+              label: 'Can travel up to in km*(N/A for online & home visits)',
               name: 'travel_upto',
               type: 'select',
               options: [5, 10, 20, 50],
-              required: true,
+              required: false,
             },
           ],
         },
@@ -613,15 +613,7 @@ export const ProductDetailsData = [
               label: 'Study destination country',
               name: 'study_destination_countries',
               type: 'multiselect',
-              options: [
-                'India',
-                'US',
-                'Canada',
-                'UK',
-                'Europe',
-                'Australia',
-                'Asia',
-              ],
+              options: [],
               required: true,
             },
             {
@@ -777,7 +769,14 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Duration in hours',
+              label: 'Duration Type',
+              name: 'duration_type',
+              type: 'select',
+              options: ['Hrs', 'Days', 'Weeks', 'Months'],
+              required: true,
+            },
+            {
+              label: 'Duration',
               name: 'duration',
               type: 'text',
               required: true,
@@ -953,6 +952,12 @@ export const ProductDetailsData = [
               label: 'Event title',
               name: 'event_title',
               type: 'text',
+              required: true,
+            },
+            {
+              label: 'Event Date',
+              name: 'event_timeline',
+              type: 'date',
               required: true,
             },
             {
@@ -1591,7 +1596,7 @@ export const ProductDetailsData = [
           heading: 'Pricing',
           fields: [
             {
-              label: 'Price per hour',
+              label: 'Price',
               name: 'price',
               type: 'number',
               required: true,
@@ -1690,11 +1695,25 @@ const commonValidations = {
     .min(3, 'Product title must be at least 3 characters')
     .max(200, 'Product title must be at most 200 characters'),
   product_code: Yup.string(),
-  price: Yup.number().positive('Price must be positive'),
-  currency: Yup.string().oneOf(['INR', 'USD']),
+  price: Yup.number()
+    .nullable()
+    .optional()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .positive('Price must be positive'),
+
+  currency: Yup.string()
+    .nullable()
+    .optional()
+    .transform((value) => (value === '' ? null : value)) // Convert empty string to null
+    .oneOf(['INR', 'USD'], 'Currency must be either INR or USD'),
+
   discount: Yup.number()
+    .nullable()
+    .optional()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
     .min(0, 'Discount cannot be negative')
     .max(100, 'Discount cannot exceed 100%'),
+
   final_price: Yup.number()
     .min(0, 'Final price cannot be negative')
     .test(
@@ -1720,10 +1739,16 @@ const commonValidations = {
     .min(50, 'USP must be at least 50 characters')
     .max(1500, 'USP must not exceed 1000 characters')
     .required('USP is required'),
-  google_reviews: Yup.string().matches(
-    /^[0-5](\.[0-9]{1,2})?$/,
-    'Rating must be a number between 0 and 5, with up to two decimal places'
-  ),
+  google_reviews: Yup.string()
+    .nullable()
+    .optional()
+    .transform((value) => (value === '' ? null : value)) // Convert empty string to null
+    .test(
+      'is-valid-rating',
+      'Rating must be a number between 0 and 5, with up to two decimal places',
+      (value) => value === null || /^[0-5](\.[0-9]{1,2})?$/.test(value)
+    ),
+
   google_rating_url: Yup.string().url('Invalid URL'),
 
   product_images: Yup.array()
@@ -1832,7 +1857,16 @@ export const validationSchemas = {
     service_available_cities: Yup.string().required(
       'Destination city is required'
     ),
-    travel_upto: Yup.string().required('Travel upto is required'),
+    travel_upto: Yup.string().when('mode_of_teaching', {
+      is: (value) =>
+        typeof value === 'string' &&
+        value.split(', ').some((v) => v.startsWith('Physical')),
+      then: (schema) =>
+        schema.required(
+          'Travel upto is required when physical teaching is selected'
+        ),
+      otherwise: (schema) => schema.notRequired(),
+    }),
     refund_policy: Yup.string()
       .oneOf(['true', 'false'])
       .required('Refund policy is required'),
@@ -1864,6 +1898,7 @@ export const validationSchemas = {
     ...commonValidations,
     age_group: Yup.string().required('Age group is required'),
     discipline: Yup.string().required('Discipline is required'),
+    duration_type: Yup.string().required('Duration type is required'),
     duration: Yup.string().required('Duration is required'),
     program_eligibility: Yup.string().required(
       'Program eligibility is required'
@@ -1892,9 +1927,26 @@ export const validationSchemas = {
     // product_title: Yup.string()
     // .required("Product title is required")
     // .min(3, "Product title must be at least 3 characters"),
-    price: Yup.number().positive('Price must be positive'),
-    currency: Yup.string().oneOf(['INR', 'USD']),
+    price: Yup.number()
+      .nullable()
+      .optional()
+      .transform((value, originalValue) =>
+        originalValue === '' ? null : value
+      )
+      .positive('Price must be positive'),
+
+    currency: Yup.string()
+      .nullable()
+      .optional()
+      .transform((value) => (value === '' ? null : value))
+      .oneOf(['INR', 'USD'], 'Currency must be either INR or USD'),
+
     discount: Yup.number()
+      .nullable()
+      .optional()
+      .transform((value, originalValue) =>
+        originalValue === '' ? null : value
+      )
       .min(0, 'Discount cannot be negative')
       .max(100, 'Discount cannot exceed 100%'),
     final_price: Yup.number().test(
@@ -1950,6 +2002,9 @@ export const validationSchemas = {
       ),
     event_title: Yup.string().required('Event title is required'),
     event_location: Yup.string().required('Event location is required'),
+    event_timeline: Yup.date()
+      .min(new Date(), 'Registration deadline must be in the future')
+      .required('Registration deadline is required'),
     event_category: Yup.string().required('Event category is required'),
     age_group_min: Yup.number()
       .min(0, 'Age group min cannot be negative')
