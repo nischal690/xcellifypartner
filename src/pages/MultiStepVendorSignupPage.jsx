@@ -9,7 +9,10 @@ import PrimaryLogo from '../assets/logo-primary.png';
 import { useNavigate } from 'react-router-dom';
 import steps from '../utils/MultiStepVendorSignupFormData'; // Updated data
 import { tourSteps } from '../utils/MultiStepVendorSignupFormData';
-import { fileUploadInfo } from '../utils/MultiStepVendorSignupFormData';
+import {
+  fileUploadInfo,
+  fileHintMessage,
+} from '../utils/MultiStepVendorSignupFormData';
 import { useStore } from '../stores';
 import { AuthStatuses } from '../utils/constants';
 import apiRequest from '../utils/apiRequest';
@@ -27,6 +30,7 @@ import {
 } from '../utils/geocoding';
 import { toast } from 'react-toastify';
 import OnBoardingHeader from '../components/onboardingPage/OnBoardingHeader';
+import SupplierDeclarationCard from '../components/onboardingPage/SupplierDeclarationCard';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -75,49 +79,80 @@ const MultiStepVendorSignupPage = () => {
   const debouncedPincode = useDebouncedValue(formData.pincode || '', 500);
 
   const uploadFieldToApiMap = {
-    digital_signature: {
-      url: 'mic-login/signature',
-      bodyParam: 'signature',
-    },
-    msme_certificate: {
-      url: 'mic-login/msmeCertificate',
-      bodyParam: 'certificate',
-    },
     brand_logo: {
       url: 'mic-login/profile-picture',
       bodyParam: 'image',
     },
   };
 
-  const uploadFile = async (fieldName, userId, file) => {
-    const apiDetails = uploadFieldToApiMap[fieldName];
+  // List of file types that should use the new `uploadAttachments` API
+  const uploadableFileTypes = [
+    'msme_certificate',
+    'signature',
+    'aadhar_coi',
+    'pan_card',
+    'gst',
+    'cancelled_cheque',
+    'gst_declaration',
+    'supplier_declaration',
+  ];
 
-    if (!apiDetails) {
+  /**
+   * Function to handle file uploads dynamically based on file type.
+   * @param {string} fieldName - The form field name for the file.
+   * @param {string} userId - User ID (if needed).
+   * @param {File} file - The file to be uploaded.
+   */
+  const uploadFile = async (fieldName, userId, file) => {
+    let formData = new FormData();
+
+    // Handle brand_logo separately
+    if (fieldName === 'brand_logo') {
+      formData.append('image', file);
+      formData.append('user_id', userId);
+    }
+    // Handle other file uploads using uploadAttachments API
+    else if (uploadableFileTypes.includes(fieldName)) {
+      formData.append('fileType', fieldName);
+      formData.append('attachment', file);
+    } else {
       console.error(`No API mapping found for field: ${fieldName}`);
       return;
     }
 
-    const formData = new FormData();
-    formData.append(apiDetails.bodyParam, file);
-    formData.append('user_id', userId);
-
     try {
+      const apiUrl =
+        fieldName === 'brand_logo'
+          ? uploadFieldToApiMap.brand_logo.url
+          : 'mic-login/uploadAttachments';
+
       const response = await apiRequest({
-        url: apiDetails.url,
+        url: apiUrl,
         method: 'post',
         data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      console.log(`${fieldName} uploaded successfully`, response);
-      if (!toast.isActive(fieldName)) {
+
+      // Log the full response for debugging
+      console.log('API Response:', response);
+
+      // Correctly access response.data.success and response.data.message
+      if (response?.data?.success) {
         toast.success(`${fieldName} uploaded successfully`, {
           toastId: fieldName,
         });
+      } else {
+        toast.error(
+          `Failed to upload ${fieldName}. Server Response: ${
+            response?.data?.message || 'Unknown error'
+          }`
+        );
       }
     } catch (error) {
       console.error(`Error uploading ${fieldName}:`, error);
+      toast.error(
+        `Error uploading ${fieldName}: ${error.message || 'Unknown error'}`
+      );
     }
   };
 
@@ -233,6 +268,30 @@ const MultiStepVendorSignupPage = () => {
     }
   };
 
+  const isFieldRequired = (fieldName) => {
+    if (fieldName === 'company_name' && formData.company_type === 'Individual')
+      return false;
+    if (fieldName === 'CIN' && formData.company_type === 'Individual')
+      return false;
+    if (
+      fieldName === 'GST' &&
+      (formData.company_type === 'Individual' ||
+        formData.company_type === 'sole_proprietership')
+    )
+      return false;
+    if (fieldName === 'msme_certificate' && formData.MSME_registered !== 'Yes')
+      return false;
+
+    if (
+      (fieldName === 'gst' || fieldName === 'gst_declaration') &&
+      (formData.company_type === 'sole_proprietership' ||
+        formData.company_type === 'Individual')
+    )
+      return false;
+
+    return true;
+  };
+
   // Update your handleChange function
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -252,44 +311,12 @@ const MultiStepVendorSignupPage = () => {
       }
 
       // Upload file
-      if (uploadFieldToApiMap[name]) {
-        uploadFile(name, userInfo?.id, file);
-      }
+      uploadFile(name, userInfo?.id, file);
 
       // Update form data with the uploaded file
       setFormData((prev) => ({ ...prev, [name]: file }));
-    }
-
-    if (
-      sameAsAbove &&
-      [
-        'contact_person_name',
-        'contact_person_email',
-        'contact_person_mobile',
-      ].includes(name)
-    ) {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-        owner_name: name === 'contact_person_name' ? value : prev.owner_name,
-        owner_email: name === 'contact_person_email' ? value : prev.owner_email,
-        owner_mobile:
-          name === 'contact_person_mobile' ? value : prev.owner_mobile,
-      }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-
-    if (files && files[0]) {
-      const file = files[0];
-      if (uploadFieldToApiMap[name]) {
-        uploadFile(name, userInfo?.id, file);
-      }
-      setFormData((prev) => ({ ...prev, [name]: file }));
-      validateField(name, file);
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-      validateField(name, value);
     }
   };
 
@@ -410,19 +437,9 @@ const MultiStepVendorSignupPage = () => {
                     >
                       <label className="block text-gray-700 mb-2">
                         {field.label}
-                        {field.required &&
-                          !(
-                            (field.name === 'company_name' &&
-                              formData.company_type === 'Individual') ||
-                            (field.name === 'CIN' &&
-                              formData.company_type === 'Individual') ||
-                            (field.name === 'GST' &&
-                              (formData.company_type === 'Individual' ||
-                                formData.company_type ===
-                                  'sole_proprietership')) ||
-                            (field.name === 'msme_certificate' &&
-                              formData.MSME_registered !== 'Yes')
-                          ) && <span className="text-red-500 ml-1">*</span>}
+                        {field.required && isFieldRequired(field.name) && (
+                          <span className="text-red-500 ml-1">*</span>
+                        )}
                       </label>
 
                       {field.type === 'select' ? (
@@ -458,9 +475,7 @@ const MultiStepVendorSignupPage = () => {
                           />
 
                           {/* Show preview card if file is uploaded */}
-                          {['digital_signature', 'brand_logo'].includes(
-                            field.name
-                          ) &&
+                          {['signature', 'brand_logo'].includes(field.name) &&
                             formData[field.name] && (
                               <FileUploadPreviewCard
                                 file={formData[field.name]}
@@ -494,6 +509,33 @@ const MultiStepVendorSignupPage = () => {
                       {fileUploadInfo[field.name] && (
                         <p className="text-sm text-gray-500 mt-1">
                           {fileUploadInfo[field.name].message}
+                        </p>
+                      )}
+                      {[
+                        'gst',
+                        'aadhar_coi',
+                        'pan_card',
+                        'gst_declaration',
+                        'cancelled_cheque',
+                        'msme_certificate',
+                      ].includes(field.name) &&
+                        field.type === 'file' && (
+                          <p className="text-sm text-gray-500 mt-1">
+                            {fileHintMessage}
+                          </p>
+                        )}
+
+                      {field.name === 'supplier_declaration' && (
+                        <>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Fill and upload the declaration form docx file
+                          </p>
+                          <SupplierDeclarationCard />
+                        </>
+                      )}
+                      {field.name === 'signature' && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          Accepted file formats images: .jpg, .jpeg, .png
                         </p>
                       )}
                     </div>

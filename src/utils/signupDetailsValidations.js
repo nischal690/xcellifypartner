@@ -1,5 +1,24 @@
 import * as yup from 'yup';
 
+const fileValidation = yup
+  .mixed()
+  .required('File is required.')
+  .test(
+    'fileType',
+    'Only PDF, JPEG, JPG, or PNG files are allowed.',
+    (value) => {
+      return (
+        value &&
+        ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'].includes(
+          value.type
+        )
+      );
+    }
+  )
+  .test('fileSize', 'Required & File size should not exceed 2MB.', (value) => {
+    return value && value.size <= 2 * 1024 * 1024;
+  });
+
 const signupValidationSchemas = [
   // Step 1: Company Details
   yup.object().shape({
@@ -59,11 +78,20 @@ const signupValidationSchemas = [
     city: yup.string().required('City is required.'),
     address_line_1: yup.string().required('Address line 1 is required.'),
     address_line_2: yup.string().nullable(),
-    digital_signature: yup
+    signature: yup
       .mixed()
       .test('required', 'Digital signature is required', (value) => {
         return value && value instanceof File;
+      })
+      .test('fileFormat', 'Only PNG, JPG, JPEG files are allowed', (value) => {
+        if (!value) return true; // Skip if no file
+        return ['image/png', 'image/jpg', 'image/jpeg'].includes(value.type);
+      })
+      .test('fileSize', 'File size should not exceed 2MB', (value) => {
+        if (!value) return true; // Skip if no file
+        return value.size <= 2 * 1024 * 1024; // 2MB size limit
       }),
+
     brand_logo: yup
       .mixed()
       .nullable()
@@ -84,7 +112,13 @@ const signupValidationSchemas = [
         if (!value) return true;
         return value && value.size <= 2 * 1024 * 1024;
       }),
-    referred_by: yup.string().nullable(),
+    referred_by: yup
+      .string()
+      .nullable()
+      .test('is-email', 'Enter a valid email', (value) => {
+        if (!value) return true; // Allows null or empty values
+        return yup.string().email().isValidSync(value);
+      }),
   }),
   // Step 2: Compliance Details
   yup.object().shape({
@@ -102,6 +136,8 @@ const signupValidationSchemas = [
       then: () => yup.string().required('PAN is required.'), // Required for Individual
       otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
     }),
+    coi_aadhar: yup.string().required('Aadhar / COI / CIN is required'),
+
     CIN: yup.string().when('company_type', {
       is: (value) => value === 'Individual',
       then: () => yup.string().nullable(), // Not required for Individual
@@ -121,7 +157,49 @@ const signupValidationSchemas = [
           ),
     }),
 
+    gst: yup.mixed().when('company_type', {
+      is: (value) => value === 'sole_proprietership' || value === 'Individual',
+      then: () => yup.mixed().notRequired(),
+      otherwise: () => fileValidation.clone().required('GST file is required.'),
+    }),
+
+    aadhar_coi: fileValidation
+      .clone()
+      .required('Aadhar or COI file is required.'),
+
+    pan_card: fileValidation.clone().required('PAN card file is required.'),
+
     MSME_registered: yup.string().required('Please specify MSME registration.'),
+
+    gst_declaration: yup.mixed().when('company_type', {
+      is: (value) => value === 'sole_proprietership' || value === 'Individual',
+      then: () => yup.mixed().notRequired(),
+      otherwise: () =>
+        fileValidation.clone().required('GST Declaration file is required.'),
+    }),
+
+    cancelled_cheque: fileValidation
+      .clone()
+      .required('Cancelled Cheque file is required.'),
+
+    supplier_declaration: yup
+      .mixed()
+      .nullable()
+      .test(
+        'fileFormat',
+        'Only Word files (.docx, .docs) are allowed',
+        (value) => {
+          if (!value) return true; // Allows empty/null value since it's not required
+          return [
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword',
+          ].includes(value.type);
+        }
+      )
+      .test('fileSize', 'File size should not exceed 2MB', (value) => {
+        if (!value) return true;
+        return value.size <= 2 * 1024 * 1024; // 2MB limit
+      }),
 
     msme_certificate: yup.mixed().when('MSME_registered', {
       is: (value) => value === 'Yes',
@@ -131,10 +209,25 @@ const signupValidationSchemas = [
           .test(
             'required',
             'MSME Certificate is required when registered under MSME',
+            (value) => value && value instanceof File
+          )
+          .test(
+            'fileFormat',
+            'Only PDF, PNG, JPG, JPEG files are allowed',
             (value) => {
-              return value && value instanceof File; // Ensures a file is uploaded
+              if (!value) return true; // Skip check if no file
+              return [
+                'application/pdf',
+                'image/png',
+                'image/jpg',
+                'image/jpeg',
+              ].includes(value.type);
             }
-          ),
+          )
+          .test('fileSize', 'File size should not exceed 5MB', (value) => {
+            if (!value) return true; // Skip check if no file
+            return value.size <= 5 * 1024 * 1024; // 5MB size limit
+          }),
       otherwise: () => yup.mixed().nullable(),
     }),
   }),
