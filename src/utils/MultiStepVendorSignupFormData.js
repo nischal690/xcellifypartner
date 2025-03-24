@@ -143,7 +143,7 @@ const steps = [
             required: false,
           },
           {
-            label: 'Digital signature',
+            label: 'Digital Signature',
             name: 'signature',
             type: 'file',
             required: true,
