@@ -415,7 +415,11 @@ export const detailedViewSchemaData = {
             name: 'age_group',
           },
           {
-            label: 'Duration In Hours',
+            label: 'Duration Type',
+            name: 'duration_type',
+          },
+          {
+            label: 'Duration',
             name: 'duration',
           },
           {
@@ -518,6 +522,10 @@ export const detailedViewSchemaData = {
           {
             label: 'Event title',
             name: 'event_title',
+          },
+          {
+            label: 'Event Date',
+            name: 'event_timeline',
           },
           {
             label: 'Event category',
