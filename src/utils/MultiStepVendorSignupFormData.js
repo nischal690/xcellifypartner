@@ -137,14 +137,14 @@ const steps = [
         heading: 'Other details',
         fields: [
           {
-            label: 'Referred by',
+            label: 'Referred by ( Registered Email ID)',
             name: 'referred_by',
             type: 'text',
             required: false,
           },
           {
             label: 'Digital signature',
-            name: 'digital_signature',
+            name: 'signature',
             type: 'file',
             required: true,
           },
@@ -198,9 +198,33 @@ const steps = [
       {
         heading: 'Other details',
         fields: [
+          {
+            label: 'Aadhar / COI / CIN',
+            name: 'coi_aadhar',
+            type: 'text',
+            required: true,
+          },
+          {
+            label: 'Upload Aadhar / COI / CIN',
+            name: 'aadhar_coi',
+            type: 'file',
+            required: true,
+          },
           { label: 'PAN Number', name: 'PAN', type: 'text', required: true },
-          { label: 'CIN Number', name: 'CIN', type: 'text', required: true },
+          {
+            label: 'Upload PAN',
+            name: 'pan_card',
+            type: 'file',
+            required: true,
+          },
+          // { label: 'CIN Number', name: 'CIN', type: 'text', required: true },
           { label: 'GST Number', name: 'GST', type: 'text', required: true },
+          {
+            label: 'Upload GST ',
+            name: 'gst',
+            type: 'file',
+            required: true,
+          },
           {
             label: 'Are you registered under MSME?',
             name: 'MSME_registered',
@@ -217,6 +241,24 @@ const steps = [
             type: 'file',
             required: true,
           },
+          {
+            label: 'Upload GST Declaration',
+            name: 'gst_declaration',
+            type: 'file',
+            required: true,
+          },
+          {
+            label: 'Upload Cancelled Cheque',
+            name: 'cancelled_cheque',
+            type: 'file',
+            required: true,
+          },
+          {
+            label: 'Supplier Declaration',
+            name: 'supplier_declaration',
+            type: 'file',
+            required: false,
+          },
         ],
       },
     ],
@@ -231,22 +273,14 @@ const steps = [
 export default steps;
 
 export const fileUploadInfo = {
-  digital_signature: {
-    message: 'Accepted: Only PNG, JPG, JPEG (Max: 2MB)',
-    maxSize: 2 * 1024 * 1024, // 2MB
-    acceptedTypes: ['image/png', 'image/jpeg', 'image/jpg'],
-  },
   brand_logo: {
     message: 'Accepted: Only PNG, JPG, JPEG, SVG (Max: 2MB)',
     maxSize: 2 * 1024 * 1024, // 2MB
     acceptedTypes: ['image/png', 'image/jpeg', 'image/jpg', 'image/svg'],
   },
-  msme_certificate: {
-    message: 'Accepted: PDF & Images (Max: 5MB)',
-    maxSize: 5 * 1024 * 1024, // 5MB
-    acceptedTypes: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
-  },
 };
+
+export const fileHintMessage = 'Accepted: Only PDFs, PNG, JPG, JPEG (Max: 2MB)';
 
 export const tourSteps = [
   {
