@@ -443,7 +443,7 @@ const MultiStepVendorSignupPage = () => {
                         )}
                       </label>
 
-                      {field.type === 'file' && field.name === 'signature' && (
+                      {/* {field.type === 'file' && field.name === 'signature' && (
                         <>
                           <DigitalSignaturePad />
                           <p className="text-gray-500 text-sm mt-2">
@@ -451,7 +451,7 @@ const MultiStepVendorSignupPage = () => {
                             Download the PNG after drawing and upload below
                           </p>
                         </>
-                      )}
+                      )} */}
 
                       {field.type === 'select' ? (
                         <Dropdown
