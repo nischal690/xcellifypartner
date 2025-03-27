@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import Joyride from 'react-joyride';
+import { removeBackground } from '@imgly/background-removal';
 
 import { toJS } from 'mobx';
 
@@ -31,7 +32,7 @@ import {
 import { toast } from 'react-toastify';
 import OnBoardingHeader from '../components/onboardingPage/OnBoardingHeader';
 import SupplierDeclarationCard from '../components/onboardingPage/SupplierDeclarationCard';
-import DigitalSignaturePad from '../components/onboardingPage/DigitalSignaturePad';
+import LoaderMessage from '../components/commonComponents/LoaderMessage';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -78,6 +79,9 @@ const MultiStepVendorSignupPage = () => {
   const [cityOptions, setCityOptions] = useState([]);
   const [disableCountrySelction, setDisableCountrySelection] = useState(false);
   const debouncedPincode = useDebouncedValue(formData.pincode || '', 500);
+
+  const [isRemovingBG, setIsRemovingBG] = useState(false);
+  const [removalMessage, setRemovalMessage] = useState('');
 
   const uploadFieldToApiMap = {
     brand_logo: {
@@ -294,11 +298,11 @@ const MultiStepVendorSignupPage = () => {
   };
 
   // Update your handleChange function
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value, files } = e.target;
 
     if (files && files[0]) {
-      const file = files[0];
+      let file = files[0];
 
       // File validation
       const { maxSize, acceptedTypes } = fileUploadInfo[name] || {};
@@ -311,10 +315,35 @@ const MultiStepVendorSignupPage = () => {
         return;
       }
 
+      // Special logic only for signature field
+      if (name === 'signature') {
+        try {
+          setIsRemovingBG(true);
+          setRemovalMessage('Removing background...');
+
+          const arrayBuffer = await file.arrayBuffer();
+          const imageBlob = new Blob([arrayBuffer], { type: file.type });
+
+          const outputBlob = await removeBackground(imageBlob, {
+            output: { format: 'image/png' },
+            progress: (p) => console.log('BG removal progress:', p),
+          });
+
+          file = new File([outputBlob], 'signature.png', { type: 'image/png' });
+          toast.success('Background removed from signature!');
+        } catch (err) {
+          console.error('Background removal failed:', err);
+          toast.error('Failed to remove background from signature.');
+        } finally {
+          setIsRemovingBG(false);
+          setRemovalMessage('');
+        }
+      }
+
       // Upload file
       uploadFile(name, userInfo?.id, file);
 
-      // Update form data with the uploaded file
+      // Update form data with the final (processed) file
       setFormData((prev) => ({ ...prev, [name]: file }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -443,16 +472,6 @@ const MultiStepVendorSignupPage = () => {
                         )}
                       </label>
 
-                      {/* {field.type === 'file' && field.name === 'signature' && (
-                        <>
-                          <DigitalSignaturePad />
-                          <p className="text-gray-500 text-sm mt-2">
-                            {' '}
-                            Download the PNG after drawing and upload below
-                          </p>
-                        </>
-                      )} */}
-
                       {field.type === 'select' ? (
                         <Dropdown
                           id={field.name}
@@ -500,6 +519,9 @@ const MultiStepVendorSignupPage = () => {
                                 }
                               />
                             )}
+                          {field.name === 'signature' && isRemovingBG && (
+                            <LoaderMessage message={removalMessage} />
+                          )}
                         </div>
                       ) : (
                         <input

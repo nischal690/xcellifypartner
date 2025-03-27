@@ -15,6 +15,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@imgly/background-removal": "^1.6.0",
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
@@ -25,6 +26,7 @@
     "lucide-react": "^0.474.0",
     "mobx": "^6.13.5",
     "mobx-react": "^9.1.1",
+    "onnxruntime-web": "^1.21.0-dev.20250206-d981b153d3",
     "quill": "^2.0.3",
     "react": "^18.3.1",
     "react-cropper": "^2.3.3",

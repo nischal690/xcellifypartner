@@ -11,7 +11,7 @@ import RichTextEditor from '../components/commonComponents/RichTextEditor';
 import PrimaryLogo from '../assets/logo-primary.png';
 
 import {
-  loadCountries,
+  loadOnlyCountries,
   loadAllIndianCities,
   loadIndianStates,
 } from '../utils/geocoding';
@@ -100,14 +100,14 @@ const StepVendorProductDetailsPage = () => {
     const indianCities = loadAllIndianCities();
     setCities(indianCities);
   };
+  const fetchCountries = () => {
+    const countriesList = loadOnlyCountries();
+    console.log('countriesList', countriesList);
+
+    setCountries(countriesList);
+  };
 
   useEffect(() => {
-    const fetchCountries = async () => {
-      setCountries(
-        OptionCountries.map((country) => ({ value: country, label: country }))
-      );
-    };
-
     fetchCountries();
     fetchStates();
     fetchCities();
@@ -1726,7 +1726,7 @@ const StepVendorProductDetailsPage = () => {
                                   : field.name === 'scholarship_course'
                                   ? loadScholarShipCourses
                                   : field.name === 'study_destination_countries'
-                                  ? OptionCountries
+                                  ? countries
                                   : field.name === 'mode_of_teaching'
                                   ? loadModeOfTeaching
                                   : field.name === 'subjects'
@@ -2232,9 +2232,6 @@ const StepVendorProductDetailsPage = () => {
                                         : field.name ===
                                           'scholarship_study_level'
                                         ? loadLoanStudyLevel
-                                        : field.name ===
-                                          'study_destination_countries'
-                                        ? OptionCountries
                                         : field.name === 'scholarship_states'
                                         ? states
                                         : field.name === 'scholarship_category'
@@ -2261,6 +2258,9 @@ const StepVendorProductDetailsPage = () => {
                                         ? cities
                                         : field.name ===
                                           'loan_available_countries'
+                                        ? countries
+                                        : field.name ===
+                                          'study_destination_countries'
                                         ? countries
                                         : []
                                     }

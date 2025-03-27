@@ -273,6 +273,12 @@ const steps = [
 export default steps;
 
 export const fileUploadInfo = {
+  signature: {
+    message:
+      "Upload your signature. We'll automatically remove the background.",
+    maxSize: 2 * 1024 * 1024,
+    acceptedTypes: ['image/png', 'image/jpeg', 'image/jpg'],
+  },
   brand_logo: {
     message: 'Accepted: Only PNG, JPG, JPEG, SVG (Max: 2MB)',
     maxSize: 2 * 1024 * 1024, // 2MB
