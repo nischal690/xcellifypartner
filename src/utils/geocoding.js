@@ -112,3 +112,12 @@ export const loadAllIndianCities = () => {
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
 };
+
+export const loadOnlyCountries = () => {
+  return Country.getAllCountries()
+    .map((country) => ({
+      value: country.name,
+      label: country.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+};

@@ -18,16 +18,7 @@ export const gstRateMapping = {
   'Summer courses': '18',
 };
 
-export const OptionCountries = [
-  'USA',
-  'Canada',
-  'UK',
-  'Europe',
-  'Australia',
-  'India',
-  'Other Asian Countries',
-  'Others',
-].map((country) => ({
+export const OptionCountries = [].map((country) => ({
   value: country,
   label: country,
 }));
