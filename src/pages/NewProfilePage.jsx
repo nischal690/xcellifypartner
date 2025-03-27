@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FiCheckCircle } from 'react-icons/fi';
 import PrimaryLogo from '../assets/logo-primary.png';
 import useVendorProfile from '../hooks/profile/useVendorProfile';
@@ -23,6 +23,7 @@ import Sidebar from '../components/sidebar';
 import getEssentialDocuments from '../utils/getEssentialDocuments';
 import MSMECertificateIcon from '../assets/svg-icons/MSMECertificateIcon';
 import { FaDownload } from 'react-icons/fa';
+import EssentialDocuments from '../components/profile/EssentialDocuments';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -59,9 +60,10 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({});
   const [editProfileData, setEditProfileData] = useState({});
   const [fieldErrors, setFieldErrors] = useState({});
-  const [msmeCertificate, setMSMECertificate] = useState();
-  const [signature, setSignature] = useState();
-  const [brandLogo, setBrandLogo] = useState();
+
+  const [essentialDocs, setEssentialDocs] = useState({});
+  const hasFetchedDocuments = useRef(false);
+
   //geocoding
   const [countryOptions, setcountryOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
@@ -139,11 +141,16 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const getDocuments = async () => {
-      const { msmeCertificate, signature, brandLogo } =
-        await getEssentialDocuments(profile.user_id, profile.partner_id);
-      setMSMECertificate(msmeCertificate);
-      setBrandLogo(brandLogo);
-      setSignature(signature);
+      if (profile.partner_id && !hasFetchedDocuments.current) {
+        console.log('Fetching documents...');
+        const docs = await getEssentialDocuments(
+          profile.user_id,
+          profile.partner_id
+        );
+        setEssentialDocs(docs);
+        console.log('Documents fetched:', docs);
+        hasFetchedDocuments.current = true;
+      }
     };
     getDocuments();
   }, [profile.partner_id]);
@@ -393,57 +400,10 @@ export default function ProfilePage() {
               <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-8">
                 {renderTabContent()}
               </div>
-              {activeTab === 'complianceDetails' && (
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                    Essential Documents
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-6 gap-4">
-                    {msmeCertificate && (
-                      <a
-                        href={`data:application/pdf;base64,${msmeCertificate}`}
-                        download="msme-certificate.pdf"
-                      >
-                        <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
-                          <span className="pr-2">
-                            <MSMECertificateIcon />
-                          </span>
-                          MSME certificate
-                          <MdDownload className="text-gray-700 ml-2" />
-                        </button>
-                      </a>
-                    )}
-                    {signature && (
-                      <a
-                        href={`data:image/png;base64,${signature}`}
-                        download="signature"
-                      >
-                        <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
-                          <span className="pr-2">
-                            <MSMECertificateIcon />
-                          </span>
-                          Signature
-                          <MdDownload className="text-gray-700 ml-2" />
-                        </button>
-                      </a>
-                    )}
-                    {brandLogo && (
-                      <a
-                        href={`data:image/png;base64,${brandLogo}`}
-                        download="brand-logo"
-                      >
-                        <button className="rounded-md border bg-white shadow-sm shadow-gray-300 flex items-center py-3 px-5">
-                          <span className="pr-2">
-                            <MSMECertificateIcon />
-                          </span>
-                          Brand Logo
-                          <MdDownload className="text-gray-700 ml-2" />
-                        </button>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
+              <EssentialDocuments
+                essentialDocs={essentialDocs}
+                activeTab={activeTab}
+              />
             </div>
           </>
         )}
