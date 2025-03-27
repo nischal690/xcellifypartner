@@ -1,30 +1,71 @@
-import apiRequest from './apiRequest'
-import { HTTP_CODE } from './constants';
+import apiRequest from './apiRequest';
 
-export default async function getEssentialDocuments(userId, partnerId){
-    
-    const apiList = [
-        apiRequest({
-            url: 'mic-login/signature',
-            method:'get',
-            params: {user_id: userId},
-        }),
-        apiRequest({
-            url: 'mic-login/profile-picture/'+partnerId,
-            method:'get',
-        }),
-        apiRequest({
-            url: 'mic-login/msmeCertificate',
-            method:'get',
-            params: {user_id: userId},
-        }),
-    ]
+const uploadableFileTypes = [
+  'msme_certificate',
+  'signature',
+  'aadhar_coi',
+  'pan_card',
+  'gst',
+  'cancelled_cheque',
+  'gst_declaration',
+  'supplier_declaration',
+];
 
-    const responseList = await Promise.allSettled(apiList);
-    const data = {
-        msmeCertificate: responseList[2].status === 'fulfilled' ? responseList[2]?.value?.data?.certificate :'',
-        signature: responseList[0].status === 'fulfilled' ? responseList[0]?.value?.data?.signature :'',
-        brandLogo: responseList[1].status === 'fulfilled' ? responseList[1]?.value?.data?.image?.image :'',
+export default async function getEssentialDocuments(userId, partnerId) {
+  const documentResults = {};
+
+  const fileTypePromises = uploadableFileTypes.map((fileType) =>
+    apiRequest({
+      url: `/mic-login/getAttachments?userId=${userId}&fileType=${fileType}`,
+      method: 'get',
+    })
+      .then((res) => ({
+        fileType,
+        success: true,
+        data: res?.data,
+      }))
+      .catch((err) => ({
+        fileType,
+        success: false,
+        data: null,
+      }))
+  );
+
+  const brandLogoPromise = apiRequest({
+    url: `mic-login/profile-picture/${partnerId}`,
+    method: 'get',
+  })
+    .then((res) => ({
+      fileType: 'brand_logo',
+      success: true,
+      data: {
+        file_data: res?.data?.image?.image || '',
+        content_type: 'image/png',
+      },
+    }))
+    .catch(() => ({
+      fileType: 'brand_logo',
+      success: false,
+      data: null,
+    }));
+
+  const allResponses = await Promise.allSettled([
+    ...fileTypePromises,
+    brandLogoPromise,
+  ]);
+
+  allResponses.forEach((result) => {
+    if (result.status === 'fulfilled' && result.value.success) {
+      const { fileType, data } = result.value;
+      if (data?.file_data) {
+        documentResults[fileType] = {
+          base64: data.file_data,
+          contentType: data.content_type,
+          updatedAt: data.updated_at || null,
+        };
+      }
     }
-    return data;
+  });
+
+  return documentResults;
 }
