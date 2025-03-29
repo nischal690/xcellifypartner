@@ -1771,14 +1771,20 @@ const commonValidations = {
     .min(50, 'USP must be at least 50 characters')
     .max(1500, 'USP must not exceed 1000 characters')
     .required('USP is required'),
-  google_reviews: Yup.string()
+  google_reviews: Yup.number()
     .nullable()
-    .optional()
-    .transform((value) => (value === '' ? null : value)) // Convert empty string to null
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : Number(originalValue)
+    )
+    .min(0, 'Rating must be between 0 and 5')
+    .max(5, 'Rating must be between 0 and 5')
     .test(
-      'is-valid-rating',
-      'Rating must be a number between 0 and 5, with up to two decimal places',
-      (value) => value === null || /^[0-5](\.[0-9]{1,2})?$/.test(value)
+      'decimal-places',
+      'Rating must be a number with up to two decimal places',
+      (value) =>
+        value === null ||
+        Number.isInteger(value) ||
+        /^\d+(\.\d{1,2})?$/.test(value.toString())
     ),
 
   google_rating_url: Yup.string().url('Invalid URL'),
