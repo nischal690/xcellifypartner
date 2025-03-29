@@ -54,7 +54,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'text',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -224,7 +224,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -433,7 +433,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -473,31 +473,31 @@ export const ProductDetailsData = [
             },
           ],
         },
-        {
-          heading: 'Pricing',
-          fields: [
-            { label: 'Price', name: 'price', type: 'number', required: false },
-            {
-              label: 'Currency',
-              name: 'currency',
-              type: 'select',
-              options: ['INR', 'USD'],
-              required: false,
-            },
-            {
-              label: 'Discount',
-              name: 'discount',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Final price',
-              name: 'final_price',
-              type: 'number',
-              required: false,
-            },
-          ],
-        },
+        // {
+        //   heading: 'Pricing',
+        //   fields: [
+        //     { label: 'Price', name: 'price', type: 'number', required: false },
+        //     {
+        //       label: 'Currency',
+        //       name: 'currency',
+        //       type: 'select',
+        //       options: ['INR', 'USD'],
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Discount',
+        //       name: 'discount',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Final price',
+        //       name: 'final_price',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //   ],
+        // },
         {
           heading: 'Marketing materials',
           fields: [
@@ -602,7 +602,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -649,36 +649,66 @@ export const ProductDetailsData = [
             },
           ],
         },
-        {
-          heading: 'Pricing',
-          fields: [
-            {
-              label: 'Counselling fees per hour',
-              name: 'price',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Currency',
-              name: 'currency',
-              type: 'select',
-              options: ['INR', 'USD'],
-              required: false,
-            },
-            {
-              label: 'Discount',
-              name: 'discount',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Final price per hour',
-              name: 'final_price',
-              type: 'number',
-              required: false,
-            },
-          ],
-        },
+        // {
+        //   heading: 'Package Details',
+        //   fields: [
+        //     {
+        //       label: 'Package name',
+        //       name: 'package_title',
+        //       type: 'text',
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Pricing type',
+        //       name: 'pricing_type',
+        //       type: 'select',
+        //       options: ['per hour', 'per week', 'per month', 'per package'],
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Package duration in hours',
+        //       name: 'discount',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Final price per hour',
+        //       name: 'final_price',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //   ],
+        // },
+        // {
+        //   heading: 'Pricing',
+        //   fields: [
+        //     {
+        //       label: 'Counselling fees per hour',
+        //       name: 'price',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Currency',
+        //       name: 'currency',
+        //       type: 'select',
+        //       options: ['INR', 'USD'],
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Discount',
+        //       name: 'discount',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //     {
+        //       label: 'Final price per hour',
+        //       name: 'final_price',
+        //       type: 'number',
+        //       required: false,
+        //     },
+        //   ],
+        // },
         {
           heading: 'Marketing materials',
           fields: [
@@ -817,7 +847,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -1018,7 +1048,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -1394,7 +1424,7 @@ export const ProductDetailsData = [
               label: 'GST rate',
               name: 'gst_rate',
               type: 'number',
-              required: true,
+              required: false,
             },
           ],
         },
@@ -1728,9 +1758,11 @@ const commonValidations = {
     .matches(/^\d{6}$/, 'HSN code must be exactly 6 digits')
     .required('HSN code is required'),
   gst_rate: Yup.number()
+    .transform((value, originalValue) => (originalValue === '' ? null : value))
+    .nullable()
     .min(0, 'GST rate cannot be negative')
-    .max(100, 'GST rate cannot exceed 100%')
-    .required('GST rate is required'),
+    .max(100, 'GST rate cannot exceed 100%'),
+
   product_description: Yup.string()
     .min(50, 'Description must be at least 50 characters')
     .max(1500, 'Description must not exceed 1000 characters')
@@ -1739,14 +1771,20 @@ const commonValidations = {
     .min(50, 'USP must be at least 50 characters')
     .max(1500, 'USP must not exceed 1000 characters')
     .required('USP is required'),
-  google_reviews: Yup.string()
+  google_reviews: Yup.number()
     .nullable()
-    .optional()
-    .transform((value) => (value === '' ? null : value)) // Convert empty string to null
+    .transform((value, originalValue) =>
+      originalValue === '' ? null : Number(originalValue)
+    )
+    .min(0, 'Rating must be between 0 and 5')
+    .max(5, 'Rating must be between 0 and 5')
     .test(
-      'is-valid-rating',
-      'Rating must be a number between 0 and 5, with up to two decimal places',
-      (value) => value === null || /^[0-5](\.[0-9]{1,2})?$/.test(value)
+      'decimal-places',
+      'Rating must be a number with up to two decimal places',
+      (value) =>
+        value === null ||
+        Number.isInteger(value) ||
+        /^\d+(\.\d{1,2})?$/.test(value.toString())
     ),
 
   google_rating_url: Yup.string().url('Invalid URL'),
@@ -1961,9 +1999,13 @@ export const validationSchemas = {
       .matches(/^\d{6}$/, 'HSN code must be exactly 6 digits')
       .required('HSN code is required'),
     gst_rate: Yup.number()
+      .transform((value, originalValue) =>
+        originalValue === '' ? null : value
+      )
+      .nullable()
       .min(0, 'GST rate cannot be negative')
-      .max(100, 'GST rate cannot exceed 100%')
-      .required('GST rate is required'),
+      .max(100, 'GST rate cannot exceed 100%'),
+
     product_description: Yup.string()
       .min(50, 'Description must be at least 50 characters')
       .max(1500, 'Description must not exceed 1000 characters')

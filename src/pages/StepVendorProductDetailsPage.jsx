@@ -45,6 +45,7 @@ import {
 } from '../utils/StepVendorProductDetails';
 import { useStore } from '../stores';
 import { toJS } from 'mobx';
+import PackageDetailsSection from '../components/productDetails/PackageDetailsSection';
 
 const StepVendorProductDetailsPage = () => {
   const { appStore } = useStore();
@@ -102,8 +103,6 @@ const StepVendorProductDetailsPage = () => {
   };
   const fetchCountries = () => {
     const countriesList = loadOnlyCountries();
-    console.log('countriesList', countriesList);
-
     setCountries(countriesList);
   };
 
@@ -844,6 +843,12 @@ const StepVendorProductDetailsPage = () => {
         currentForm.category
       );
       console.log('Form data:', currentForm.formData);
+
+      // console.log('📝 Product being added:', currentForm.formData);
+      // console.log(
+      //   '📦 Package inside formData before saving:',
+      //   currentForm.formData.package
+      // );
 
       const validationResult = await validateForm(
         currentForm.category,
@@ -2425,6 +2430,30 @@ const StepVendorProductDetailsPage = () => {
                                         </div>
                                       </div>
                                     )}
+
+                                  {['Career counselling', 'Tutoring'].includes(
+                                    currentForm.category
+                                  ) && (
+                                    <PackageDetailsSection
+                                      formData={currentForm.formData}
+                                      setFormData={(updater) =>
+                                        setCurrentForm((prev) => {
+                                          const updatedFormData =
+                                            typeof updater === 'function'
+                                              ? updater(prev.formData)
+                                              : {
+                                                  ...prev.formData,
+                                                  ...updater,
+                                                };
+
+                                          return {
+                                            ...prev,
+                                            formData: updatedFormData,
+                                          };
+                                        })
+                                      }
+                                    />
+                                  )}
                                 </>
                               ) : (
                                 <>
