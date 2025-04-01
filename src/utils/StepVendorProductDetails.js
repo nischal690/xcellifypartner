@@ -1572,19 +1572,7 @@ export const ProductDetailsData = [
               options: ['Books', 'Stationery', 'School Uniform', 'Electronics'],
               required: false,
             },
-            {
-              label: 'Member since',
-              name: 'member_since',
-              type: 'text',
-              required: false,
-            },
-            {
-              label: 'Mode of teaching',
-              name: 'mode_of_teaching',
-              type: 'select',
-              options: ['Online', 'Offline'],
-              required: false,
-            },
+
             // {
             //   label: 'Product code',
             //   name: 'product_code',
