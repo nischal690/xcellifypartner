@@ -82,6 +82,12 @@ const MultiStepVendorSignupPage = () => {
 
   const [isRemovingBG, setIsRemovingBG] = useState(false);
   const [removalMessage, setRemovalMessage] = useState('');
+  const [uploadingFields, setUploadingFields] = useState({});
+
+  const getFieldValidationSchema = (name) => {
+    const stepSchema = signupValidationSchemas[currentStep];
+    return stepSchema.fields[name]; // get schema for this field
+  };
 
   const uploadFieldToApiMap = {
     brand_logo: {
@@ -126,6 +132,8 @@ const MultiStepVendorSignupPage = () => {
     }
 
     try {
+      setUploadingFields((prev) => ({ ...prev, [fieldName]: true }));
+
       const apiUrl =
         fieldName === 'brand_logo'
           ? uploadFieldToApiMap.brand_logo.url
@@ -158,6 +166,8 @@ const MultiStepVendorSignupPage = () => {
       toast.error(
         `Error uploading ${fieldName}: ${error.message || 'Unknown error'}`
       );
+    } finally {
+      setUploadingFields((prev) => ({ ...prev, [fieldName]: false }));
     }
   };
 
@@ -303,6 +313,14 @@ const MultiStepVendorSignupPage = () => {
 
     if (files && files[0]) {
       let file = files[0];
+
+      try {
+        const schema = getFieldValidationSchema(name);
+        await schema.validate(file);
+      } catch (error) {
+        toast.error(error.message);
+        return; // 🚫 Don't upload if validation fails
+      }
 
       // File validation
       const { maxSize, acceptedTypes } = fileUploadInfo[name] || {};
@@ -522,6 +540,18 @@ const MultiStepVendorSignupPage = () => {
                           {field.name === 'signature' && isRemovingBG && (
                             <LoaderMessage message={removalMessage} />
                           )}
+                          {[
+                            'gst',
+                            'aadhar_coi',
+                            'pan_card',
+                            'cancelled_cheque',
+                            'gst_declaration',
+                            'msme_certificate',
+                            'brand_logo',
+                          ].includes(field.name) &&
+                            uploadingFields[field.name] && (
+                              <LoaderMessage message="Uploading..." />
+                            )}
                         </div>
                       ) : (
                         <input
@@ -548,7 +578,6 @@ const MultiStepVendorSignupPage = () => {
                         'gst',
                         'aadhar_coi',
                         'pan_card',
-                        'gst_declaration',
                         'cancelled_cheque',
                         'msme_certificate',
                       ].includes(field.name) &&
@@ -558,8 +587,11 @@ const MultiStepVendorSignupPage = () => {
                           </p>
                         )}
 
-                      {field.name === 'supplier_declaration' && (
+                      {field.name === 'gst_declaration' && (
                         <>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Accepted: Only PDFs, Docx, PNG, JPG, JPEG (Max: 2MB)
+                          </p>
                           <p className="text-sm text-gray-500 mt-1">
                             Fill and upload the declaration form docx file
                           </p>

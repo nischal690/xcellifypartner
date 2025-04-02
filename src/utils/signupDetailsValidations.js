@@ -138,11 +138,11 @@ const signupValidationSchemas = [
     }),
     coi_aadhar: yup.string().required('Aadhar / COI / CIN is required'),
 
-    CIN: yup.string().when('company_type', {
-      is: (value) => value === 'Individual',
-      then: () => yup.string().nullable(), // Not required for Individual
-      otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
-    }),
+    // CIN: yup.string().when('company_type', {
+    //   is: (value) => value === 'Individual',
+    //   then: () => yup.string().nullable(), // Not required for Individual
+    //   otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
+    // }),
 
     GST: yup.string().when('company_type', {
       is: (value) => value === 'sole_proprietership' || value === 'Individual',
@@ -175,31 +175,32 @@ const signupValidationSchemas = [
       is: (value) => value === 'sole_proprietership' || value === 'Individual',
       then: () => yup.mixed().notRequired(),
       otherwise: () =>
-        fileValidation.clone().required('GST Declaration file is required.'),
+        yup
+          .mixed()
+          .required('GST Declaration file is required.')
+          .test(
+            'fileFormat',
+            'Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed',
+            (value) => {
+              if (!value) return false;
+              return [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'image/png',
+                'image/jpeg',
+                'image/jpg',
+              ].includes(value.type);
+            }
+          )
+          .test('fileSize', 'File size should not exceed 2MB', (value) => {
+            return value && value.size <= 2 * 1024 * 1024;
+          }),
     }),
 
     cancelled_cheque: fileValidation
       .clone()
       .required('Cancelled Cheque file is required.'),
-
-    supplier_declaration: yup
-      .mixed()
-      .nullable()
-      .test(
-        'fileFormat',
-        'Only Word files (.docx, .docs) are allowed',
-        (value) => {
-          if (!value) return true; // Allows empty/null value since it's not required
-          return [
-            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            'application/msword',
-          ].includes(value.type);
-        }
-      )
-      .test('fileSize', 'File size should not exceed 2MB', (value) => {
-        if (!value) return true;
-        return value.size <= 2 * 1024 * 1024; // 2MB limit
-      }),
 
     msme_certificate: yup.mixed().when('MSME_registered', {
       is: (value) => value === 'Yes',
