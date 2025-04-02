@@ -38,10 +38,29 @@ export default function LeftItems({ product, category, subcategory, schema }) {
     <div className="w-full lg:w-1/2 py-4">
       <div className="space-y-10">
         <KeyValuePairCard title="Basic details" keyValuePairs={basicDetails} />
-        <KeyValuePairCard
-          title="Pricing details"
-          keyValuePairs={pricingDetails}
-        />
+        {['Career counselling', 'Tutoring'].includes(category) &&
+        product?.package?.length > 0 ? (
+          product.package.map((pkg, idx) => (
+            <KeyValuePairCard
+              key={pkg.id || idx}
+              title={`Package ${idx + 1}: ${pkg.package_title}`}
+              keyValuePairs={[
+                { key: 'Pricing Type', value: pkg.pricing_type },
+                { key: 'Package Duration', value: pkg.package_duration },
+                { key: 'Package Details', value: pkg.package_details },
+                { key: 'Currency', value: pkg.currency },
+                { key: 'Price', value: pkg.price },
+                { key: 'Discount (%)', value: pkg.discount },
+                { key: 'Final Price', value: pkg.final_package_price },
+              ]}
+            />
+          ))
+        ) : (
+          <KeyValuePairCard
+            title="Pricing details"
+            keyValuePairs={pricingDetails}
+          />
+        )}
 
         <div>
           <h3 className="font-semibold text-lg mb-4">Review/rating</h3>

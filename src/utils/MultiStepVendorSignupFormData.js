@@ -199,13 +199,13 @@ const steps = [
         heading: 'Other details',
         fields: [
           {
-            label: 'Aadhar / COI / CIN',
+            label: 'Aadhar / CIN',
             name: 'coi_aadhar',
             type: 'text',
             required: true,
           },
           {
-            label: 'Upload Aadhar / COI / CIN',
+            label: 'Upload Aadhar / CIN',
             name: 'aadhar_coi',
             type: 'file',
             required: true,
@@ -242,7 +242,7 @@ const steps = [
             required: true,
           },
           {
-            label: 'Upload GST Declaration',
+            label: 'Upload Partner / GST Declaration',
             name: 'gst_declaration',
             type: 'file',
             required: true,
@@ -253,12 +253,12 @@ const steps = [
             type: 'file',
             required: true,
           },
-          {
-            label: 'Supplier Declaration',
-            name: 'supplier_declaration',
-            type: 'file',
-            required: false,
-          },
+          // {
+          //   label: 'Supplier Declaration',
+          //   name: 'supplier_declaration',
+          //   type: 'file',
+          //   required: false,
+          // },
         ],
       },
     ],
