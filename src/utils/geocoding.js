@@ -105,12 +105,22 @@ export const loadAllIndianCities = () => {
     (city) => city.countryCode === 'IN'
   );
 
-  return citiesList
+  const formattedCities = citiesList
     .map((city) => ({
       value: city.name,
       label: city.name,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
+
+  const allIndiaOption = {
+    value: 'All India',
+    label: 'All India',
+  };
+
+  formattedCities.unshift(allIndiaOption); 
+
+
+  return formattedCities;
 };
 
 export const loadOnlyCountries = () => {
