@@ -1775,7 +1775,11 @@ const commonValidations = {
         /^\d+(\.\d{1,2})?$/.test(value.toString())
     ),
 
-  google_rating_url: Yup.string().url('Invalid URL'),
+  google_rating_url: Yup.string()
+    .nullable()
+    .optional()
+    .transform((value) => (value === '' ? null : value)) // Convert empty string to null
+    .url('Invalid URL'),
 
   product_images: Yup.array()
     .nullable()
