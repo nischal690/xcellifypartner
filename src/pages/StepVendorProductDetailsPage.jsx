@@ -100,6 +100,7 @@ const StepVendorProductDetailsPage = () => {
   const fetchCities = () => {
     const indianCities = loadAllIndianCities();
     setCities(indianCities);
+    console.log('loadAllIndianCities', indianCities);
   };
   const fetchCountries = () => {
     const countriesList = loadOnlyCountries();
@@ -1215,7 +1216,8 @@ const StepVendorProductDetailsPage = () => {
         key !== 'company_website' &&
         key !== 'product_images' &&
         key !== 'product_videos' &&
-        key !== 'refund_policy'
+        key !== 'refund_policy' &&
+        key !== 'google_rating_url'
       ) {
         console.error(`Validation failed for product: ${key}`);
         return false;

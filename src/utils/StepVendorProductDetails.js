@@ -1761,21 +1761,35 @@ const commonValidations = {
     .required('USP is required'),
   google_reviews: Yup.number()
     .nullable()
-    .transform((value, originalValue) =>
-      originalValue === '' ? null : Number(originalValue)
-    )
+    .optional()
+    .transform((value, originalValue) => {
+      if (
+        originalValue === '' ||
+        originalValue === null ||
+        originalValue === undefined
+      ) {
+        return null;
+      }
+      return Number(originalValue);
+    })
     .min(0, 'Rating must be between 0 and 5')
     .max(5, 'Rating must be between 0 and 5')
     .test(
       'decimal-places',
       'Rating must be a number with up to two decimal places',
-      (value) =>
-        value === null ||
-        Number.isInteger(value) ||
-        /^\d+(\.\d{1,2})?$/.test(value.toString())
+      (value) => {
+        if (value === null || value === undefined) return true;
+        return (
+          Number.isInteger(value) || /^\d+(\.\d{1,2})?$/.test(value.toString())
+        );
+      }
     ),
 
-  google_rating_url: Yup.string().url('Invalid URL'),
+  google_rating_url: Yup.string()
+    .nullable()
+    .optional()
+    .transform((value) => (value === '' || value === undefined ? null : value))
+    .url('Invalid URL'),
 
   product_images: Yup.array()
     .nullable()
