@@ -100,6 +100,7 @@ const StepVendorProductDetailsPage = () => {
   const fetchCities = () => {
     const indianCities = loadAllIndianCities();
     setCities(indianCities);
+    console.log('loadAllIndianCities', indianCities);
   };
   const fetchCountries = () => {
     const countriesList = loadOnlyCountries();

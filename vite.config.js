@@ -36,6 +36,10 @@ export default defineConfig({
       devOptions: {
         enabled: true, // Enables PWA in dev mode for testing
       },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 50 * 1024 * 1024,
+        globIgnores: ['**/ort-wasm-simd-threaded*.wasm'],
+      },
     }),
   ],
   server: {
