@@ -97,7 +97,7 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
   };
 
   return (
-    <div className="mb-6  w-[300px] sm:w-[1200px] md:w-[1400px] lg:w-[1600px] mx-auto  rounded-md p-6 ">
+    <div className="mb-6 mx-auto p-6 w-full max-w-4xl">
       <h3 className="text-md font-semibold mb-4 text-lg">Package Details</h3>
 
       {packages.map((pkg, index) => (
@@ -178,7 +178,7 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
               value={newPackage.package_details}
               onChange={handleChange}
               placeholder="Enter package details"
-              className="p-2 border rounded w-full"
+              className="p-2 border rounded w-full h-[200px]"
               maxLength={100}
             />
             <p className="text-sm text-gray-500 text-right">
@@ -243,7 +243,7 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
       {packages.length < 5 && (
         <div className="text-center mt-8">
           <p className="text-gray-700 mb-4 text-base">
-            Added atleast one package by clicking on + Add another Package after
+            Added atleast one package by clicking on + below button after
             filling details (max 5 packages)
           </p>
           <button
@@ -251,7 +251,7 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
             className="text-purple-700 font-semibold hover:underline"
             onClick={handleAddPackage}
           >
-            + Add another Package
+            + Save & Add another Package
           </button>
         </div>
       )}
