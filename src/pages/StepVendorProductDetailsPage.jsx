@@ -854,7 +854,7 @@ const StepVendorProductDetailsPage = () => {
         const pkg = currentForm.formData?.package?.[0]; // take the first package
         if (!pkg?.pricing_type || !pkg?.package_duration) {
           toast.error(
-            'Please fill Pricing Type, Package Duration in Package Details and Other fields.'
+            'Fill All input fields with Pricing Type, Package Duration and save it in Package Details.'
           );
           return;
         }
@@ -992,7 +992,7 @@ const StepVendorProductDetailsPage = () => {
           const pkg = currentForm.formData?.package?.[0]; // take the first package
           if (!pkg?.pricing_type || !pkg?.package_duration) {
             toast.error(
-              'Please fill Pricing Type, Package Duration in Package Details and Other fields.'
+              'Fill All input fields with Pricing Type, Package Duration and save it in Package Details.'
             );
             setLoading(false);
             return;
