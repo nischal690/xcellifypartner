@@ -49,9 +49,9 @@ export default function LeftItems({ product, category, subcategory, schema }) {
                 { key: 'Package Duration', value: pkg.package_duration },
                 { key: 'Package Details', value: pkg.package_details },
                 { key: 'Currency', value: pkg.currency },
-                { key: 'Price', value: pkg.price },
-                { key: 'Discount (%)', value: pkg.discount },
-                { key: 'Final Price', value: pkg.final_package_price },
+                { key: 'Price', value: pkg.price || '0' },
+                { key: 'Discount (%)', value: pkg.discount || '0' },
+                { key: 'Final Price', value: pkg.final_package_price || '0' },
               ]}
             />
           ))
