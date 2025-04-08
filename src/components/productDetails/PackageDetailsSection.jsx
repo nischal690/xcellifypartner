@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const pricingTypes = [
   { label: 'Per Hour', value: 'Per Hour' },
@@ -56,18 +58,24 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
 
   const handleAddPackage = () => {
     if (!newPackage.pricing_type || !newPackage.package_duration) {
-      window.toast?.error('Pricing type and Package duration are required');
+      toast.error('Pricing type and Package duration are required');
       return;
     }
 
-    const finalPrice = calculateFinalPrice(
-      parseFloat(newPackage.price) || 0,
-      parseFloat(newPackage.discount) || 0
-    );
+    const price = parseFloat(newPackage.price) || 0;
+    const discount = parseFloat(newPackage.discount) || 0;
+    const finalPrice = calculateFinalPrice(price, discount);
+    const package_duration = parseInt(newPackage.package_duration) || 0;
 
     const newEntry = {
-      ...newPackage,
+      package_title: newPackage.package_title || '',
+      pricing_type: newPackage.pricing_type || '',
+      price,
+      discount,
       final_package_price: finalPrice,
+      package_details: newPackage.package_details || '',
+      currency: newPackage.currency || 'INR', // default INR
+      package_duration,
     };
 
     const updatedPackages = [...packages, newEntry].slice(0, 5);

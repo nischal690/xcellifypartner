@@ -7,7 +7,7 @@ import Sidebar from '../../components/sidebar/index';
 import ProductsList from './List';
 import { observer } from 'mobx-react';
 import { useStore } from '../../stores';
-import getProducts_API from './getProducts_API';
+import { getProducts_API_PG } from './getProducts_API';
 import useDebouncedValue from '../../hooks/useDebouncedValue';
 
 const Products = () => {
@@ -38,7 +38,7 @@ const Products = () => {
           conditionType: 'or',
         });
       }
-      const response = await getProducts_API({
+      const response = await getProducts_API_PG({
         payload: payload,
         pgNo: pageNo,
         pgSize: pageSize,

@@ -850,6 +850,16 @@ const StepVendorProductDetailsPage = () => {
       //   currentForm.formData.package
       // );
 
+      if (['Career counselling', 'Tutoring'].includes(currentForm.category)) {
+        const pkg = currentForm.formData?.package?.[0]; // take the first package
+        if (!pkg?.pricing_type || !pkg?.package_duration) {
+          toast.error(
+            'Please fill Pricing Type, Package Duration in Package Details and Other fields.'
+          );
+          return;
+        }
+      }
+
       const validationResult = await validateForm(
         currentForm.category,
         currentForm.formData
@@ -974,6 +984,20 @@ const StepVendorProductDetailsPage = () => {
         console.log(
           'Submitting only entered product without adding to categories...'
         );
+
+        if (
+          currentForm.category &&
+          ['Career counselling', 'Tutoring'].includes(currentForm.category)
+        ) {
+          const pkg = currentForm.formData?.package?.[0]; // take the first package
+          if (!pkg?.pricing_type || !pkg?.package_duration) {
+            toast.error(
+              'Please fill Pricing Type, Package Duration in Package Details and Other fields.'
+            );
+            setLoading(false);
+            return;
+          }
+        }
 
         const validationResult = await validateForm(
           currentForm.category,

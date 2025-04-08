@@ -60,9 +60,9 @@ export default function ProductDetailedView() {
     getProduct();
   }, [id]);
 
-  console.log(product);
+  // console.log('Hello===', product);
 
-  console.log('subcategory', subcategory);
+  // console.log('subcategory', subcategory);
 
   const handleDelete = async () => {
     let deleteProductResp = await apiRequest({
