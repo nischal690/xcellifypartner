@@ -250,8 +250,14 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
 
       {packages.length < 5 && (
         <div className="text-center mt-8">
+          <button
+            className="bg-purple-700 text-white py-2 px-4 rounded justify-center"
+            onClick={handleAddPackage}
+          >
+            Save Existing Package
+          </button>
           <p className="text-gray-700 mb-4 text-base">
-            Added atleast one package by clicking on + below button after
+            Added atleast one package by clicking on above save button after
             filling details (max 5 packages)
           </p>
           <button
@@ -259,7 +265,7 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
             className="text-purple-700 font-semibold hover:underline"
             onClick={handleAddPackage}
           >
-            + Save & Add another Package
+            + Add another Package
           </button>
         </div>
       )}
