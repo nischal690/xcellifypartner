@@ -18,27 +18,71 @@ const ProductSlider = ({ product, brandLogo }) => {
       (vid) => import.meta.env.VITE_STRAPI_URL + vid.url
     ) || [];
 
-  let media = [...images, ...videos]; // Combine images and videos
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
 
-  // If no images or videos exist, use a static placeholder
+    try {
+      const parsedUrl = new URL(url);
+
+      if (parsedUrl.hostname === 'youtu.be') {
+        return `https://www.youtube.com/embed/${parsedUrl.pathname.slice(1)}`;
+      }
+
+      if (parsedUrl.searchParams.has('v')) {
+        return `https://www.youtube.com/embed/${parsedUrl.searchParams.get(
+          'v'
+        )}`;
+      }
+
+      if (parsedUrl.pathname.includes('/shorts/')) {
+        const videoId = parsedUrl.pathname.split('/shorts/')[1];
+        return `https://www.youtube.com/embed/${videoId}`;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Invalid YouTube URL:', url);
+      return null;
+    }
+  };
+
+  const youtubeEmbed = getYouTubeEmbedUrl(product?.youtube_url);
+
+  let media = [...images, ...videos];
+  if (youtubeEmbed) media.push(youtubeEmbed);
+
   if (media.length === 0) {
     media = [placeHolderImg];
   }
 
   return (
     <div className="relative w-full max-w-6xl mx-auto">
-      {/* Swiper Slider (Manual Infinite Scroll) */}
+      {/* Swiper Slider */}
       <div className="relative">
         <Swiper
           modules={[Navigation, Pagination]}
           navigation
           pagination={{ clickable: true }}
-          loop={true} // Enable infinite loop
+          loop={true}
           className="rounded-lg"
         >
           {media.map((item, index) => (
             <SwiperSlide key={index}>
-              {item.includes('.mp4') ? (
+              {/* YouTube Video */}
+              {item.includes('youtube.com/embed') ? (
+                <div className="w-full h-80 sm:h-96 rounded-lg overflow-hidden">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src={item}
+                    title={`YouTube Video ${index}`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="rounded-lg"
+                  ></iframe>
+                </div>
+              ) : item.includes('.mp4') ? (
                 <video
                   src={item}
                   controls
@@ -56,7 +100,7 @@ const ProductSlider = ({ product, brandLogo }) => {
           ))}
         </Swiper>
 
-        {/* Brand Logo Positioned Inside the Slider */}
+        {/* Brand Logo */}
         <div className="absolute -bottom-6 left-10 z-10">
           <img
             src={brandLogo || placeHolderImg}
@@ -65,16 +109,16 @@ const ProductSlider = ({ product, brandLogo }) => {
           />
         </div>
 
-        {/* Image/Video Count Positioned Inside Slider */}
+        {/* Media Count */}
         <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded flex items-center space-x-2 z-10">
           {images.length > 0 && (
             <>
               <FaImage /> <span>{images.length}</span>
             </>
           )}
-          {videos.length > 0 && (
+          {(videos.length > 0 || youtubeEmbed) && (
             <>
-              <FaVideo /> <span>{videos.length}</span>
+              <FaVideo /> <span>{videos.length + (youtubeEmbed ? 1 : 0)}</span>
             </>
           )}
         </div>
