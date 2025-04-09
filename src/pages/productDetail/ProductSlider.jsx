@@ -55,8 +55,6 @@ const ProductSlider = ({ product, brandLogo }) => {
     media = [placeHolderImg];
   }
 
-  console.log('Youtub url', product?.youtube_url);
-
   return (
     <div className="relative w-full max-w-6xl mx-auto">
       {/* Swiper Slider */}
