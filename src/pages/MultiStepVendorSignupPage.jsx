@@ -184,7 +184,7 @@ const MultiStepVendorSignupPage = () => {
     let resp = await apiRequest({
       url: '/mic-login/cin',
       method: 'POST',
-      data: {cin: formData.cin},
+      data: {cin: formData.CIN},
     })
     if(resp.status === HTTP_CODE?.SUCCESS && resp?.data){
       return resp?.data;
@@ -243,8 +243,9 @@ const MultiStepVendorSignupPage = () => {
         if(data?.cashfreeResponse?.valid){
           setPANData(data?.cashfreeResponse);
           setIsPANValidated(true);
+          toast.success("Your PAN has been verified!")
         }
-        else if(!data?.cashfreeResponse?.valid){
+        else if(data?.cashfreeResponse && !data?.cashfreeResponse?.valid){
           setErrors((prev) => ({...prev, PAN: "Invalid PAN Number"}));
         }
       }
@@ -277,22 +278,24 @@ const MultiStepVendorSignupPage = () => {
           setFormData((prev) => ({...prev, ...addressObj}))
           setFormData(prev => ({...prev, company_name: data?.cashfreeResponse?.legal_name_of_business}) )
 
+          toast.success("Your GSTIN has been verified!")
+
         }
-        else if(!data?.cashfreeResponse?.valid){
+        else if(data?.cashfreeResponse && !data?.cashfreeResponse?.valid){
           setErrors((prev) => ({...prev, GST: "Invalid GST Number"}));
         }
       }
 
-      if(formData?.cin.length === 21 && !isCINValidated){
-        setErrors((prev) => ({...prev, cin: ""}));
+      if(formData?.CIN.length === 21 && !isCINValidated){
+        setErrors((prev) => ({...prev, CIN: ""}));
         let data = await verifyCIN();
         if(data?.cashfreeResponse?.status == "VALID"){
           setCINData(data?.cashfreeResponse);
           setIsCINValidated(true);
-          
+          toast.success("Your CIN has been verified");
         }
-        else if(data?.cashfreeResponse?.status == "INVALID"){
-          setErrors((prev) => ({...prev, cin: "Invalid CIN"}));
+        else if(data?.cashfreeResponse && data?.cashfreeResponse?.status == "INVALID"){
+          setErrors((prev) => ({...prev, CIN: "Invalid CIN"}));
         }
       }
 
@@ -300,7 +303,7 @@ const MultiStepVendorSignupPage = () => {
 
     cashFreeValidations();
 
-  },[formData?.cin, formData?.GST, formData?.PAN]);
+  },[formData?.CIN, formData?.GST, formData?.PAN]);
 
   useEffect(() => {
     const getPincodeLocationDetails1 = async (pincode) => {
@@ -403,7 +406,7 @@ const MultiStepVendorSignupPage = () => {
         handleSubmit(e);
       }
       else{
-        toast.error("Invalid IFSC or Account Number!")
+      toast.error("Invalid IFSC or Account Number!")
       }
     }
   };
@@ -621,7 +624,7 @@ const MultiStepVendorSignupPage = () => {
                 <h3 className="text-lg font-medium mb-4">{section.heading}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {section.fields.map((field, idx) => (
-                    ["partnership", "Individual", "sole_proprietership"].includes(formData.company_type) && field.name == "cin" ? null :
+                    ["partnership", "Individual", "sole_proprietership"].includes(formData.company_type) && field.name == "CIN" ? null :
                     <div
                       key={idx}
                       className={`col-span-${
@@ -629,7 +632,7 @@ const MultiStepVendorSignupPage = () => {
                       }`}
                     >
                       <label className="block text-gray-700 mb-2">
-                        {formData?.company_type == 'llp' && field.name == 'cin' ? 'LCIN' : 
+                        {formData?.company_type == 'llp' && field.name == 'CIN' ? 'LCIN' : 
                           ['Individual','sole_proprietership'].includes(formData?.company_type) && field.name == 'PAN' ? field.label2 :
                           field.label}
                         {field.required && isFieldRequired(field.name) && (
