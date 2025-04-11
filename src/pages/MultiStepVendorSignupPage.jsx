@@ -15,7 +15,7 @@ import {
   fileHintMessage,
 } from '../utils/MultiStepVendorSignupFormData';
 import { useStore } from '../stores';
-import { AuthStatuses } from '../utils/constants';
+import { AuthStatuses, HTTP_CODE } from '../utils/constants';
 import apiRequest from '../utils/apiRequest';
 import { validateStep } from '../utils/signupDetailsValidations';
 import Dropdown from '../components/commonComponents/Dropdown';
@@ -83,6 +83,15 @@ const MultiStepVendorSignupPage = () => {
   const [isRemovingBG, setIsRemovingBG] = useState(false);
   const [removalMessage, setRemovalMessage] = useState('');
   const [uploadingFields, setUploadingFields] = useState({});
+
+  const [CINData, setCINData] = useState({});
+  const [isCINValidated, setIsCINValidated] = useState(false);
+  const [GSTData, setGSTData] = useState({});
+  const [isGSTValidated, setIsGSTValidated] = useState(false);
+  const [PANData, setPANData] = useState({})
+  const [isPANValidated, setIsPANValidated] = useState(false);
+  const [bankData, setBankData] = useState({});
+  const [isBankAccountVerified, setIsBankAccountVerified] = useState(false);
 
   const getFieldValidationSchema = (name) => {
     const stepSchema = signupValidationSchemas[currentStep];
@@ -170,6 +179,128 @@ const MultiStepVendorSignupPage = () => {
       setUploadingFields((prev) => ({ ...prev, [fieldName]: false }));
     }
   };
+
+  const verifyCIN = async () => {
+    let resp = await apiRequest({
+      url: '/mic-login/cin',
+      method: 'POST',
+      data: {cin: formData.cin},
+    })
+    if(resp.status === HTTP_CODE?.SUCCESS && resp?.data){
+      return resp?.data;
+    }
+    return {};
+  }
+
+  const verifyGST = async () => {
+    let resp = await apiRequest({
+      url: '/mic-login/gstin',
+      method: 'POST',
+      data: {GSTIN: formData.GST},
+    })
+    if(resp.status === HTTP_CODE?.SUCCESS && resp?.data){
+      return resp?.data;
+    }
+    return {};
+  }
+
+  const verifyPAN = async () => {
+    let resp = await apiRequest({
+      url: '/mic-login/pan',
+      method: 'POST',
+      data: {pan: formData.PAN},
+    })
+    if(resp.status === HTTP_CODE?.SUCCESS && resp?.data){
+      return resp?.data;
+    }
+    return {};
+  }
+
+  const verifyBankAccount = async () => {
+    let resp = await apiRequest({
+      url: '/mic-login/bankAccount',
+      method: 'POST',
+      data: {
+        bank_account: formData?.bank_account_number,
+        ifsc: formData?.bank_ifsc,
+        name: formData?.account_holder_name,
+        phone: formData?.contact_person_mobile,
+      },
+    })
+    if(resp.status === HTTP_CODE?.SUCCESS && resp?.data){
+      return resp?.data;
+    }
+    return {};
+  }
+
+  useEffect(() => {
+
+    const cashFreeValidations = async () => {
+    
+      if(formData?.PAN.length === 10 && !isPANValidated){
+        setErrors((prev) => ({...prev, PAN: ""}));
+        let data = await verifyPAN();
+        if(data?.cashfreeResponse?.valid){
+          setPANData(data?.cashfreeResponse);
+          setIsPANValidated(true);
+        }
+        else if(!data?.cashfreeResponse?.valid){
+          setErrors((prev) => ({...prev, PAN: "Invalid PAN Number"}));
+        }
+      }
+
+      if(formData?.GST.length === 15 && !isGSTValidated){
+        setErrors((prev) => ({...prev, GST: ""}));
+        let data = await verifyGST();
+        if(data?.cashfreeResponse?.valid){
+          setGSTData(data?.cashfreeResponse);
+          setIsGSTValidated(true);
+
+          let cashFreeAddressObj = data?.cashfreeResponse?.principal_place_split_address;
+
+          let addressObj = {
+            pincode: cashFreeAddressObj?.pincode || "",
+            country: cashFreeAddressObj?.country || "India",
+            state: cashFreeAddressObj?.state || "",
+            city: cashFreeAddressObj?.city || "",
+            address_line_1: [
+              cashFreeAddressObj?.flat_number,
+              cashFreeAddressObj?.building_number,
+              cashFreeAddressObj?.building_name
+            ].filter(Boolean).join(", "),
+            address_line_2: [
+              cashFreeAddressObj?.street,
+              cashFreeAddressObj?.location
+            ].filter(Boolean).join(", ")
+          };
+
+          setFormData((prev) => ({...prev, ...addressObj}))
+          setFormData(prev => ({...prev, company_name: data?.cashfreeResponse?.legal_name_of_business}) )
+
+        }
+        else if(!data?.cashfreeResponse?.valid){
+          setErrors((prev) => ({...prev, GST: "Invalid GST Number"}));
+        }
+      }
+
+      if(formData?.cin.length === 21 && !isCINValidated){
+        setErrors((prev) => ({...prev, cin: ""}));
+        let data = await verifyCIN();
+        if(data?.cashfreeResponse?.status == "VALID"){
+          setCINData(data?.cashfreeResponse);
+          setIsCINValidated(true);
+          
+        }
+        else if(data?.cashfreeResponse?.status == "INVALID"){
+          setErrors((prev) => ({...prev, cin: "Invalid CIN"}));
+        }
+      }
+
+    }
+
+    cashFreeValidations();
+
+  },[formData?.cin, formData?.GST, formData?.PAN]);
 
   useEffect(() => {
     const getPincodeLocationDetails1 = async (pincode) => {
@@ -262,7 +393,18 @@ const MultiStepVendorSignupPage = () => {
       setCurrentStep((prev) => prev + 1);
     }
     if (currentStep == 1) {
-      handleSubmit(e);
+      let bankVerificationResponse =  await verifyBankAccount();
+      if(
+        bankVerificationResponse?.cashfreeResponse?.account_status == "VALID" &&
+        bankVerificationResponse?.cashfreeResponse?.account_status_code == "ACCOUNT_IS_VALID"
+      ){
+        setFormData((prev => ({...prev, bank_name: bankVerificationResponse?.cashfreeResponse?.bank_name})))
+        toast.success("Account Verified!")
+        handleSubmit(e);
+      }
+      else{
+        toast.error("Invalid IFSC or Account Number!")
+      }
     }
   };
 
@@ -297,6 +439,8 @@ const MultiStepVendorSignupPage = () => {
     if (fieldName === 'msme_certificate' && formData.MSME_registered !== 'Yes')
       return false;
 
+    if(fieldName === 'GST' && formData.hasGSTnumber !== 'Yes')
+      return false;
     if (
       (fieldName === 'gst' || fieldName === 'gst_declaration') &&
       (formData.company_type === 'sole_proprietership' ||
@@ -477,6 +621,7 @@ const MultiStepVendorSignupPage = () => {
                 <h3 className="text-lg font-medium mb-4">{section.heading}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {section.fields.map((field, idx) => (
+                    ["partnership", "Individual", "sole_proprietership"].includes(formData.company_type) && field.name == "cin" ? null :
                     <div
                       key={idx}
                       className={`col-span-${
@@ -484,7 +629,9 @@ const MultiStepVendorSignupPage = () => {
                       }`}
                     >
                       <label className="block text-gray-700 mb-2">
-                        {field.label}
+                        {formData?.company_type == 'llp' && field.name == 'cin' ? 'LCIN' : 
+                          ['Individual','sole_proprietership'].includes(formData?.company_type) && field.name == 'PAN' ? field.label2 :
+                          field.label}
                         {field.required && isFieldRequired(field.name) && (
                           <span className="text-red-500 ml-1">*</span>
                         )}
@@ -492,17 +639,19 @@ const MultiStepVendorSignupPage = () => {
 
                       {field.type === 'select' ? (
                         <Dropdown
-                          id={field.name}
-                          name={field.name}
-                          options={handleOptions(field.name) || field.options}
+                          id={field?.name}
+                          name={field?.name}
+                          options={handleOptions(field?.name) || field?.options}
                           handleChange={handleChange}
-                          selectedValue={formData[field.name]}
+                          selectedValue={formData[field?.name]}
                           defaultValueText={
-                            !!formData[field.name]
-                              ? formData[field.name]
-                              : `Select ${field.label}`
+                            !!formData[field?.name]
+                              ? formData[field?.name]
+                              : field.name == "hasGSTnumber" 
+                              ? `Choose your answer`
+                              :`Select ${field?.label}`
                           }
-                          disabled={handleDisable(field.name)}
+                          disabled={handleDisable(field?.name)}
                           inputStyle="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
                         />
                       ) : field.type === 'textarea' ? (
@@ -554,13 +703,13 @@ const MultiStepVendorSignupPage = () => {
                             )}
                         </div>
                       ) : (
-                        <input
+                         <input
                           type={field.type}
                           name={field.name}
                           value={formData[field.name]}
                           onChange={handleChange}
                           className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-purple-200"
-                          placeholder={`Enter ${field.label.toLowerCase()}`}
+                          placeholder={['Individual','sole_proprietership'].includes(formData?.company_type) && field.name == 'PAN' ? `Enter ${field.label2.toLowerCase()}` : `Enter ${field.label.toLowerCase()}`}
                         />
                       )}
 
@@ -587,16 +736,16 @@ const MultiStepVendorSignupPage = () => {
                           </p>
                         )}
 
-                      {field.name === 'gst_declaration' && (
-                        <>
+                      {field.name === 'supplier_declaration' && (
+                        <div>
                           <p className="text-sm text-gray-500 mt-1">
                             Accepted: Only PDFs, Docx, PNG, JPG, JPEG (Max: 2MB)
                           </p>
-                          <p className="text-sm text-gray-500 mt-1">
+                          <p className="text-sm text-gray-500 mt-4">
                             Fill and upload the declaration form docx file
                           </p>
                           <SupplierDeclarationCard />
-                        </>
+                        </div>
                       )}
                       {field.name === 'signature' && (
                         <p className="text-sm text-gray-500 mt-1">
@@ -608,7 +757,7 @@ const MultiStepVendorSignupPage = () => {
                 </div>
                 {/* ✅ Checkbox -  */}
                 {section.heading === "Contact person's details" && (
-                  <div className="mt-4 flex items-center">
+                  <div className="mt-10 -mb-8 flex items-center">
                     <input
                       type="checkbox"
                       id="sameAsAbove"
@@ -620,6 +769,7 @@ const MultiStepVendorSignupPage = () => {
                             ...prev,
                             owner_name: prev.contact_person_name,
                             owner_email: prev.contact_person_email,
+                            owner_country_code: prev.contact_person_country_code,
                             owner_mobile: prev.contact_person_mobile,
                           }));
                         } else {
@@ -633,8 +783,8 @@ const MultiStepVendorSignupPage = () => {
                       }}
                       className="mr-2"
                     />
-                    <label htmlFor="sameAsAbove" className="text-gray-700">
-                      Same as above (Auto-fill CEO/Owner details)
+                    <label htmlFor="sameAsAbove" className="text-purple-primary">
+                      Fill the data as above?
                     </label>
                   </div>
                 )}

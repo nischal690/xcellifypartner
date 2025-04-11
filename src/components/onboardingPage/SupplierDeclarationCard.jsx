@@ -10,7 +10,7 @@ const SupplierDeclarationCard = () => {
         <div className="flex items-center space-x-3">
           <img src={wordDocIcon} alt="Word Document" className="w-8 h-8" />
           <span className="text-gray-900 font-medium">
-            Partner / GST Declaration.docx
+            Supplier Declaration.docx
           </span>
         </div>
         <a
@@ -26,7 +26,7 @@ const SupplierDeclarationCard = () => {
       <div className="mt-4">
         <h3 className="text-gray-900 font-semibold">Steps</h3>
         <ul className="text-gray-700 mt-1 space-y-1 list-disc pl-5">
-          <li>Download the partner / gst declaration form.</li>
+          <li>Download the supplier declaration form.</li>
           <li>Complete the form.</li>
           <li>Re-upload the completed form.</li>
         </ul>
