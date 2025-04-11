@@ -153,6 +153,13 @@ export const ProductDetailsData = [
               type: 'file',
               required: false,
             },
+
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
+              required: false,
+            },
           ],
         },
         {
@@ -321,6 +328,13 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
               required: false,
             },
           ],
@@ -523,6 +537,13 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
               required: false,
             },
           ],
@@ -734,6 +755,12 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
               required: false,
             },
           ],
@@ -952,6 +979,12 @@ export const ProductDetailsData = [
               type: 'file',
               required: false,
             },
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
+              required: false,
+            },
           ],
         },
         {
@@ -1125,6 +1158,12 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
               required: false,
             },
           ],
@@ -1368,6 +1407,12 @@ export const ProductDetailsData = [
               type: 'file',
               required: false,
             },
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
+              required: false,
+            },
           ],
         },
 
@@ -1551,6 +1596,12 @@ export const ProductDetailsData = [
               type: 'file',
               required: false,
             },
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
+              required: false,
+            },
           ],
         },
       ],
@@ -1665,6 +1716,12 @@ export const ProductDetailsData = [
               label: 'Upload product video',
               name: 'product_videos',
               type: 'file',
+              required: false,
+            },
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
               required: false,
             },
           ],
@@ -1786,6 +1843,12 @@ const commonValidations = {
     ),
 
   google_rating_url: Yup.string()
+    .nullable()
+    .optional()
+    .transform((value) => (value === '' || value === undefined ? null : value))
+    .url('Invalid URL'),
+
+  youtube_url: Yup.string()
     .nullable()
     .optional()
     .transform((value) => (value === '' || value === undefined ? null : value))
@@ -2020,6 +2083,13 @@ export const validationSchemas = {
       /^[0-5](\.[0-9]{1,2})?$/,
       'Rating must be a number between 0 and 5, with up to two decimal places'
     ),
+    youtube_url: Yup.string()
+      .nullable()
+      .optional()
+      .transform((value) =>
+        value === '' || value === undefined ? null : value
+      )
+      .url('Invalid URL'),
     brand_logo: Yup.mixed()
       .nullable()
       .test(
