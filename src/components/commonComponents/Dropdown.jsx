@@ -15,11 +15,12 @@ export default function Dropdown({
         <>
             <select className={inputStyle} id={id} name={name} onChange={handleChange}
                 value={selectedValue || ""}
-                disabled={disabled}>
-                <option value="">{defaultValueText || `Select ${name}`}</option>
-                {options.map((option,index) => (
-                    <option key={index} value={option.value}>
-                        {option.label}
+                disabled={disabled}
+                >
+                <option value="" selected disabled hidden>{defaultValueText || `Select ${name}`}</option>
+                {options?.map((option,index) => (
+                    <option key={index} value={option?.value}>
+                        {option?.label}
                     </option>
                 ))}
             </select>

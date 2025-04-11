@@ -136,7 +136,7 @@ const signupValidationSchemas = [
       then: () => yup.string().required('PAN is required.'), // Required for Individual
       otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
     }),
-    coi_aadhar: yup.string().required('Aadhar / COI / CIN is required'),
+    // coi_aadhar: yup.string().required('Aadhar / COI / CIN is required'),
 
     // CIN: yup.string().when('company_type', {
     //   is: (value) => value === 'Individual',
@@ -157,50 +157,50 @@ const signupValidationSchemas = [
           ),
     }),
 
-    gst: yup.mixed().when('company_type', {
-      is: (value) => value === 'sole_proprietership' || value === 'Individual',
-      then: () => yup.mixed().notRequired(),
-      otherwise: () => fileValidation.clone().required('GST file is required.'),
-    }),
+    // gst: yup.mixed().when('company_type', {
+    //   is: (value) => value === 'sole_proprietership' || value === 'Individual',
+    //   then: () => yup.mixed().notRequired(),
+    //   otherwise: () => fileValidation.clone().required('GST file is required.'),
+    // }),
 
-    aadhar_coi: fileValidation
-      .clone()
-      .required('Aadhar or COI file is required.'),
+    // aadhar_coi: fileValidation
+    //   .clone()
+    //   .required('Aadhar or COI file is required.'),
 
-    pan_card: fileValidation.clone().required('PAN card file is required.'),
+    // pan_card: fileValidation.clone().required('PAN card file is required.'),
 
-    MSME_registered: yup.string().required('Please specify MSME registration.'),
+    // MSME_registered: yup.string().required('Please specify MSME registration.'),
 
-    gst_declaration: yup.mixed().when('company_type', {
-      is: (value) => value === 'sole_proprietership' || value === 'Individual',
-      then: () => yup.mixed().notRequired(),
-      otherwise: () =>
-        yup
-          .mixed()
-          .required('GST Declaration file is required.')
-          .test(
-            'fileFormat',
-            'Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed',
-            (value) => {
-              if (!value) return false;
-              return [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'image/png',
-                'image/jpeg',
-                'image/jpg',
-              ].includes(value.type);
-            }
-          )
-          .test('fileSize', 'File size should not exceed 2MB', (value) => {
-            return value && value.size <= 2 * 1024 * 1024;
-          }),
-    }),
+    // gst_declaration: yup.mixed().when('company_type', {
+    //   is: (value) => value === 'sole_proprietership' || value === 'Individual',
+    //   then: () => yup.mixed().notRequired(),
+    //   otherwise: () =>
+    //     yup
+    //       .mixed()
+    //       .required('GST Declaration file is required.')
+    //       .test(
+    //         'fileFormat',
+    //         'Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed',
+    //         (value) => {
+    //           if (!value) return false;
+    //           return [
+    //             'application/pdf',
+    //             'application/msword',
+    //             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    //             'image/png',
+    //             'image/jpeg',
+    //             'image/jpg',
+    //           ].includes(value.type);
+    //         }
+    //       )
+    //       .test('fileSize', 'File size should not exceed 2MB', (value) => {
+    //         return value && value.size <= 2 * 1024 * 1024;
+    //       }),
+    // }),
 
-    cancelled_cheque: fileValidation
-      .clone()
-      .required('Cancelled Cheque file is required.'),
+    // cancelled_cheque: fileValidation
+    //   .clone()
+    //   .required('Cancelled Cheque file is required.'),
 
     msme_certificate: yup.mixed().when('MSME_registered', {
       is: (value) => value === 'Yes',
