@@ -243,6 +243,10 @@ const MultiStepVendorSignupPage = () => {
         if(data?.cashfreeResponse?.valid){
           setPANData(data?.cashfreeResponse);
           setIsPANValidated(true);
+          if(formData?.company_type == "Individual" || formData?.company_type == "sole_proprietership"){
+            let name = data?.cashfreeResponse?.registered_name;
+            setFormData((prev) => ({...prev, contact_person_name: name}))
+          }
           toast.success("Your PAN has been verified!")
         }
         else if(data?.cashfreeResponse && !data?.cashfreeResponse?.valid){
@@ -393,7 +397,8 @@ const MultiStepVendorSignupPage = () => {
 
   const handleNext = async (e) => {
     if (await validate()) {
-      setCurrentStep((prev) => prev + 1);
+      console.log(await validate(), currentStep)
+      currentStep == 0 && setCurrentStep(1)
     }
     if (currentStep == 1) {
       let bankVerificationResponse =  await verifyBankAccount();
@@ -405,8 +410,13 @@ const MultiStepVendorSignupPage = () => {
         toast.success("Account Verified!")
         handleSubmit(e);
       }
+      else if(bankVerificationResponse?.cashfreeResponse?.account_status == "INVALID" &&
+        bankVerificationResponse?.cashfreeResponse?.account_status_code == "ACCOUNT_IS_INVALID"){
+        toast.error("Invalid IFSC or Account Number!");
+      }
       else{
-      toast.error("Invalid IFSC or Account Number!")
+        toast.error("Error while verifying the account");
+        handleSubmit(e);
       }
     }
   };
@@ -526,6 +536,9 @@ const MultiStepVendorSignupPage = () => {
         });
         if (response?.data) {
           toast.success('Detailed submiited');
+          if(await validate()){
+            setCurrentStep(2);
+          }
         }
       } catch (error) {
         console.error('Error submitting form:', error);
