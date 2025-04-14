@@ -44,7 +44,7 @@ export default defineConfig({
   ],
   server: {
     host: '0.0.0.0', // Allows external devices to connect
-    port: 5173,
+    port: 5174,
     strictPort: true,
     allowedHosts: ['.ngrok-free.app'],
   },

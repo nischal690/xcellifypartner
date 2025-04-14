@@ -28,6 +28,27 @@ const signupValidationSchemas = [
       otherwise: () => yup.string().required('Company name is required'),
     }),
     company_type: yup.string().required('Company type is required'),
+    GST: yup.string().when('company_type', {
+      is: (value) => value === 'sole_proprietership' || value === 'Individual',
+      then: () => yup.string().notRequired(),
+      otherwise: () =>
+        yup
+          .string()
+          .required('GST is required for this company type.')
+          .matches(
+            /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+            'Invalid GST format'
+          ),
+    }),
+    PAN: yup.string().when('company_type', {
+      then: () => yup.string().required('PAN is required.'), // Required for Individual
+      otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
+    }),
+    CIN: yup.string().when('company_type', {
+      is: (value) => value === 'Individual' || value === 'partnership' || value === 'sole_proprietership',
+      then: () => yup.string().nullable(), // Not required for Individual
+      otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
+    }),
 
     // Optional
     website: yup.string().nullable(),
@@ -132,10 +153,10 @@ const signupValidationSchemas = [
       .string()
       .required('IFSC number is required.')
       .matches(/^/, 'Invalid IFSC number.'),
-    PAN: yup.string().when('company_type', {
-      then: () => yup.string().required('PAN is required.'), // Required for Individual
-      otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
-    }),
+    // PAN: yup.string().when('company_type', {
+    //   then: () => yup.string().required('PAN is required.'), // Required for Individual
+    //   otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
+    // }),
     // coi_aadhar: yup.string().required('Aadhar / COI / CIN is required'),
 
     // CIN: yup.string().when('company_type', {
@@ -144,18 +165,18 @@ const signupValidationSchemas = [
     //   otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
     // }),
 
-    GST: yup.string().when('company_type', {
-      is: (value) => value === 'sole_proprietership' || value === 'Individual',
-      then: () => yup.string().notRequired(),
-      otherwise: () =>
-        yup
-          .string()
-          .required('GST is required for this company type.')
-          .matches(
-            /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
-            'Invalid GST format'
-          ),
-    }),
+    // GST: yup.string().when('company_type', {
+    //   is: (value) => value === 'sole_proprietership' || value === 'Individual',
+    //   then: () => yup.string().notRequired(),
+    //   otherwise: () =>
+    //     yup
+    //       .string()
+    //       .required('GST is required for this company type.')
+    //       .matches(
+    //         /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+    //         'Invalid GST format'
+    //       ),
+    // }),
 
     // gst: yup.mixed().when('company_type', {
     //   is: (value) => value === 'sole_proprietership' || value === 'Individual',
