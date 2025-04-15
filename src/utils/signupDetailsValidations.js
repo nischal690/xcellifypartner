@@ -28,6 +28,30 @@ const signupValidationSchemas = [
       otherwise: () => yup.string().required('Company name is required'),
     }),
     company_type: yup.string().required('Company type is required'),
+    GST: yup.string().when('company_type', {
+      is: (value) => value === 'sole_proprietership' || value === 'Individual',
+      then: () => yup.string().notRequired(),
+      otherwise: () =>
+        yup
+          .string()
+          .required('GST is required for this company type.')
+          .matches(
+            /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+            'Invalid GST format'
+          ),
+    }),
+    PAN: yup.string().when('company_type', {
+      then: () => yup.string().required('PAN is required.'), // Required for Individual
+      otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
+    }),
+    CIN: yup.string().when('company_type', {
+      is: (value) =>
+        value === 'Individual' ||
+        value === 'partnership' ||
+        value === 'sole_proprietership',
+      then: () => yup.string().nullable(), // Not required for Individual
+      otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
+    }),
 
     // Optional
     website: yup.string().nullable(),
@@ -47,6 +71,8 @@ const signupValidationSchemas = [
         'STD code must contain only numbers.',
         (value) => !value || /^\d+$/.test(value) // Validates only if value is not empty
       ),
+    google_rating: yup.string().nullable(),
+    google_rating_url: yup.string().nullable(),
     contact_person_name: yup
       .string()
       .required('Contact person name is required.'),
@@ -132,11 +158,11 @@ const signupValidationSchemas = [
       .string()
       .required('IFSC number is required.')
       .matches(/^/, 'Invalid IFSC number.'),
-    PAN: yup.string().when('company_type', {
-      then: () => yup.string().required('PAN is required.'), // Required for Individual
-      otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
-    }),
-    coi_aadhar: yup.string().required('Aadhar / COI / CIN is required'),
+    // PAN: yup.string().when('company_type', {
+    //   then: () => yup.string().required('PAN is required.'), // Required for Individual
+    //   otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
+    // }),
+    // coi_aadhar: yup.string().required('Aadhar / COI / CIN is required'),
 
     // CIN: yup.string().when('company_type', {
     //   is: (value) => value === 'Individual',
@@ -144,63 +170,63 @@ const signupValidationSchemas = [
     //   otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
     // }),
 
-    GST: yup.string().when('company_type', {
-      is: (value) => value === 'sole_proprietership' || value === 'Individual',
-      then: () => yup.string().notRequired(),
-      otherwise: () =>
-        yup
-          .string()
-          .required('GST is required for this company type.')
-          .matches(
-            /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
-            'Invalid GST format'
-          ),
-    }),
+    // GST: yup.string().when('company_type', {
+    //   is: (value) => value === 'sole_proprietership' || value === 'Individual',
+    //   then: () => yup.string().notRequired(),
+    //   otherwise: () =>
+    //     yup
+    //       .string()
+    //       .required('GST is required for this company type.')
+    //       .matches(
+    //         /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+    //         'Invalid GST format'
+    //       ),
+    // }),
 
-    gst: yup.mixed().when('company_type', {
-      is: (value) => value === 'sole_proprietership' || value === 'Individual',
-      then: () => yup.mixed().notRequired(),
-      otherwise: () => fileValidation.clone().required('GST file is required.'),
-    }),
+    // gst: yup.mixed().when('company_type', {
+    //   is: (value) => value === 'sole_proprietership' || value === 'Individual',
+    //   then: () => yup.mixed().notRequired(),
+    //   otherwise: () => fileValidation.clone().required('GST file is required.'),
+    // }),
 
-    aadhar_coi: fileValidation
-      .clone()
-      .required('Aadhar or COI file is required.'),
+    // aadhar_coi: fileValidation
+    //   .clone()
+    //   .required('Aadhar or COI file is required.'),
 
-    pan_card: fileValidation.clone().required('PAN card file is required.'),
+    // pan_card: fileValidation.clone().required('PAN card file is required.'),
 
-    MSME_registered: yup.string().required('Please specify MSME registration.'),
+    // MSME_registered: yup.string().required('Please specify MSME registration.'),
 
-    gst_declaration: yup.mixed().when('company_type', {
-      is: (value) => value === 'sole_proprietership' || value === 'Individual',
-      then: () => yup.mixed().notRequired(),
-      otherwise: () =>
-        yup
-          .mixed()
-          .required('GST Declaration file is required.')
-          .test(
-            'fileFormat',
-            'Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed',
-            (value) => {
-              if (!value) return false;
-              return [
-                'application/pdf',
-                'application/msword',
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                'image/png',
-                'image/jpeg',
-                'image/jpg',
-              ].includes(value.type);
-            }
-          )
-          .test('fileSize', 'File size should not exceed 2MB', (value) => {
-            return value && value.size <= 2 * 1024 * 1024;
-          }),
-    }),
+    // gst_declaration: yup.mixed().when('company_type', {
+    //   is: (value) => value === 'sole_proprietership' || value === 'Individual',
+    //   then: () => yup.mixed().notRequired(),
+    //   otherwise: () =>
+    //     yup
+    //       .mixed()
+    //       .required('GST Declaration file is required.')
+    //       .test(
+    //         'fileFormat',
+    //         'Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed',
+    //         (value) => {
+    //           if (!value) return false;
+    //           return [
+    //             'application/pdf',
+    //             'application/msword',
+    //             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    //             'image/png',
+    //             'image/jpeg',
+    //             'image/jpg',
+    //           ].includes(value.type);
+    //         }
+    //       )
+    //       .test('fileSize', 'File size should not exceed 2MB', (value) => {
+    //         return value && value.size <= 2 * 1024 * 1024;
+    //       }),
+    // }),
 
-    cancelled_cheque: fileValidation
-      .clone()
-      .required('Cancelled Cheque file is required.'),
+    // cancelled_cheque: fileValidation
+    //   .clone()
+    //   .required('Cancelled Cheque file is required.'),
 
     msme_certificate: yup.mixed().when('MSME_registered', {
       is: (value) => value === 'Yes',

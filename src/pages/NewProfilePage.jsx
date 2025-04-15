@@ -85,6 +85,10 @@ export default function ProfilePage() {
           subSectionTitle: 'Company details',
           fields: [
             { label: 'Company Name', name: 'company_name' },
+            { label: 'GST', name: 'GST' },
+            { label: 'PAN', name: 'PAN' },
+            { label: 'CIN', name: 'CIN' },
+            { label: 'Brand Name', name: 'brand_name' },
             { label: 'Website', name: 'website' },
             { label: 'Company Type', name: 'company_type' },
             { label: 'Landline Number', name: 'landline_number' },
@@ -96,9 +100,9 @@ export default function ProfilePage() {
             { label: 'Contact Person Name', name: 'contact_person_name' },
             { label: "Contact Person's Email", name: 'contact_person_email' },
             { label: "Contact Person's Mobile", name: 'contact_person_mobile' },
-            { label: 'CEO/Owner Name', name: 'owner_name' },
-            { label: "CEO/Owner's email", name: 'owner_email' },
-            { label: "CEO/Owner's mobile", name: 'owner_mobile' },
+            { label: "Other Key Person's Name", name: 'owner_name' },
+            { label: "Other Key Person's Email", name: 'owner_email' },
+            { label: "Other Key Person's Mobile", name: 'owner_mobile' },
           ],
         },
         {
@@ -120,19 +124,11 @@ export default function ProfilePage() {
         {
           subSectionTitle: 'Bank details',
           fields: [
+            { label: "Account Holder Name", name: 'account_holder_name'},
             { label: 'Bank Name', name: 'bank_name' },
             { label: 'Account Type', name: 'bank_account_type' },
             { label: 'Account Number', name: 'bank_account_number' },
             { label: 'IFSC Code', name: 'bank_ifsc' },
-          ],
-        },
-        {
-          subSectionTitle: 'Other details',
-          fields: [
-            { label: 'PAN', name: 'PAN' },
-            { label: 'CIN', name: 'CIN' },
-            { label: 'GST', name: 'GST' },
-            { label: 'MSME Registered', name: 'MSME_registered' },
           ],
         },
       ],
