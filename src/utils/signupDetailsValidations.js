@@ -45,7 +45,10 @@ const signupValidationSchemas = [
       otherwise: () => yup.string().required('PAN is required for companies.'), // Required for other companies
     }),
     CIN: yup.string().when('company_type', {
-      is: (value) => value === 'Individual' || value === 'partnership' || value === 'sole_proprietership',
+      is: (value) =>
+        value === 'Individual' ||
+        value === 'partnership' ||
+        value === 'sole_proprietership',
       then: () => yup.string().nullable(), // Not required for Individual
       otherwise: () => yup.string().required('CIN is required for companies.'), // Required for other companies
     }),
@@ -68,6 +71,8 @@ const signupValidationSchemas = [
         'STD code must contain only numbers.',
         (value) => !value || /^\d+$/.test(value) // Validates only if value is not empty
       ),
+    google_rating: yup.string().nullable(),
+    google_rating_url: yup.string().nullable(),
     contact_person_name: yup
       .string()
       .required('Contact person name is required.'),
