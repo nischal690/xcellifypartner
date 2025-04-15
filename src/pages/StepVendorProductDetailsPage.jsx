@@ -215,7 +215,11 @@ const StepVendorProductDetailsPage = () => {
       formData: {
         ...prev.formData,
         hsn_code: hsnCodeMapping[selectedCategory] || '',
-        gst_rate: gstRate,
+        gst_rate: partnerInfo?.GST
+          ? gstRateMapping[selectedCategory] || ''
+          : '0',
+        google_reviews: partnerInfo?.google_rating || '',
+        google_rating_url: partnerInfo?.google_rating_url || '',
       },
     }));
   };
