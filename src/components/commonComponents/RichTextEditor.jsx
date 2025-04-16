@@ -21,19 +21,19 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
   const [editorHeight, setEditorHeight] = useState(600);
   const quillRef = useRef(null);
 
-  //  Handle Undo
-  const handleUndo = () => {
-    if (quillRef.current) {
-      quillRef.current.getEditor().history.undo();
-    }
-  };
+  // //  Handle Undo
+  // const handleUndo = () => {
+  //   if (quillRef.current) {
+  //     quillRef.current.getEditor().history.undo();
+  //   }
+  // };
 
-  //  Handle Redo
-  const handleRedo = () => {
-    if (quillRef.current) {
-      quillRef.current.getEditor().history.redo();
-    }
-  };
+  // //  Handle Redo
+  // const handleRedo = () => {
+  //   if (quillRef.current) {
+  //     quillRef.current.getEditor().history.redo();
+  //   }
+  // };
 
   return (
     <div className="w-full border rounded-md relative bg-white">
@@ -41,7 +41,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
       <div className="sticky top-0 bg-white z-1 border-b shadow-sm p-2">
         <div className="flex justify-between items-center">
           <span className="font-medium">Text Editor</span>
-          <div className="flex space-x-2">
+          {/* <div className="flex space-x-2">
             <button
               onClick={handleUndo}
               className="px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md"
@@ -54,7 +54,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
             >
               Redo ↪
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
 
