@@ -246,7 +246,7 @@ const steps = [
             label: 'Upload Supplier Declaration Form',
             name: 'supplier_declaration',
             type: 'file',
-            required: false,
+            required: true,
           },
         ],
       },

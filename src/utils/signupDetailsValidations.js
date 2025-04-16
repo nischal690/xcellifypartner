@@ -138,6 +138,29 @@ const signupValidationSchemas = [
         if (!value) return true;
         return value && value.size <= 2 * 1024 * 1024;
       }),
+
+      supplier_declaration: yup
+      .mixed()
+      .required('Supplier Declaration file is required.')
+      .test(
+        'fileFormat',
+        'Only PDF, DOC, DOCX, JPG, JPEG, or PNG files are allowed',
+        (value) => {
+          if (!value) return false;
+          return [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'image/png',
+            'image/jpeg',
+            'image/jpg',
+          ].includes(value.type);
+        }
+      )
+      .test('fileSize', 'File size should not exceed 2MB', (value) => {
+        return value && value.size <= 2 * 1024 * 1024;
+      }),
+    
     referred_by: yup
       .string()
       .nullable()
