@@ -610,6 +610,23 @@ const StepVendorProductDetailsPage = () => {
         }));
 
       if (!uploadedFiles.length) {
+        // Clear invalid file from UI state
+        if (categoryIndex !== undefined) {
+          const updatedCategories = [...categories];
+          const product =
+            updatedCategories[categoryIndex].products[productIndex];
+          product.formData[fieldName] = null;
+          setCategories(updatedCategories);
+        } else {
+          setCurrentForm((prev) => ({
+            ...prev,
+            formData: {
+              ...prev.formData,
+              [fieldName]: null,
+            },
+          }));
+        }
+
         toast.error('Failed to upload files. Please try again.');
         return;
       }
@@ -1007,6 +1024,18 @@ const StepVendorProductDetailsPage = () => {
           currentForm.category,
           currentForm.formData
         );
+
+        if (
+          currentForm.formData.refund_policy === 'false' &&
+          (!currentForm.formData.refund_policy_media ||
+            !currentForm.formData.refund_policy_media.id)
+        ) {
+          toast.error(
+            'Upload refund policy document when selecting custom refund policy.'
+          );
+          setLoading(false);
+          return;
+        }
 
         if (!validationResult.isValid) {
           console.log('Validation failed:', validationResult.errors);
@@ -2429,7 +2458,7 @@ const StepVendorProductDetailsPage = () => {
 
                                           {currentForm.formData[
                                             'refund_policy_media'
-                                          ]?.name && (
+                                          ]?.id && (
                                             <div className="flex items-center gap-2 mt-2">
                                               <span className="text-sm text-gray-700">
                                                 {
