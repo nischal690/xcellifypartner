@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [totalOrdersCount, setTotalOrdersCount] = useState();
   const [ordersDataLoading, setOrdersDataLoading] = useState(false);
   const [ordersData, setOrdersData] = useState([]);
+  const [orderInvoice, setOrderInvoice] = useState(null);
 
   const { appStore } = useStore();
 
@@ -83,6 +84,18 @@ const Dashboard = () => {
     setTotalOrdersCount(calculatedOrdersCount);
   };
 
+  const handleOrderIdClick = async (orderId) => {
+    const getOrderInvoice = await apiRequest({
+      // url: `/mic-study/orderReceipts/OD-1744373712855`,
+      url: `/mic-study/orderReceipts/${orderId}`,
+      method: 'GET',
+    })
+    if(getOrderInvoice?.data){
+      setOrderInvoice(getOrderInvoice?.data?.files?.[0]?.url);
+      window.open(getOrderInvoice?.data?.files?.[0]?.url);
+    }
+  }
+
   return (
     <div className="p-4 max-w-screen-xl mx-auto">
       <header className="flex justify-between items-center mb-8">
@@ -110,8 +123,9 @@ const Dashboard = () => {
       </div>
 
       <div className="bg-white shadow rounded-md p-4">
-        <OrdersTable data={ordersData} isLoading={ordersDataLoading} />
+        <OrdersTable data={ordersData} isLoading={ordersDataLoading} handleOrderIdClick={handleOrderIdClick}/>
       </div>
+
     </div>
   );
 };
