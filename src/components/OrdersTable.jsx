@@ -1,4 +1,4 @@
-function OrdersTable({ isLoading, data }) {
+function OrdersTable({ isLoading, data, handleOrderIdClick }) {
   const getParsedDate = (orderDate) => {
     let parsedDate = '';
     const months = [
@@ -33,6 +33,7 @@ function OrdersTable({ isLoading, data }) {
     return order_status_info[order_status] || '';
   };
 
+
   return (
     <div className="w-full overflow-x-auto">
       <table className="w-full border-collapse min-w-max">
@@ -56,7 +57,11 @@ function OrdersTable({ isLoading, data }) {
           ) : (
             data.map((order, index) => (
               <tr key={index} className="border-t text-xs sm:text-sm">
-                <td className="px-4 py-3 whitespace-nowrap">{order.orderId}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <button className="text-blue-600 underline" onClick={() => handleOrderIdClick(order.orderId)}>
+                    {order.orderId}
+                  </button>
+                </td>
                 <td className="px-4 py-3 whitespace-nowrap ">
                   {order.productId}
                 </td>
