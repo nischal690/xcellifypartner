@@ -27,7 +27,7 @@ export default function ProductDetailedView() {
       const payload = [
         {
           operation: 'equals',
-          data: [{ key: 'id', value: id }],
+          data: [{ key: 'product_id', value: id }],
         },
       ];
 
@@ -60,7 +60,9 @@ export default function ProductDetailedView() {
     getProduct();
   }, [id]);
 
-  // console.log('Hello===', product);
+  // console.log('Hola===', product);
+
+  // console.log('productSchema', productSchema);
 
   // console.log('subcategory', subcategory);
 
@@ -93,6 +95,8 @@ export default function ProductDetailedView() {
     });
   }
 
+  console.log('productcate', product?.category);
+
   return (
     <div className="max-w-7xl mx-auto px-10 font-dmsans">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center my-4 space-y-3 sm:space-y-0">
@@ -110,6 +114,29 @@ export default function ProductDetailedView() {
               Re-submit
             </button>
           )}
+          <button
+            className={`px-3 py-1 rounded-md w-auto sm:w-auto min-w-[120px] text-center transition-colors duration-300 ${
+              product?.product_status === 'Approved'
+                ? 'bg-gray-300 text-gray-700 cursor-not-allowed'
+                : 'bg-purple-primary text-white hover:bg-purple-700'
+            }`}
+            onClick={() => {
+              if (product?.product_status === 'Approved') {
+                toast.info(
+                  'This product is already approved. Contact admin to request changes.'
+                );
+                return;
+              }
+              navigate(
+                `/edit-product/${product?.category}/${
+                  product?.subcategory || 'none'
+                }?product_id=${product?.product_id}`
+              );
+            }}
+          >
+            Edit product
+          </button>
+
           <button
             className="text-white bg-red-500 rounded-md px-3 py-1 w-auto sm:w-auto min-w-[120px] text-center"
             onClick={handleDelete}
