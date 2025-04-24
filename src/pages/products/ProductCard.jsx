@@ -16,7 +16,7 @@ export default function ProductCard({ product, brandLogo }) {
     product_title = '',
     product_description = '',
     category = '',
-    id = '',
+    product_id = '',
     product_images = [],
   } = product || {};
 
@@ -78,7 +78,7 @@ export default function ProductCard({ product, brandLogo }) {
         </span>
         <button
           className="text-blue-500 text-[12px] underline hover:underline flex items-center"
-          onClick={() => navigate(`/home/product/${id}`)}
+          onClick={() => navigate(`/home/product/${product_id}`)}
         >
           View Details <FaArrowRight className="ml-1" />
         </button>
