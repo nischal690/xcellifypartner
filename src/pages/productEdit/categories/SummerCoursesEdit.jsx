@@ -152,13 +152,13 @@ export default function SummerCoursesEdit({ product_id }) {
           // google_rating_url: product.google_rating_url || "",
           youtube_url: product.youtube_url || '',
           refund_policy: product.refund_policy || false,
-          refund_policy_media: fetchedRefundPolicyMediaId || '',
+          refund_policy_media: fetchedRefundPolicyMediaId || null,
           product_images: fetchedProductImagesIds || [],
           product_videos: fetchedProductVideosIds || [],
         });
 
         setPartnerId(product.partner_id || '');
-        setFetchedRefundPolicyMedia(product.refund_policy_media || '');
+        setFetchedRefundPolicyMedia(product.refund_policy_media || null);
         setFetchedProductImages(product.product_images || []);
         setFetchedProductVideos(product.product_videos || []);
       }
@@ -250,7 +250,7 @@ export default function SummerCoursesEdit({ product_id }) {
       toast.success('File deleted successfully!');
       setFetchedRefundPolicyMedia(null);
       setFormData((prev) => ({ ...prev, refund_policy: true }));
-      setFormData((prev) => ({ ...prev, refund_policy_media: '' }));
+      setFormData((prev) => ({ ...prev, refund_policy_media: null }));
     }
   };
 
@@ -665,19 +665,21 @@ export default function SummerCoursesEdit({ product_id }) {
                 <span className="text-red-500">*</span>
               </label>
               <select
-                name="study_level"
+                name="scholarship_available"
                 className="w-full border rounded-lg px-3 py-2"
-                value={formData.scholarship_available || ''}
+                value={
+                  formData.scholarship_available === true ? 'true' : 'false'
+                }
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    scholarship_available: e.target.value,
+                    scholarship_available: e.target.value === 'true',
                   })
                 }
               >
-                <option>Select Scholarship Available</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="">Select Scholarship Available</option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
               </select>
             </div>
             <div>
@@ -920,30 +922,30 @@ export default function SummerCoursesEdit({ product_id }) {
           <h2 className="text-xl font-semibold mb-4">Marketing Materials</h2>
           <div className="space-y-4">
             {/* <input
-                            name="google_reviews"
-                            type="text"
-                            placeholder="Enter Google reviews/rating"
-                            className="w-full border rounded-lg px-3 py-2"
-                            value={formData.google_reviews}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    google_reviews: e.target.value,
-                                })
-                            }
-                        />
-                        <input
-                            type="text"
-                            placeholder="Enter link for Google rating"
-                            className="w-full border rounded-lg px-3 py-2"
-                            value={formData.google_rating_url || ""}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    google_rating_url: e.target.value,
-                                })
-                            }
-                        /> */}
+                          name="google_reviews"
+                          type="text"
+                          placeholder="Enter Google reviews/rating"
+                          className="w-full border rounded-lg px-3 py-2"
+                          value={formData.google_reviews}
+                          onChange={(e) =>
+                              setFormData({
+                                  ...formData,
+                                  google_reviews: e.target.value,
+                              })
+                          }
+                      />
+                      <input
+                          type="text"
+                          placeholder="Enter link for Google rating"
+                          className="w-full border rounded-lg px-3 py-2"
+                          value={formData.google_rating_url || ""}
+                          onChange={(e) =>
+                              setFormData({
+                                  ...formData,
+                                  google_rating_url: e.target.value,
+                              })
+                          }
+                      /> */}
             <div className="flex gap-2">
               <div
                 className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md`}
