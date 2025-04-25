@@ -488,21 +488,30 @@ export default function LoansEdit({ product_id }) {
                 <span className="text-red-500">*</span>
               </label>
               <select
-                name="loan_for_study_level"
+                name="full_financing_available"
                 className="w-full border rounded-lg px-3 py-2"
-                value={formData.full_financing_available || ''}
+                value={
+                  formData.full_financing_available === true
+                    ? 'true'
+                    : formData.full_financing_available === false
+                    ? 'false'
+                    : ''
+                }
                 onChange={(e) =>
                   setFormData({
                     ...formData,
-                    full_financing_available: e.target.value,
+                    full_financing_available: e.target.value === 'true',
                   })
                 }
               >
-                <option>Select Whether 100% Financing Available</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="">
+                  Select Whether 100% Financing Available
+                </option>
+                <option value="true">Yes</option>
+                <option value="false">No</option>
               </select>
             </div>
+
             <div>
               <label className="block font-medium mb-1">HSN Code</label>
               <input
@@ -691,30 +700,30 @@ export default function LoansEdit({ product_id }) {
           <h2 className="text-xl font-semibold mb-4">Marketing Materials</h2>
           <div className="space-y-4">
             {/* <input
-                            name="google_reviews"
-                            type="text"
-                            placeholder="Enter Google reviews/rating"
-                            className="w-full border rounded-lg px-3 py-2"
-                            value={formData.google_reviews}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    google_reviews: e.target.value,
-                                })
-                            }
-                        />
-                        <input
-                            type="text"
-                            placeholder="Enter link for Google rating"
-                            className="w-full border rounded-lg px-3 py-2"
-                            value={formData.google_rating_url || ""}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    google_rating_url: e.target.value,
-                                })
-                            }
-                        /> */}
+                          name="google_reviews"
+                          type="text"
+                          placeholder="Enter Google reviews/rating"
+                          className="w-full border rounded-lg px-3 py-2"
+                          value={formData.google_reviews}
+                          onChange={(e) =>
+                              setFormData({
+                                  ...formData,
+                                  google_reviews: e.target.value,
+                              })
+                          }
+                      />
+                      <input
+                          type="text"
+                          placeholder="Enter link for Google rating"
+                          className="w-full border rounded-lg px-3 py-2"
+                          value={formData.google_rating_url || ""}
+                          onChange={(e) =>
+                              setFormData({
+                                  ...formData,
+                                  google_rating_url: e.target.value,
+                              })
+                          }
+                      /> */}
             <div className="flex gap-2">
               <div
                 className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-md`}
