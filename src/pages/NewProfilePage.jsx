@@ -116,6 +116,13 @@ export default function ProfilePage() {
             { label: 'Address Line 2', name: 'address_line_2' },
           ],
         },
+        {
+          subSectionTitle: 'Marketing materials',
+          fields: [
+            { label: 'Google Rating', name: 'google_rating' },
+            { label: 'Google Rating Url', name: 'google_rating_url' },
+          ],
+        },
       ],
     },
     complianceDetails: {
@@ -124,7 +131,7 @@ export default function ProfilePage() {
         {
           subSectionTitle: 'Bank details',
           fields: [
-            { label: "Account Holder Name", name: 'account_holder_name'},
+            { label: 'Account Holder Name', name: 'account_holder_name' },
             { label: 'Bank Name', name: 'bank_name' },
             { label: 'Account Type', name: 'bank_account_type' },
             { label: 'Account Number', name: 'bank_account_number' },

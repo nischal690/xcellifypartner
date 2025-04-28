@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { loadOnlyCountries, loadStates } from '../../../utils/geocoding';
+import { loadOnlyCountries, loadIndianStates } from '../../../utils/geocoding';
 
 import RichTextEditor from '../../../components/commonComponents/RichTextEditor';
 
@@ -136,7 +136,7 @@ export default function ScholarshipsEdit({ product_id }) {
   }, []);
 
   const fetchStates = () => {
-    const indianStates = loadStates();
+    const indianStates = loadIndianStates();
     setStates(indianStates);
   };
   const fetchCountries = () => {

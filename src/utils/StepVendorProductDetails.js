@@ -106,7 +106,7 @@ export const ProductDetailsData = [
           fields: [
             { label: 'Price', name: 'price', type: 'number', required: false },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -283,7 +283,7 @@ export const ProductDetailsData = [
           fields: [
             { label: 'Price', name: 'price', type: 'number', required: false },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -932,7 +932,7 @@ export const ProductDetailsData = [
           fields: [
             { label: 'Price', name: 'price', type: 'number', required: false },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -1125,7 +1125,7 @@ export const ProductDetailsData = [
               required: false,
             },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -1671,7 +1671,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
