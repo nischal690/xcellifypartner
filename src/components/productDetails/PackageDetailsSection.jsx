@@ -32,7 +32,7 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
     discount: '',
     final_package_price: '',
     package_details: '',
-    currency: '',
+    currency: 'INR',
     package_duration: '',
   });
 
