@@ -62,7 +62,7 @@ export default function LeftItems({ product, category, subcategory, schema }) {
           />
         )}
 
-        <div>
+        {/* <div>
           <h3 className="font-semibold text-lg mb-4">Review/rating</h3>
           <div className="shadow-md shadow-gray-300 p-5 rounded-md bg-white">
             <p className="text-xl font-semibold mb-6">Google reviews</p>
@@ -85,7 +85,7 @@ export default function LeftItems({ product, category, subcategory, schema }) {
               </a>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

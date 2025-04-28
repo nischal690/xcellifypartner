@@ -218,8 +218,7 @@ const StepVendorProductDetailsPage = () => {
         gst_rate: partnerInfo?.GST
           ? gstRateMapping[selectedCategory] || ''
           : '0',
-        google_reviews: partnerInfo?.google_rating || '',
-        google_rating_url: partnerInfo?.google_rating_url || '',
+        currency: 'INR',
       },
     }));
   };
@@ -942,6 +941,8 @@ const StepVendorProductDetailsPage = () => {
       category: currentForm.category,
       company_name: partnerInfo?.company_name || '',
       company_website: partnerInfo?.website || '',
+      google_reviews: partnerInfo?.google_rating || 0, // (number)
+      google_rating_url: partnerInfo?.google_rating_url || '', // (string)
       refund_policy:
         formData.refund_policy === 'true'
           ? true
@@ -1164,6 +1165,8 @@ const StepVendorProductDetailsPage = () => {
             category: category.name,
             company_name: partnerInfo?.company_name || '',
             company_website: partnerInfo?.website || '',
+            google_reviews: partnerInfo?.google_rating || 0,
+            google_rating_url: partnerInfo?.google_rating_url || '',
             refund_policy:
               formData.refund_policy === 'true'
                 ? true

@@ -61,6 +61,7 @@ const Products = lazy(() => import('./pages/products/index'));
 const ProductDetailedView = lazy(() =>
   import('./pages/productDetail/ProductDetailedView')
 );
+const ProductEdit = lazy(() => import('./pages/productEdit/index'));
 const ContactUs = lazy(() => import('./pages/ContactusPage'));
 const AboutusPage = lazy(() => import('./pages/AboutusPage'));
 
@@ -110,6 +111,10 @@ const router = createBrowserRouter([
   {
     path: '/add-new-product',
     element: <StepVendorProductDetailsPage />,
+  },
+  {
+    path: '/edit-product/:category/:subcategory',
+    element: <ProductEdit />,
   },
   {
     path: '/application-sent',

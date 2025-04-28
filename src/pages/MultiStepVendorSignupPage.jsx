@@ -97,8 +97,11 @@ const MultiStepVendorSignupPage = () => {
 
   const debouncedCompanyName = useDebouncedValue(formData.company_name, 1000);
 
+  const debouncedBrandName = useDebouncedValue(formData.brand_name, 1000);
+
   useGoogleRating({
     companyName: debouncedCompanyName,
+    brandName: debouncedBrandName,
     setFormData,
   });
 

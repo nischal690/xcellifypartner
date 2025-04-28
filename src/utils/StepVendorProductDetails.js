@@ -106,7 +106,7 @@ export const ProductDetailsData = [
           fields: [
             { label: 'Price', name: 'price', type: 'number', required: false },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -129,18 +129,18 @@ export const ProductDetailsData = [
         {
           heading: 'Marketing materials',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'number',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
@@ -283,7 +283,7 @@ export const ProductDetailsData = [
           fields: [
             { label: 'Price', name: 'price', type: 'number', required: false },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -306,18 +306,18 @@ export const ProductDetailsData = [
         {
           heading: 'Marketing materials',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'text',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'text',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
@@ -515,18 +515,18 @@ export const ProductDetailsData = [
         {
           heading: 'Marketing materials',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'text',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'text',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
@@ -733,18 +733,18 @@ export const ProductDetailsData = [
         {
           heading: 'Marketing materials',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'number',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
@@ -932,7 +932,7 @@ export const ProductDetailsData = [
           fields: [
             { label: 'Price', name: 'price', type: 'number', required: false },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -955,18 +955,18 @@ export const ProductDetailsData = [
         {
           heading: 'Marketing materials',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'number',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
@@ -1125,7 +1125,7 @@ export const ProductDetailsData = [
               required: false,
             },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -1383,18 +1383,18 @@ export const ProductDetailsData = [
           heading: 'Marketing materials (Scholarship)',
           subcategory: 'Scholarship',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'number',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
@@ -1572,18 +1572,18 @@ export const ProductDetailsData = [
           heading: 'Marketing materials (Education Loan)',
           subcategory: 'Education Loan',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'text',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'text',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
@@ -1671,7 +1671,7 @@ export const ProductDetailsData = [
               required: true,
             },
             {
-              label: 'Currency',
+              label: 'Select Currency (deafult INR)',
               name: 'currency',
               type: 'select',
               options: ['INR', 'USD'],
@@ -1694,18 +1694,18 @@ export const ProductDetailsData = [
         {
           heading: 'Marketing materials',
           fields: [
-            {
-              label: 'Google reviews/rating',
-              name: 'google_reviews',
-              type: 'number',
-              required: false,
-            },
-            {
-              label: 'Enter link for Google rating',
-              name: 'google_rating_url',
-              type: 'text',
-              required: false,
-            },
+            // {
+            //   label: 'Google reviews/rating',
+            //   name: 'google_reviews',
+            //   type: 'number',
+            //   required: false,
+            // },
+            // {
+            //   label: 'Enter link for Google rating',
+            //   name: 'google_rating_url',
+            //   type: 'text',
+            //   required: false,
+            // },
             {
               label: 'Upload product images',
               name: 'product_images',
