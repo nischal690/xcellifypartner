@@ -63,6 +63,7 @@ export default function careerCounsellingEdit({ product_id }) {
     refund_policy: '',
     refund_policy_media: '',
     package: [],
+    status: 'published',
   });
 
   const [partnerId, setPartnerId] = useState(null);
@@ -129,6 +130,7 @@ export default function careerCounsellingEdit({ product_id }) {
           product_images: fetchedProductImagesIds || [], // Or prefill with product.product_images if needed
           product_videos: fetchedProductVideosIds || [], // Or prefill with product.product_videos if needed
           package: product.package || [],
+          status: 'published',
         });
 
         setPartnerId(product.partner_id || '');

@@ -42,6 +42,7 @@ export default function LoansEdit({ product_id }) {
     refund_policy: '',
     product_images: [],
     product_videos: [],
+    status: 'published',
   });
   const [partnerId, setPartnerId] = useState(null);
 
@@ -117,6 +118,7 @@ export default function LoansEdit({ product_id }) {
           refund_policy: product.refund_policy || false,
           product_images: fetchedProductImagesIds || [],
           product_videos: fetchedProductVideosIds || [],
+          status: 'published',
         });
 
         setPartnerId(product.partner_id || '');

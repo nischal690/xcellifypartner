@@ -48,6 +48,7 @@ export default function StudyOverseasEdit({ product_id }) {
     refund_policy_media: '',
     product_images: [],
     product_videos: [],
+    status: 'published',
   });
 
   const [partnerId, setPartnerId] = useState(null);
@@ -123,6 +124,7 @@ export default function StudyOverseasEdit({ product_id }) {
           refund_policy_media: fetchedRefundPolicyMediaId || null,
           product_images: fetchedProductImagesIds || [],
           product_videos: fetchedProductVideosIds || [],
+          status: 'published',
         });
 
         setPartnerId(product.partner_id || '');
