@@ -58,6 +58,7 @@ export default function ScholarshipsEdit({ product_id }) {
     youtube_url: '',
     product_images: [],
     product_videos: [],
+    status: 'published',
   });
 
   const [partnerId, setPartnerId] = useState(null);
@@ -123,6 +124,7 @@ export default function ScholarshipsEdit({ product_id }) {
           youtube_url: product.youtube_url || '',
           product_images: fetchedProductImagesIds || [],
           product_videos: fetchedProductVideosIds || [],
+          status: 'published',
         });
 
         setPartnerId(product.partner_id || '');

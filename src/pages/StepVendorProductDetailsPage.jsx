@@ -943,6 +943,7 @@ const StepVendorProductDetailsPage = () => {
       company_website: partnerInfo?.website || '',
       google_reviews: partnerInfo?.google_rating || 0, // (number)
       google_rating_url: partnerInfo?.google_rating_url || '', // (string)
+      status: 'published',
       refund_policy:
         formData.refund_policy === 'true'
           ? true
@@ -1167,6 +1168,7 @@ const StepVendorProductDetailsPage = () => {
             company_website: partnerInfo?.website || '',
             google_reviews: partnerInfo?.google_rating || 0,
             google_rating_url: partnerInfo?.google_rating_url || '',
+            status: 'published',
             refund_policy:
               formData.refund_policy === 'true'
                 ? true
