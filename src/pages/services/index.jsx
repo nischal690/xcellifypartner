@@ -107,10 +107,34 @@ function Services() {
     setModalOpen(true);
   };
 
+  const getApiBasePath = (category) => {
+    switch (category) {
+      case 'Study Overseas':
+      case 'Study India':
+        return 'mic-study';
+      case 'Tutoring':
+      case 'Career Counselling':
+      case 'Summer Courses':
+        return 'mic-counselling';
+      case 'Study Finance':
+      case 'Loans and Scholarships':
+        return 'mic-finance';
+      case 'Events':
+      case 'Competitions':
+        return 'mic-events';
+      default:
+        console.error('Category not matched:', category);
+        throw new Error(`Unknown category: ${category}`);
+    }
+  };
+
   const verifyOtp = async (otp) => {
     try {
+      const categoryName = CATEGORY_MAPPING[selectedService?.categoryId];
+      const apiBase = getApiBasePath(categoryName);
+
       const response = await apiRequest({
-        url: '/mic-study/verifyOrderOtp',
+        url: `/${apiBase}/verifyOrderOtp`,
         method: 'post',
         data: {
           orderId: selectedService?.orderId,
