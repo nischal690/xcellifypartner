@@ -35,6 +35,7 @@ import SupplierDeclarationCard from '../components/onboardingPage/SupplierDeclar
 import LoaderMessage from '../components/commonComponents/LoaderMessage';
 import AutoFilledInputRating from '../components/onboardingPage/AutoFilledInputRating';
 import { useGoogleRating } from '../hooks/profile/useGoogleRating';
+import SupplierDeclarationPreview from '../components/onboardingPage/SupplierDeclarationPreview';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -448,7 +449,7 @@ const MultiStepVendorSignupPage = () => {
     }
   };
 
-  console.log('formData of steps:', formData);
+  // console.log('formData of steps:', formData);
 
   const handleBack = () => {
     if (currentStep > 0) setCurrentStep((prev) => prev - 1);
@@ -814,9 +815,9 @@ const MultiStepVendorSignupPage = () => {
                               2MB)
                             </p>
                             <p className="text-sm text-gray-500 mt-4">
-                              Fill and upload the declaration form docx file
+                              download & upload the declaration form docx file
                             </p>
-                            <SupplierDeclarationCard />
+                            <SupplierDeclarationPreview formData={formData} />
                           </div>
                         )}
                         {field.name === 'signature' && (
