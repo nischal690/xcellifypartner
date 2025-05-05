@@ -213,44 +213,51 @@ const MultiStepVendorSignupPage = () => {
 
   const verifyGST = async () => {
     // Show loading state
-    toast.info("Validating GST number...");
+    // toast.info("Validating GST number...");
     setErrors((prev) => ({ ...prev, GST: '' }));
-    
+
     // Check if GST number is empty
     if (!formData.GST || formData.GST.trim() === '') {
       setErrors((prev) => ({ ...prev, GST: 'GST number cannot be empty' }));
-      toast.error('GST number cannot be empty');
+      // toast.error('GST number cannot be empty');
       return {};
     }
-    
+
     try {
       let resp = await apiRequest({
         url: '/mic-login/gstin',
         method: 'POST',
         data: { GSTIN: formData.GST },
       });
-      
+
       if (resp.status === HTTP_CODE?.SUCCESS && resp?.data) {
         setGSTData(resp.data);
         setIsGSTValidated(true);
-        
+
         // Add visual indicator for validated GST
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           GSTValidated: true,
           // Auto-fill company name from GST data if available
-          company_name: resp.data.legal_name || resp.data.trade_name || prev.company_name
+          company_name:
+            resp.data.legal_name || resp.data.trade_name || prev.company_name,
         }));
-        
+
         toast.success('Your GST number has been verified successfully');
         return resp.data;
       } else {
-        setErrors((prev) => ({ ...prev, GST: 'Invalid GST number. Please enter a valid GST number.' }));
+        setErrors((prev) => ({
+          ...prev,
+          GST: 'Invalid GST number. Please enter a valid GST number.',
+        }));
         toast.error('GST validation failed. Please check and try again.');
       }
     } catch (error) {
-      console.error("GST validation error:", error);
-      setErrors((prev) => ({ ...prev, GST: 'Error validating GST number. Please try again.' }));
+      console.error('GST validation error:', error);
+      setErrors((prev) => ({
+        ...prev,
+        GST: 'Error validating GST number. Please try again.',
+      }));
       toast.error('Error validating GST number');
     }
     return {};
@@ -295,7 +302,7 @@ const MultiStepVendorSignupPage = () => {
       if (data?.cashfreeResponse?.valid) {
         setGSTData(data?.cashfreeResponse);
         setIsGSTValidated(true);
-        
+
         // Populate address fields from GST data
         let cashFreeAddressObj =
           data?.cashfreeResponse?.principal_place_split_address;
@@ -325,8 +332,8 @@ const MultiStepVendorSignupPage = () => {
           ...prev,
           company_name: data?.cashfreeResponse?.legal_name_of_business,
         }));
-        
-        toast.success('Your GST has been verified!');
+
+        // toast.success('Your GST has been verified!');
       } else if (data?.cashfreeResponse && !data?.cashfreeResponse?.valid) {
         setErrors((prev) => ({ ...prev, GST: 'Invalid GST Number' }));
       }
@@ -379,34 +386,34 @@ const MultiStepVendorSignupPage = () => {
       }
 
       const pincodeLocationDetails = await getPincodeLocationDetails(pincode);
-      
+
       if (pincodeLocationDetails) {
         // Create an object with all available location details
         const locationData = {
           country: pincodeLocationDetails.country || '',
           state: pincodeLocationDetails.state || '',
-          city: pincodeLocationDetails.city || ''
+          city: pincodeLocationDetails.city || '',
         };
-        
+
         // Update form data with all available location details at once
         setFormData((prev) => ({
           ...prev,
-          ...locationData
+          ...locationData,
         }));
-        
+
         // Enable or disable country selection based on data completeness
         if (locationData.country && locationData.state && locationData.city) {
           setDisableCountrySelection(true);
-          console.log("Pincode location details complete:", locationData);
+          console.log('Pincode location details complete:', locationData);
         } else {
           setDisableCountrySelection(false);
-          console.log("Incomplete pincode location details:", locationData);
+          console.log('Incomplete pincode location details:', locationData);
         }
       } else {
         // When no data available
         setDisableCountrySelection(false);
         loadCountries();
-        console.log("No location data found for pincode:", pincode);
+        console.log('No location data found for pincode:', pincode);
       }
     };
     getPincodeLocationDetails1(debouncedPincode);
@@ -437,27 +444,32 @@ const MultiStepVendorSignupPage = () => {
 
   const handleDisable = (name) => {
     // First priority: If GST is validated, disable all address-related fields
-    if (isGSTValidated && (
-      name === 'company_name' ||
-      name === 'GST' ||
-      name === 'address_line_1' || 
-      name === 'address_line_2' || 
-      name === 'city' || 
-      name === 'state' || 
-      name === 'pincode' || 
-      name === 'country'
-    ))
+    if (
+      isGSTValidated &&
+      (name === 'company_name' ||
+        name === 'GST' ||
+        name === 'address_line_1' ||
+        name === 'address_line_2' ||
+        name === 'city' ||
+        name === 'state' ||
+        name === 'pincode' ||
+        name === 'country')
+    )
       return true;
-    
+
     // Second priority: If pincode is entered and has auto-fetched location details
-    if (formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-        (name === 'country' || name === 'state' || name === 'city'))
+    if (
+      formData.pincode &&
+      formData.pincode.length === 6 &&
+      disableCountrySelction &&
+      (name === 'country' || name === 'state' || name === 'city')
+    )
       return true;
-    
+
     // Third priority: Handle geocoding-related disabling
     if (name === 'country' || name === 'state' || name === 'city')
       return disableCountrySelction;
-    
+
     return false;
   };
 
@@ -531,7 +543,12 @@ const MultiStepVendorSignupPage = () => {
   const validateField = async (name, value) => {
     try {
       // Special case for CIN field with different company types
-      if (name === 'CIN' && ['Individual', 'sole_proprietership', 'partnership'].includes(formData.company_type)) {
+      if (
+        name === 'CIN' &&
+        ['Individual', 'sole_proprietership', 'partnership'].includes(
+          formData.company_type
+        )
+      ) {
         // For these company types, validate as Aadhaar number
         const aadhaarPattern = vendorBaiscInfoValidation['Aadhaar'];
         if (value && !aadhaarPattern.test(value)) {
@@ -584,11 +601,11 @@ const MultiStepVendorSignupPage = () => {
 
     // Handle hasGSTnumber change to reset GST field when changed to "No"
     if (name === 'hasGSTnumber') {
-      setFormData(prev => ({ 
-        ...prev, 
+      setFormData((prev) => ({
+        ...prev,
         [name]: value,
         // Reset GST field if "No" is selected
-        ...(value === 'No' ? { GST: '' } : {})
+        ...(value === 'No' ? { GST: '' } : {}),
       }));
       return;
     }
@@ -597,36 +614,37 @@ const MultiStepVendorSignupPage = () => {
     if (name === 'GST') {
       // If GST is already validated, don't allow changes
       if (isGSTValidated) {
-        toast.info("GST number has been validated and cannot be changed");
+        toast.info('GST number has been validated and cannot be changed');
         return;
       }
-      
+
       // Format GST input to uppercase
       const formattedValue = value.toUpperCase();
-      
+
       // Only allow valid GST format characters
       if (formattedValue && !/^[0-9A-Z]*$/.test(formattedValue)) {
         return; // Don't update if invalid characters
       }
-      
+
       // Update form with formatted value
-      setFormData(prev => ({ ...prev, [name]: formattedValue }));
-      
+      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+
       // Validate GST format when it reaches 15 characters
       if (formattedValue.length === 15) {
-        console.log("GST length is 15, validating format...");
+        console.log('GST length is 15, validating format...');
         // Check if it matches GST pattern
-        const gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+        const gstPattern =
+          /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
         if (!gstPattern.test(formattedValue)) {
-          setErrors(prev => ({ 
-            ...prev, 
-            [name]: 'Invalid GST format.' 
+          setErrors((prev) => ({
+            ...prev,
+            [name]: 'Invalid GST format.',
           }));
         } else {
           // Clear format errors and trigger API validation directly
-          console.log("GST format is valid, calling API validation...");
-          setErrors(prev => ({ ...prev, [name]: undefined }));
-          
+          console.log('GST format is valid, calling API validation...');
+          setErrors((prev) => ({ ...prev, [name]: undefined }));
+
           // Direct API validation call with non-empty GST
           if (formattedValue && formattedValue.trim() !== '') {
             verifyGST();
@@ -638,7 +656,9 @@ const MultiStepVendorSignupPage = () => {
 
     // Special handling for company_name field
     if (name === 'company_name' && isGSTValidated) {
-      toast.info("Company name has been auto-filled from GST data and cannot be changed");
+      toast.info(
+        'Company name has been auto-filled from GST data and cannot be changed'
+      );
       return;
     }
 
@@ -646,36 +666,37 @@ const MultiStepVendorSignupPage = () => {
     if (name === 'PAN') {
       // If PAN is already validated, don't allow changes
       if (isPANValidated) {
-        toast.info("PAN has been validated and cannot be changed");
+        toast.info('PAN has been validated and cannot be changed');
         return;
       }
-      
+
       // Format PAN input to uppercase
       const formattedValue = value.toUpperCase();
-      
+
       // Only allow valid PAN format characters (5 letters + 4 numbers + 1 letter)
       if (formattedValue && !/^[A-Z0-9]*$/.test(formattedValue)) {
         return; // Don't update if invalid characters
       }
-      
+
       // Update form with formatted value
-      setFormData(prev => ({ ...prev, [name]: formattedValue }));
-      
+      setFormData((prev) => ({ ...prev, [name]: formattedValue }));
+
       // Validate PAN format when it reaches 10 characters
       if (formattedValue.length === 10) {
-        console.log("PAN length is 10, validating format...");
+        console.log('PAN length is 10, validating format...');
         // Check if it matches PAN pattern (5 letters + 4 numbers + 1 letter)
         const panPattern = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
         if (!panPattern.test(formattedValue)) {
-          setErrors(prev => ({ 
-            ...prev, 
-            [name]: 'Invalid PAN format. It should be 5 letters + 4 numbers + 1 letter' 
+          setErrors((prev) => ({
+            ...prev,
+            [name]:
+              'Invalid PAN format. It should be 5 letters + 4 numbers + 1 letter',
           }));
         } else {
           // Clear format errors and trigger API validation directly
-          console.log("PAN format is valid, calling API validation...");
-          setErrors(prev => ({ ...prev, [name]: undefined }));
-          
+          console.log('PAN format is valid, calling API validation...');
+          setErrors((prev) => ({ ...prev, [name]: undefined }));
+
           // Direct API validation call
           validatePAN(formattedValue);
         }
@@ -785,10 +806,49 @@ const MultiStepVendorSignupPage = () => {
 
   // Function to check if all required fields in a section are filled
   const checkSectionCompletion = (section, stepIndex, sectionIndex) => {
+    if (section.heading === 'Company details') {
+      const companyType = formData.company_type;
+      const hasGSTnumber = formData.hasGSTnumber;
+
+      if (!companyType || !hasGSTnumber) {
+        return false;
+      }
+
+      let requiredFields = [];
+
+      if (companyType === 'privateltd' || companyType === 'llp') {
+        requiredFields = ['PAN', 'CIN', 'company_name', 'brand_name'];
+      } else if (
+        companyType === 'Individual' ||
+        companyType === 'sole_proprietership' ||
+        companyType === 'partnership'
+      ) {
+        requiredFields = ['PAN', 'CIN', 'brand_name'];
+        if (hasGSTnumber === 'Yes') {
+          requiredFields.push('GST');
+        }
+      }
+
+      const allCompanyFieldsFilled = requiredFields.every((field) => {
+        return formData[field] && formData[field].toString().trim() !== '';
+      });
+
+      if (allCompanyFieldsFilled) {
+        setCompletedSections((prev) => ({
+          ...prev,
+          [`${stepIndex}-${sectionIndex}`]: true,
+        }));
+      }
+
+      return allCompanyFieldsFilled;
+    }
+
+    // Default behavior for all other sections
     const requiredFields = section.fields.filter((field) => field.required);
     const allFilled = requiredFields.every((field) => {
-      // Check if the field has a value
-      return formData[field.name] && formData[field.name] !== '';
+      return (
+        formData[field.name] && formData[field.name].toString().trim() !== ''
+      );
     });
 
     if (allFilled) {
@@ -818,7 +878,10 @@ const MultiStepVendorSignupPage = () => {
         const nextSectionKey = `${currentStep}-${i + 1}`;
 
         // If current section is completed and next section exists
-        if (completedSections[sectionKey] && i + 1 < currentStepData.sections.length) {
+        if (
+          completedSections[sectionKey] &&
+          i + 1 < currentStepData.sections.length
+        ) {
           // Open the next section
           setActiveSections((prev) => ({
             ...prev,
@@ -845,25 +908,25 @@ const MultiStepVendorSignupPage = () => {
   }, [formData, currentStep, steps]);
 
   const validatePAN = async (panValue) => {
-    console.log("Validating PAN:", panValue);
+    console.log('Validating PAN:', panValue);
     // Show loading state
-    toast.info("Validating PAN...");
+    // toast.info("Validating PAN...");
     setErrors((prev) => ({ ...prev, PAN: '' }));
-    
+
     try {
       let data = await verifyPAN(panValue);
-      console.log("PAN validation response:", data);
-      
+      console.log('PAN validation response:', data);
+
       if (data?.cashfreeResponse?.valid) {
         setPANData(data?.cashfreeResponse);
         setIsPANValidated(true);
-        
+
         // Add visual indicator for validated PAN
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
-          PANValidated: true
+          PANValidated: true,
         }));
-        
+
         if (
           formData?.company_type === 'Individual' ||
           formData?.company_type === 'sole_proprietership' ||
@@ -882,14 +945,23 @@ const MultiStepVendorSignupPage = () => {
         data?.cashfreeResponse &&
         data?.cashfreeResponse?.valid === false
       ) {
-        setErrors((prev) => ({ ...prev, PAN: 'Invalid PAN. Please enter a valid PAN number.' }));
+        setErrors((prev) => ({
+          ...prev,
+          PAN: 'Invalid PAN. Please enter a valid PAN number.',
+        }));
         toast.error('PAN validation failed. Please check and try again.');
       } else {
-        setErrors((prev) => ({ ...prev, PAN: 'PAN validation failed. Please try again.' }));
+        setErrors((prev) => ({
+          ...prev,
+          PAN: 'PAN validation failed. Please try again.',
+        }));
       }
     } catch (error) {
-      console.error("PAN validation error:", error);
-      setErrors((prev) => ({ ...prev, PAN: 'Error validating PAN. Please try again.' }));
+      console.error('PAN validation error:', error);
+      setErrors((prev) => ({
+        ...prev,
+        PAN: 'Error validating PAN. Please try again.',
+      }));
       toast.error('Error validating PAN');
     }
   };
@@ -917,30 +989,57 @@ const MultiStepVendorSignupPage = () => {
       <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Welcome Message & Progress Indicator */}
         <div className="mb-10 text-center">
-          <h1 className="text-3xl font-bold text-purple-800 mb-3">Welcome to Your Onboarding Journey</h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">Complete your profile to unlock all features and start connecting with potential customers.</p>
+          <h1 className="text-3xl font-bold text-purple-800 mb-3">
+            Welcome to Your Onboarding Journey
+          </h1>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Complete your profile to unlock all features and start connecting
+            with potential customers.
+          </p>
 
           {/* Progress Steps */}
           <div className="mt-8 relative">
             <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2"></div>
-            <div className="absolute top-1/2 left-0 h-1 bg-purple-600 -translate-y-1/2" style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}></div>
+            <div
+              className="absolute top-1/2 left-0 h-1 bg-purple-600 -translate-y-1/2"
+              style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+            ></div>
             <div className="relative flex justify-between">
               {steps.map((step, index) => (
                 <div key={index} className="flex flex-col items-center">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center z-10 ${
-                      index < currentStep ? 'bg-purple-600 text-white' : index === currentStep ? 'bg-purple-600 text-white' : 'bg-white border-2 border-gray-300 text-gray-500'
+                      index < currentStep
+                        ? 'bg-purple-600 text-white'
+                        : index === currentStep
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-white border-2 border-gray-300 text-gray-500'
                     }`}
                   >
                     {index < currentStep ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
                       </svg>
                     ) : (
                       <span>{index + 1}</span>
                     )}
                   </div>
-                  <span className={`mt-2 text-sm font-medium ${index <= currentStep ? 'text-purple-600' : 'text-gray-500'}`}>
+                  <span
+                    className={`mt-2 text-sm font-medium ${
+                      index <= currentStep ? 'text-purple-600' : 'text-gray-500'
+                    }`}
+                  >
                     {step.title}
                   </span>
                 </div>
@@ -960,56 +1059,67 @@ const MultiStepVendorSignupPage = () => {
                 <CollapsibleSection
                   key={sectionIndex}
                   title={section.heading}
-                  isOpen={activeSections[`${currentStep}-${sectionIndex}`] || false}
-                  onToggle={(isOpen) => toggleSection(currentStep, sectionIndex, isOpen)}
+                  isOpen={
+                    activeSections[`${currentStep}-${sectionIndex}`] || false
+                  }
+                  onToggle={(isOpen) =>
+                    toggleSection(currentStep, sectionIndex, isOpen)
+                  }
                   isCompleted={isSectionCompleted(sectionIndex, currentStep)}
-                  isActive={!isSectionCompleted(sectionIndex, currentStep) && activeSections[`${currentStep}-${sectionIndex}`]}
+                  isActive={
+                    !isSectionCompleted(sectionIndex, currentStep) &&
+                    activeSections[`${currentStep}-${sectionIndex}`]
+                  }
                   index={sectionIndex}
                   totalSections={steps[currentStep].sections.length}
                 >
-                  {currentStep === 0 && section.heading === "CEO/Owner details" && (
-                    <div className="mb-6 flex items-center">
-                      <input
-                        type="checkbox"
-                        id="sameAsAbove"
-                        checked={sameAsAbove}
-                        onChange={(e) => {
-                          setSameAsAbove(e.target.checked);
-                          if (e.target.checked) {
-                            setFormData((prev) => ({
-                              ...prev,
-                              owner_name: prev.contact_person_name,
-                              owner_email: prev.contact_person_email,
-                              owner_country_code:
-                                prev.contact_person_country_code,
-                              owner_mobile: prev.contact_person_mobile,
-                            }));
-                          } else {
-                            setFormData((prev) => ({
-                              ...prev,
-                              owner_name: '',
-                              owner_email: '',
-                              owner_mobile: '',
-                            }));
-                          }
-                        }}
-                        className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
-                      />
-                      <label
-                        htmlFor="sameAsAbove"
-                        className="ml-2 text-purple-700 font-medium"
-                      >
-                        Fill the data as Contact person's details
-                      </label>
-                    </div>
-                  )}
+                  {currentStep === 0 &&
+                    section.heading === 'CEO/Owner details' && (
+                      <div className="mb-6 flex items-center">
+                        <input
+                          type="checkbox"
+                          id="sameAsAbove"
+                          checked={sameAsAbove}
+                          onChange={(e) => {
+                            setSameAsAbove(e.target.checked);
+                            if (e.target.checked) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                owner_name: prev.contact_person_name,
+                                owner_email: prev.contact_person_email,
+                                owner_country_code:
+                                  prev.contact_person_country_code,
+                                owner_mobile: prev.contact_person_mobile,
+                              }));
+                            } else {
+                              setFormData((prev) => ({
+                                ...prev,
+                                owner_name: '',
+                                owner_email: '',
+                                owner_mobile: '',
+                              }));
+                            }
+                          }}
+                          className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+                        />
+                        <label
+                          htmlFor="sameAsAbove"
+                          className="ml-2 text-purple-700 font-medium"
+                        >
+                          Fill the data as Contact person's details
+                        </label>
+                      </div>
+                    )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                     {section.fields.map((field, fieldIndex) => {
                       // Skip rendering the GST field if hasGSTnumber is not 'Yes'
-                      if (field.name === 'GST' && formData.hasGSTnumber !== 'Yes') {
+                      if (
+                        field.name === 'GST' &&
+                        formData.hasGSTnumber !== 'Yes'
+                      ) {
                         return null;
                       }
-                      
+
                       return (
                         <div
                           key={fieldIndex}
@@ -1020,26 +1130,43 @@ const MultiStepVendorSignupPage = () => {
                           <label
                             htmlFor={field.name}
                             className={`block text-sm font-medium ${
-                              errors[field.name] ? 'text-red-700' : 'text-gray-700'
+                              errors[field.name]
+                                ? 'text-red-700'
+                                : 'text-gray-700'
                             } mb-1`}
                           >
-                            {field.conditionalLabel && field.conditionalLabel[formData.company_type] 
-                              ? field.conditionalLabel[formData.company_type] 
+                            {field.conditionalLabel &&
+                            field.conditionalLabel[formData.company_type]
+                              ? field.conditionalLabel[formData.company_type]
                               : field.label}
                             {isFieldRequired(field.name) && (
                               <span className="text-red-500 ml-1">*</span>
                             )}
                           </label>
 
-                          {(field.type === 'text' || field.type === 'url' || field.type === 'email' || field.type === 'mobile') && (
+                          {(field.type === 'text' ||
+                            field.type === 'url' ||
+                            field.type === 'email' ||
+                            field.type === 'mobile') && (
                             <div className="relative">
                               <input
-                                type={field.type === 'url' ? 'url' : field.type === 'email' ? 'email' : field.type === 'mobile' ? 'tel' : 'text'}
+                                type={
+                                  field.type === 'url'
+                                    ? 'url'
+                                    : field.type === 'email'
+                                    ? 'email'
+                                    : field.type === 'mobile'
+                                    ? 'tel'
+                                    : 'text'
+                                }
                                 id={field.name}
                                 name={field.name}
                                 value={formData[field.name] || ''}
                                 onChange={handleChange}
-                                disabled={handleDisable(field.name) || (field.name === 'PAN' && isPANValidated)}
+                                disabled={
+                                  handleDisable(field.name) ||
+                                  (field.name === 'PAN' && isPANValidated)
+                                }
                                 className={`w-full px-4 py-3 rounded-lg border ${
                                   errors[field.name]
                                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -1047,39 +1174,53 @@ const MultiStepVendorSignupPage = () => {
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
                                     : field.name === 'GST' && isGSTValidated
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : field.name === 'company_name' && isGSTValidated
+                                    : field.name === 'company_name' &&
+                                      isGSTValidated
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : (isGSTValidated && (
-                                        field.name === 'address_line_1' || 
-                                        field.name === 'address_line_2' || 
-                                        field.name === 'city' || 
-                                        field.name === 'state' || 
-                                        field.name === 'pincode' || 
-                                        field.name === 'country'
-                                      ))
+                                    : isGSTValidated &&
+                                      (field.name === 'address_line_1' ||
+                                        field.name === 'address_line_2' ||
+                                        field.name === 'city' ||
+                                        field.name === 'state' ||
+                                        field.name === 'pincode' ||
+                                        field.name === 'country')
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : (formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                        (field.name === 'country' || field.name === 'state' || field.name === 'city'))
+                                    : formData.pincode &&
+                                      formData.pincode.length === 6 &&
+                                      disableCountrySelction &&
+                                      (field.name === 'country' ||
+                                        field.name === 'state' ||
+                                        field.name === 'city')
                                     ? 'border-blue-500 bg-blue-50 focus:border-blue-500 focus:ring-blue-500'
                                     : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
                                 } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200 ${
-                                  (field.name === 'PAN' && isPANValidated) || 
-                                  (field.name === 'GST' && isGSTValidated) || 
-                                  (field.name === 'company_name' && isGSTValidated) ||
-                                  (isGSTValidated && (
-                                    field.name === 'address_line_1' || 
-                                    field.name === 'address_line_2' || 
-                                    field.name === 'city' || 
-                                    field.name === 'state' || 
-                                    field.name === 'pincode' || 
-                                    field.name === 'country'
-                                  )) ||
-                                  (formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                    (field.name === 'country' || field.name === 'state' || field.name === 'city'))
-                                  ? 'pr-10' : ''
+                                  (field.name === 'PAN' && isPANValidated) ||
+                                  (field.name === 'GST' && isGSTValidated) ||
+                                  (field.name === 'company_name' &&
+                                    isGSTValidated) ||
+                                  (isGSTValidated &&
+                                    (field.name === 'address_line_1' ||
+                                      field.name === 'address_line_2' ||
+                                      field.name === 'city' ||
+                                      field.name === 'state' ||
+                                      field.name === 'pincode' ||
+                                      field.name === 'country')) ||
+                                  (formData.pincode &&
+                                    formData.pincode.length === 6 &&
+                                    disableCountrySelction &&
+                                    (field.name === 'country' ||
+                                      field.name === 'state' ||
+                                      field.name === 'city'))
+                                    ? 'pr-10'
+                                    : ''
                                 }`}
                                 placeholder={
-                                  field.name === 'CIN' && ['Individual', 'sole_proprietership', 'partnership'].includes(formData.company_type)
+                                  field.name === 'CIN' &&
+                                  [
+                                    'Individual',
+                                    'sole_proprietership',
+                                    'partnership',
+                                  ].includes(formData.company_type)
                                     ? 'Enter 12-digit Aadhaar number'
                                     : field.name === 'CIN'
                                     ? 'Enter 21-character CIN'
@@ -1088,72 +1229,145 @@ const MultiStepVendorSignupPage = () => {
                                     : `Enter ${field.label.toLowerCase()}`
                                 }
                               />
-                              {(field.name === 'PAN' && isPANValidated) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                              {field.name === 'PAN' && isPANValidated && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                  <svg
+                                    className="h-5 w-5 text-green-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
                                   </svg>
                                 </div>
                               )}
-                              {(field.name === 'GST' && isGSTValidated) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                              {field.name === 'GST' && isGSTValidated && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                  <svg
+                                    className="h-5 w-5 text-green-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
                                   </svg>
                                 </div>
                               )}
-                              {(field.name === 'company_name' && isGSTValidated) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </div>
+                              {field.name === 'company_name' &&
+                                isGSTValidated && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                    <svg
+                                      className="h-5 w-5 text-green-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {field.name === 'PAN' && isPANValidated && (
+                                <p className="mt-1 text-sm text-green-600">
+                                  PAN verified successfully
+                                </p>
                               )}
-                              {(field.name === 'PAN' && isPANValidated) && (
-                                <p className="mt-1 text-sm text-green-600">PAN verified successfully</p>
+                              {field.name === 'GST' && isGSTValidated && (
+                                <p className="mt-1 text-sm text-green-600">
+                                  GST verified successfully
+                                </p>
                               )}
-                              {(field.name === 'GST' && isGSTValidated) && (
-                                <p className="mt-1 text-sm text-green-600">GST verified successfully</p>
-                              )}
-                              {(field.name === 'company_name' && isGSTValidated) && (
-                                <p className="mt-1 text-sm text-green-600">Auto-filled from GST data</p>
-                              )}
-                              {(isGSTValidated && (
-                                field.name === 'address_line_1' || 
-                                field.name === 'address_line_2' || 
-                                field.name === 'city' || 
-                                field.name === 'state' || 
-                                field.name === 'pincode' || 
-                                field.name === 'country'
-                              )) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </div>
-                              )}
-                              {(isGSTValidated && (
-                                field.name === 'address_line_1' || 
-                                field.name === 'address_line_2' || 
-                                field.name === 'city' || 
-                                field.name === 'state' || 
-                                field.name === 'pincode' || 
-                                field.name === 'country'
-                              )) && (
-                                <p className="mt-1 text-sm text-green-600">Auto-filled from GST data</p>
-                              )}
-                              {(formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                (field.name === 'country' || field.name === 'state' || field.name === 'city')) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </div>
-                              )}
-                              {(formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                (field.name === 'country' || field.name === 'state' || field.name === 'city')) && (
-                                <p className="mt-1 text-sm text-blue-600">Auto-filled from Pincode</p>
-                              )}
+                              {field.name === 'company_name' &&
+                                isGSTValidated && (
+                                  <p className="mt-1 text-sm text-green-600">
+                                    Auto-filled from GST data
+                                  </p>
+                                )}
+                              {isGSTValidated &&
+                                (field.name === 'address_line_1' ||
+                                  field.name === 'address_line_2' ||
+                                  field.name === 'city' ||
+                                  field.name === 'state' ||
+                                  field.name === 'pincode' ||
+                                  field.name === 'country') && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                    <svg
+                                      className="h-5 w-5 text-green-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {isGSTValidated &&
+                                (field.name === 'address_line_1' ||
+                                  field.name === 'address_line_2' ||
+                                  field.name === 'city' ||
+                                  field.name === 'state' ||
+                                  field.name === 'pincode' ||
+                                  field.name === 'country') && (
+                                  <p className="mt-1 text-sm text-green-600">
+                                    Auto-filled from GST data
+                                  </p>
+                                )}
+                              {formData.pincode &&
+                                formData.pincode.length === 6 &&
+                                disableCountrySelction &&
+                                (field.name === 'country' ||
+                                  field.name === 'state' ||
+                                  field.name === 'city') && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg
+                                      className="h-5 w-5 text-blue-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {formData.pincode &&
+                                formData.pincode.length === 6 &&
+                                disableCountrySelction &&
+                                (field.name === 'country' ||
+                                  field.name === 'state' ||
+                                  field.name === 'city') && (
+                                  <p className="mt-1 text-sm text-blue-600">
+                                    Auto-filled from Pincode
+                                  </p>
+                                )}
                             </div>
                           )}
 
@@ -1169,18 +1383,25 @@ const MultiStepVendorSignupPage = () => {
                                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                                   : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
                               } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
-                              placeholder={field.placeholder || `Enter ${field.label}`}
+                              placeholder={
+                                field.placeholder || `Enter ${field.label}`
+                              }
                             />
                           )}
 
-                          {(field.type === 'dropdown' || field.type === 'select') && (
+                          {(field.type === 'dropdown' ||
+                            field.type === 'select') && (
                             <Dropdown
                               id={field.name}
                               name={field.name}
                               value={formData[field.name] || ''}
                               onChange={handleChange}
-                              options={handleOptions(field.name) || field.options}
-                              placeholder={field.placeholder || `Select ${field.label}`}
+                              options={
+                                handleOptions(field.name) || field.options
+                              }
+                              placeholder={
+                                field.placeholder || `Select ${field.label}`
+                              }
                               className={`w-full px-4 py-3 rounded-lg border ${
                                 errors[field.name]
                                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -1202,7 +1423,9 @@ const MultiStepVendorSignupPage = () => {
                               }}
                               value={formData[field.name]}
                               accept={fileUploadInfo[field.name]?.accept || ''}
-                              fileType={fileUploadInfo[field.name]?.fileType || ''}
+                              fileType={
+                                fileUploadInfo[field.name]?.fileType || ''
+                              }
                               isUploading={uploadingFields[field.name] || false}
                               progress={0}
                               className={`${
@@ -1254,14 +1477,21 @@ const MultiStepVendorSignupPage = () => {
                 <CollapsibleSection
                   key={sectionIndex}
                   title={section.heading}
-                  isOpen={activeSections[`${currentStep}-${sectionIndex}`] || false}
-                  onToggle={(isOpen) => toggleSection(currentStep, sectionIndex, isOpen)}
+                  isOpen={
+                    activeSections[`${currentStep}-${sectionIndex}`] || false
+                  }
+                  onToggle={(isOpen) =>
+                    toggleSection(currentStep, sectionIndex, isOpen)
+                  }
                   isCompleted={isSectionCompleted(sectionIndex, currentStep)}
-                  isActive={!isSectionCompleted(sectionIndex, currentStep) && activeSections[`${currentStep}-${sectionIndex}`]}
+                  isActive={
+                    !isSectionCompleted(sectionIndex, currentStep) &&
+                    activeSections[`${currentStep}-${sectionIndex}`]
+                  }
                   index={sectionIndex}
                   totalSections={steps[currentStep].sections.length}
                 >
-                  {section.heading === "CEO/Owner details" && (
+                  {section.heading === 'CEO/Owner details' && (
                     <div className="mb-6 flex items-center">
                       <input
                         type="checkbox"
@@ -1300,10 +1530,13 @@ const MultiStepVendorSignupPage = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
                     {section.fields.map((field, fieldIndex) => {
                       // Skip rendering the GST field if hasGSTnumber is not 'Yes'
-                      if (field.name === 'GST' && formData.hasGSTnumber !== 'Yes') {
+                      if (
+                        field.name === 'GST' &&
+                        formData.hasGSTnumber !== 'Yes'
+                      ) {
                         return null;
                       }
-                      
+
                       return (
                         <div
                           key={fieldIndex}
@@ -1314,26 +1547,43 @@ const MultiStepVendorSignupPage = () => {
                           <label
                             htmlFor={field.name}
                             className={`block text-sm font-medium ${
-                              errors[field.name] ? 'text-red-700' : 'text-gray-700'
+                              errors[field.name]
+                                ? 'text-red-700'
+                                : 'text-gray-700'
                             } mb-1`}
                           >
-                            {field.conditionalLabel && field.conditionalLabel[formData.company_type] 
-                              ? field.conditionalLabel[formData.company_type] 
+                            {field.conditionalLabel &&
+                            field.conditionalLabel[formData.company_type]
+                              ? field.conditionalLabel[formData.company_type]
                               : field.label}
                             {isFieldRequired(field.name) && (
                               <span className="text-red-500 ml-1">*</span>
                             )}
                           </label>
 
-                          {(field.type === 'text' || field.type === 'url' || field.type === 'email' || field.type === 'mobile') && (
+                          {(field.type === 'text' ||
+                            field.type === 'url' ||
+                            field.type === 'email' ||
+                            field.type === 'mobile') && (
                             <div className="relative">
                               <input
-                                type={field.type === 'url' ? 'url' : field.type === 'email' ? 'email' : field.type === 'mobile' ? 'tel' : 'text'}
+                                type={
+                                  field.type === 'url'
+                                    ? 'url'
+                                    : field.type === 'email'
+                                    ? 'email'
+                                    : field.type === 'mobile'
+                                    ? 'tel'
+                                    : 'text'
+                                }
                                 id={field.name}
                                 name={field.name}
                                 value={formData[field.name] || ''}
                                 onChange={handleChange}
-                                disabled={handleDisable(field.name) || (field.name === 'PAN' && isPANValidated)}
+                                disabled={
+                                  handleDisable(field.name) ||
+                                  (field.name === 'PAN' && isPANValidated)
+                                }
                                 className={`w-full px-4 py-3 rounded-lg border ${
                                   errors[field.name]
                                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -1341,39 +1591,53 @@ const MultiStepVendorSignupPage = () => {
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
                                     : field.name === 'GST' && isGSTValidated
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : field.name === 'company_name' && isGSTValidated
+                                    : field.name === 'company_name' &&
+                                      isGSTValidated
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : (isGSTValidated && (
-                                        field.name === 'address_line_1' || 
-                                        field.name === 'address_line_2' || 
-                                        field.name === 'city' || 
-                                        field.name === 'state' || 
-                                        field.name === 'pincode' || 
-                                        field.name === 'country'
-                                      ))
+                                    : isGSTValidated &&
+                                      (field.name === 'address_line_1' ||
+                                        field.name === 'address_line_2' ||
+                                        field.name === 'city' ||
+                                        field.name === 'state' ||
+                                        field.name === 'pincode' ||
+                                        field.name === 'country')
                                     ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : (formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                        (field.name === 'country' || field.name === 'state' || field.name === 'city'))
+                                    : formData.pincode &&
+                                      formData.pincode.length === 6 &&
+                                      disableCountrySelction &&
+                                      (field.name === 'country' ||
+                                        field.name === 'state' ||
+                                        field.name === 'city')
                                     ? 'border-blue-500 bg-blue-50 focus:border-blue-500 focus:ring-blue-500'
                                     : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
                                 } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200 ${
-                                  (field.name === 'PAN' && isPANValidated) || 
-                                  (field.name === 'GST' && isGSTValidated) || 
-                                  (field.name === 'company_name' && isGSTValidated) ||
-                                  (isGSTValidated && (
-                                    field.name === 'address_line_1' || 
-                                    field.name === 'address_line_2' || 
-                                    field.name === 'city' || 
-                                    field.name === 'state' || 
-                                    field.name === 'pincode' || 
-                                    field.name === 'country'
-                                  )) ||
-                                  (formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                    (field.name === 'country' || field.name === 'state' || field.name === 'city'))
-                                  ? 'pr-10' : ''
+                                  (field.name === 'PAN' && isPANValidated) ||
+                                  (field.name === 'GST' && isGSTValidated) ||
+                                  (field.name === 'company_name' &&
+                                    isGSTValidated) ||
+                                  (isGSTValidated &&
+                                    (field.name === 'address_line_1' ||
+                                      field.name === 'address_line_2' ||
+                                      field.name === 'city' ||
+                                      field.name === 'state' ||
+                                      field.name === 'pincode' ||
+                                      field.name === 'country')) ||
+                                  (formData.pincode &&
+                                    formData.pincode.length === 6 &&
+                                    disableCountrySelction &&
+                                    (field.name === 'country' ||
+                                      field.name === 'state' ||
+                                      field.name === 'city'))
+                                    ? 'pr-10'
+                                    : ''
                                 }`}
                                 placeholder={
-                                  field.name === 'CIN' && ['Individual', 'sole_proprietership', 'partnership'].includes(formData.company_type)
+                                  field.name === 'CIN' &&
+                                  [
+                                    'Individual',
+                                    'sole_proprietership',
+                                    'partnership',
+                                  ].includes(formData.company_type)
                                     ? 'Enter 12-digit Aadhaar number'
                                     : field.name === 'CIN'
                                     ? 'Enter 21-character CIN'
@@ -1382,72 +1646,145 @@ const MultiStepVendorSignupPage = () => {
                                     : `Enter ${field.label.toLowerCase()}`
                                 }
                               />
-                              {(field.name === 'PAN' && isPANValidated) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                              {field.name === 'PAN' && isPANValidated && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                  <svg
+                                    className="h-5 w-5 text-green-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
                                   </svg>
                                 </div>
                               )}
-                              {(field.name === 'GST' && isGSTValidated) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                              {field.name === 'GST' && isGSTValidated && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                  <svg
+                                    className="h-5 w-5 text-green-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
                                   </svg>
                                 </div>
                               )}
-                              {(field.name === 'company_name' && isGSTValidated) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </div>
+                              {field.name === 'company_name' &&
+                                isGSTValidated && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                    <svg
+                                      className="h-5 w-5 text-green-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {field.name === 'PAN' && isPANValidated && (
+                                <p className="mt-1 text-sm text-green-600">
+                                  PAN verified successfully
+                                </p>
                               )}
-                              {(field.name === 'PAN' && isPANValidated) && (
-                                <p className="mt-1 text-sm text-green-600">PAN verified successfully</p>
+                              {field.name === 'GST' && isGSTValidated && (
+                                <p className="mt-1 text-sm text-green-600">
+                                  GST verified successfully
+                                </p>
                               )}
-                              {(field.name === 'GST' && isGSTValidated) && (
-                                <p className="mt-1 text-sm text-green-600">GST verified successfully</p>
-                              )}
-                              {(field.name === 'company_name' && isGSTValidated) && (
-                                <p className="mt-1 text-sm text-green-600">Auto-filled from GST data</p>
-                              )}
-                              {(isGSTValidated && (
-                                field.name === 'address_line_1' || 
-                                field.name === 'address_line_2' || 
-                                field.name === 'city' || 
-                                field.name === 'state' || 
-                                field.name === 'pincode' || 
-                                field.name === 'country'
-                              )) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </div>
-                              )}
-                              {(isGSTValidated && (
-                                field.name === 'address_line_1' || 
-                                field.name === 'address_line_2' || 
-                                field.name === 'city' || 
-                                field.name === 'state' || 
-                                field.name === 'pincode' || 
-                                field.name === 'country'
-                              )) && (
-                                <p className="mt-1 text-sm text-green-600">Auto-filled from GST data</p>
-                              )}
-                              {(formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                (field.name === 'country' || field.name === 'state' || field.name === 'city')) && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                  <svg className="h-5 w-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                                  </svg>
-                                </div>
-                              )}
-                              {(formData.pincode && formData.pincode.length === 6 && disableCountrySelction && 
-                                (field.name === 'country' || field.name === 'state' || field.name === 'city')) && (
-                                <p className="mt-1 text-sm text-blue-600">Auto-filled from Pincode</p>
-                              )}
+                              {field.name === 'company_name' &&
+                                isGSTValidated && (
+                                  <p className="mt-1 text-sm text-green-600">
+                                    Auto-filled from GST data
+                                  </p>
+                                )}
+                              {isGSTValidated &&
+                                (field.name === 'address_line_1' ||
+                                  field.name === 'address_line_2' ||
+                                  field.name === 'city' ||
+                                  field.name === 'state' ||
+                                  field.name === 'pincode' ||
+                                  field.name === 'country') && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg
+                                      className="h-5 w-5 text-green-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {isGSTValidated &&
+                                (field.name === 'address_line_1' ||
+                                  field.name === 'address_line_2' ||
+                                  field.name === 'city' ||
+                                  field.name === 'state' ||
+                                  field.name === 'pincode' ||
+                                  field.name === 'country') && (
+                                  <p className="mt-1 text-sm text-green-600">
+                                    Auto-filled from GST data
+                                  </p>
+                                )}
+                              {formData.pincode &&
+                                formData.pincode.length === 6 &&
+                                disableCountrySelction &&
+                                (field.name === 'country' ||
+                                  field.name === 'state' ||
+                                  field.name === 'city') && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg
+                                      className="h-5 w-5 text-blue-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {formData.pincode &&
+                                formData.pincode.length === 6 &&
+                                disableCountrySelction &&
+                                (field.name === 'country' ||
+                                  field.name === 'state' ||
+                                  field.name === 'city') && (
+                                  <p className="mt-1 text-sm text-blue-600">
+                                    Auto-filled from Pincode
+                                  </p>
+                                )}
                             </div>
                           )}
 
@@ -1463,18 +1800,25 @@ const MultiStepVendorSignupPage = () => {
                                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                                   : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
                               } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
-                              placeholder={field.placeholder || `Enter ${field.label}`}
+                              placeholder={
+                                field.placeholder || `Enter ${field.label}`
+                              }
                             />
                           )}
 
-                          {(field.type === 'dropdown' || field.type === 'select') && (
+                          {(field.type === 'dropdown' ||
+                            field.type === 'select') && (
                             <Dropdown
                               id={field.name}
                               name={field.name}
                               value={formData[field.name] || ''}
                               onChange={handleChange}
-                              options={handleOptions(field.name) || field.options}
-                              placeholder={field.placeholder || `Select ${field.label}`}
+                              options={
+                                handleOptions(field.name) || field.options
+                              }
+                              placeholder={
+                                field.placeholder || `Select ${field.label}`
+                              }
                               className={`w-full px-4 py-3 rounded-lg border ${
                                 errors[field.name]
                                   ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -1496,7 +1840,9 @@ const MultiStepVendorSignupPage = () => {
                               }}
                               value={formData[field.name]}
                               accept={fileUploadInfo[field.name]?.accept || ''}
-                              fileType={fileUploadInfo[field.name]?.fileType || ''}
+                              fileType={
+                                fileUploadInfo[field.name]?.fileType || ''
+                              }
                               isUploading={uploadingFields[field.name] || false}
                               progress={0}
                               className={`${
@@ -1553,8 +1899,17 @@ const MultiStepVendorSignupPage = () => {
                   onClick={handleBack}
                   className="flex items-center px-6 py-3 border-2 rounded-lg text-purple-600 border-purple-300 hover:bg-purple-50 transition-all duration-300 font-medium"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                   Back
                 </button>
@@ -1566,8 +1921,17 @@ const MultiStepVendorSignupPage = () => {
                   className="flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium ml-auto"
                 >
                   Next
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H7a1 1 0 110-2h5.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H7a1 1 0 110-2h5.586l-2.293-2.293a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
               )}
@@ -1577,8 +1941,17 @@ const MultiStepVendorSignupPage = () => {
                   className="flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
                 >
                   Submit
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L9 10.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L9 10.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </button>
               )}

@@ -109,7 +109,9 @@ const router = createBrowserRouter([
     path: '/onboarding',
     element: (
       <ProtectedRoute>
-        <ErrorBoundary showErrorDetails={process.env.NODE_ENV === 'development'}>
+        <ErrorBoundary
+          showErrorDetails={process.env.NODE_ENV === 'development'}
+        >
           <MultiStepVendorSignupPage />
         </ErrorBoundary>
       </ProtectedRoute>
