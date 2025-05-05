@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 import Dashboard from '../pages/dashboard/index';
 import ProductsView from '../pages/products/index';
 import Sidebar from '../components/sidebar/index';
-import NavBar from '../components/navbar/index';
 import NewProfilePage from '../pages/NewProfilePage';
 import ProductDetailedView from '../pages/productDetail/ProductDetailedView';
 import Services from '../pages/services/index';
@@ -35,11 +34,6 @@ const HomePage = () => {
       </div>
 
       <main className="flex-1 flex flex-col">
-        {/* Navbar: Always visible at the top */}
-        <div className="w-full border-b border-gray-200">
-          <NavBar />
-        </div>
-
         {/* Main Content: Fully responsive with proper padding */}
         <div className="mx-auto px-4 sm:px-6 md:px-8 lg:px-10 py-4 overflow-y-auto max-h-screen w-full">
           <Routes>

@@ -56,6 +56,7 @@ const VerifyEmailPage = lazy(() =>
 );
 const NewProfilePage = lazy(() => import('./pages/NewProfilePage'));
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/commonComponents/ErrorBoundary';
 
 const Products = lazy(() => import('./pages/products/index'));
 const ProductDetailedView = lazy(() =>
@@ -106,7 +107,13 @@ const router = createBrowserRouter([
   },
   {
     path: '/onboarding',
-    element: <MultiStepVendorSignupPage />,
+    element: (
+      <ProtectedRoute>
+        <ErrorBoundary showErrorDetails={process.env.NODE_ENV === 'development'}>
+          <MultiStepVendorSignupPage />
+        </ErrorBoundary>
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/add-new-product',

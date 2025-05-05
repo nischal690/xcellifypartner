@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { RiDashboardLine } from 'react-icons/ri';
+import { RiDashboardLine, RiMessage2Line, RiSettings4Line } from 'react-icons/ri';
 
 import { ProductsIcon } from '../../assets/svg-icons/Products';
 import { PriceIcon } from '../../assets/svg-icons/Price';
@@ -9,6 +9,7 @@ import profilePlaceholderImage from '../../assets/profilePlaceholder.png';
 
 import PrimaryLogo from '../../assets/logo-primary.png';
 import NavItem from './NavItem';
+import Messages from './Messages';
 import { useStore } from '../../stores';
 import { AuthStatuses } from '../../utils/constants';
 import { useEffect, useState } from 'react';
@@ -19,7 +20,7 @@ import { toast } from 'react-toastify';
 
 function Sidebar() {
   const navigate = useNavigate();
-  const { appStore } = useStore();
+  const { appStore, messageStore } = useStore();
   const [profilePicture, setProfilePicture] = useState('');
   const [isOpen, setIsOpen] = useState(false); //  Sidebar toggle state
 
@@ -60,6 +61,7 @@ function Sidebar() {
 
   const goToPayoutsView = () => {
     navigate('/home/payout');
+    setIsOpen(false);
     return;
   };
 
@@ -78,7 +80,7 @@ function Sidebar() {
   const isCurrentTabActive = (currTab) => {
     return location.pathname.indexOf(currTab) > -1;
   };
-  console.log(appStore.partnerInfo);
+
   return (
     <>
       {!isOpen && (
@@ -92,7 +94,7 @@ function Sidebar() {
 
       {/*  Sidebar Container */}
       <div
-        className={`fixed md:relative w-64 min-h-screen bg-white border-r transform transition-transform ${
+        className={`fixed md:relative w-64 min-h-screen bg-white border-r shadow-sm flex flex-col transform transition-transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 md:flex md:flex-col z-40`}
       >
@@ -104,46 +106,70 @@ function Sidebar() {
         </button>
 
         {/*  Sidebar Header - Logo */}
-        <div className="p-4">
-          <button onClick={goToHome}>
-            <img src={PrimaryLogo} alt="Xcellify" className="h-12 mx-auto" />
+        <div className="p-4 border-b">
+          <button onClick={goToHome} className="flex justify-center">
+            <img src={PrimaryLogo} alt="Xcellify" className="h-12" />
           </button>
         </div>
 
         {/*  Profile Section */}
-        <div className="p-4 cursor-pointer" onClick={goToProfileView}>
-          <div className="flex items-center space-x-2 p-2 bg-gray-100 rounded-md">
+        <div className="p-4 cursor-pointer bg-gray-50" onClick={goToProfileView}>
+          <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 transition-colors">
             <img
               src={profilePicture || profilePlaceholderImage}
               alt={partnerInfo.company_name}
-              className="object-cover w-8 h-8 rounded-full"
+              className="object-cover w-10 h-10 rounded-full border-2 border-blue-100"
             />
-            <span>{display_name}</span>
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-800">{display_name}</span>
+              <span className="text-xs text-gray-500">View Profile</span>
+            </div>
           </div>
         </div>
 
-        {/* ✅ Navigation Links */}
-        <nav className="mt-8">
+        {/* Main Navigation */}
+        <nav className="mt-4 flex-1 overflow-y-auto">
+          <div className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Main
+          </div>
           <NavItem
-            icon={<RiDashboardLine />}
+            icon={<RiDashboardLine className="text-blue-600" />}
             onClick={goToDashboard}
             text="Dashboard"
             active={isCurrentTabActive('dashboard')}
           />
           <NavItem
-            icon={<ProductsIcon />}
+            icon={<ProductsIcon className="text-blue-600" />}
             onClick={goToProductsView}
-            text="Product"
+            text="Products"
             active={isCurrentTabActive('products')}
           />
           <NavItem
-            icon={<ProductsIcon />}
+            icon={<ProductsIcon className="text-blue-600" />}
             onClick={goToServicesView}
             text="Services"
             active={isCurrentTabActive('services')}
           />
+          
+          {/* Messages Section - Now below Services */}
+          <div className="px-3 mt-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Messages
+          </div>
+          <div className="px-2">
+            <Messages />
+          </div>
+          
+          <div className="px-3 mt-6 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Account
+          </div>
           <NavItem
-            icon={<LogoutIcon />}
+            icon={<RiSettings4Line className="text-blue-600" />}
+            onClick={goToProfileView}
+            text="Settings"
+            active={isCurrentTabActive('profile')}
+          />
+          <NavItem
+            icon={<LogoutIcon className="text-red-500" />}
             onClick={handleLogout}
             text="Logout"
             className="text-red-500"

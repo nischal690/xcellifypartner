@@ -7,6 +7,7 @@ import { store } from './redux/store.js';
 
 import './utils/i18n.js';
 import './index.css';
+import './assets/animations.css';
 import App from './App.jsx';
 import { FacebookProvider } from 'react-facebook';
 

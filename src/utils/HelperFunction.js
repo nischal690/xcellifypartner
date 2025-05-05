@@ -54,6 +54,7 @@ export const vendorBaiscInfoValidation = {
   PAN: /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
   address: /^[a-zA-Z0-9\s,.'-]{5,100}$/,
   pincode: /^[0-9]{6}$/,
+  Aadhaar: /^[0-9]{12}$/,
   // MSME_registered: /^[a-zA-Z0-9\s]{2,50}$/, // Boolean validation
 };
 
