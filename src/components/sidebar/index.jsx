@@ -1,5 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { RiDashboardLine, RiMessage2Line, RiSettings4Line } from 'react-icons/ri';
+import {
+  RiDashboardLine,
+  RiMessage2Line,
+  RiSettings4Line,
+} from 'react-icons/ri';
 
 import { ProductsIcon } from '../../assets/svg-icons/Products';
 import { PriceIcon } from '../../assets/svg-icons/Price';
@@ -42,13 +46,13 @@ function Sidebar() {
   };
 
   const goToHome = () => {
-    navigate('/home/dashboard');
+    navigate('/home');
     setIsOpen(false);
     return;
   };
 
   const goToDashboard = () => {
-    navigate('/home/dashboard');
+    navigate('/home');
     setIsOpen(false);
     return;
   };
@@ -78,6 +82,9 @@ function Sidebar() {
   };
 
   const isCurrentTabActive = (currTab) => {
+    if (currTab === 'dashboard') {
+      return location.pathname === '/home';
+    }
     return location.pathname.indexOf(currTab) > -1;
   };
 
@@ -113,7 +120,10 @@ function Sidebar() {
         </div>
 
         {/*  Profile Section */}
-        <div className="p-4 cursor-pointer bg-gray-50" onClick={goToProfileView}>
+        <div
+          className="p-4 cursor-pointer bg-gray-50"
+          onClick={goToProfileView}
+        >
           <div className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 transition-colors">
             <img
               src={profilePicture || profilePlaceholderImage}
@@ -150,7 +160,7 @@ function Sidebar() {
             text="Services"
             active={isCurrentTabActive('services')}
           />
-          
+
           {/* Messages Section - Now below Services */}
           <div className="px-3 mt-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
             Messages
@@ -158,7 +168,7 @@ function Sidebar() {
           <div className="px-2">
             <Messages />
           </div>
-          
+
           <div className="px-3 mt-6 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
             Account
           </div>

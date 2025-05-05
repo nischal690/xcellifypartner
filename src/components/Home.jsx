@@ -39,7 +39,6 @@ const HomePage = () => {
           <Routes>
             <Route index element={<Dashboard />} />
             <Route path="profile" element={<NewProfilePage />} />
-            <Route path="dashboard" element={<Dashboard />} />
             <Route path="products" element={<ProductsView />} />
             <Route path="product/:id" element={<ProductDetailedView />} />
             {/* <Route path="payouts" element={<ProductsView />} /> */}

@@ -2005,7 +2005,7 @@ const StepVendorProductDetailsPage = () => {
       <div>
         <div
           className="w-fit cursor-pointer m-10"
-          onClick={() => navigate('/home/dashboard')}
+          onClick={() => navigate('/home')}
         >
           <img src={PrimaryLogo} className="w-24 lg:w-32" alt="Xcellify" />
         </div>
