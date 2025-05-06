@@ -38,6 +38,7 @@ import AutoFilledInputRating from '../components/onboardingPage/AutoFilledInputR
 import { useGoogleRating } from '../hooks/profile/useGoogleRating';
 import SupplierDeclarationPreview from '../components/onboardingPage/SupplierDeclarationPreview';
 import { vendorBaiscInfoValidation } from '../utils/HelperFunction';
+import SupplierComDeclarationPreview from '../components/onboardingPage/SupplierComDeclarationPreview';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -1879,6 +1880,14 @@ const MultiStepVendorSignupPage = () => {
                             <p className="text-sm text-gray-500 mt-1 italic">
                               Accepted file formats images: .jpg, .jpeg, .png
                             </p>
+                          )}
+
+                          {field.name === 'bank_name' && (
+                            <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+                              <SupplierComDeclarationPreview
+                                formData={formData}
+                              />
+                            </div>
                           )}
                         </div>
                       );
