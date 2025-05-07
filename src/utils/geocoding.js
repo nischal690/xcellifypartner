@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 import { City, Country, State } from 'country-state-city';
 import apiRequest from './apiRequest.js';
 let countryISOCodeMap = new Map();
@@ -6,39 +8,68 @@ let stateCodeMap = new Map();
 let phoneNumberCodes = [];
 let phoneCountryCodeMap = [];
 
-export const getPincodeLocationDetails = async (debouncedPincode) => {
-  const response = debouncedPincode
-    ? await apiRequest({
-        url: `/mic-login/geoLocationDetails?pincode=${debouncedPincode}`,
-        method: 'get',
-      })
-    : {};
-  const locationDetails = response?.data?.results[0];
-  const postcode_localities = locationDetails?.postcode_localities || [];
-  const address_components = locationDetails?.address_components || [];
-  const locationObj = {};
-  let pincodeLocationDetails = {};
-  address_components.forEach((addObj) => {
-    const types = addObj.types;
-    if (types.includes('country')) {
-      locationObj['country'] = addObj.long_name;
+// export const getPincodeLocationDetails = async (debouncedPincode) => {
+//   const response = debouncedPincode
+//     ? await apiRequest({
+//         url: `/mic-login/geoLocationDetails?pincode=${debouncedPincode}`,
+//         method: 'get',
+//       })
+//     : {};
+//   const locationDetails = response?.data?.results[0];
+//   const postcode_localities = locationDetails?.postcode_localities || [];
+//   const address_components = locationDetails?.address_components || [];
+//   const locationObj = {};
+//   let pincodeLocationDetails = {};
+//   address_components.forEach((addObj) => {
+//     const types = addObj.types;
+//     if (types.includes('country')) {
+//       locationObj['country'] = addObj.long_name;
+//     }
+//     if (types.includes('administrative_area_level_1')) {
+//       locationObj['state'] = addObj.long_name;
+//     }
+//     if (types.includes('locality')) {
+//       locationObj['city'] = addObj.long_name;
+//     }
+//   });
+//   //locationObj.localities = postcode_localities;
+//   if (locationObj.country) {
+//     pincodeLocationDetails = {
+//       country: locationObj.country,
+//       state: locationObj.state,
+//       city: locationObj.city,
+//     };
+//     return pincodeLocationDetails;
+//   } else return null;
+// };
+
+export const getPincodeLocationDetails = async (pincode) => {
+  if (!pincode || pincode.length !== 6) {
+    return null;
+  }
+
+  try {
+    const response = await axios.get(
+      `https://api.postalpincode.in/pincode/${pincode}`
+    );
+    const data = response.data?.[0];
+
+    if (data?.Status === 'Success' && data?.PostOffice?.length > 0) {
+      const postOffice = data.PostOffice[0];
+
+      return {
+        country: postOffice.Country || 'India',
+        state: postOffice.State || '',
+        city: postOffice.Region || '',
+      };
+    } else {
+      console.error('Invalid Pincode or No Data Found');
+      return null;
     }
-    if (types.includes('administrative_area_level_1')) {
-      locationObj['state'] = addObj.long_name;
-    }
-    if (types.includes('locality')) {
-      locationObj['city'] = addObj.long_name;
-    }
-  });
-  //locationObj.localities = postcode_localities;
-  if (locationObj.country) {
-    pincodeLocationDetails = {
-      country: locationObj.country,
-      state: locationObj.state,
-      city: locationObj.city,
-    };
-    return pincodeLocationDetails;
-  } else return null;
+  } catch (error) {
+    console.error('Error fetching pincode location:', error);
+    return null;
+  }
 };
 
 export const loadCountries = () => {
@@ -117,8 +148,7 @@ export const loadAllIndianCities = () => {
     label: 'All India',
   };
 
-  formattedCities.unshift(allIndiaOption); 
-
+  formattedCities.unshift(allIndiaOption);
 
   return formattedCities;
 };

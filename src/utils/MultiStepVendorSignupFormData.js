@@ -39,8 +39,8 @@ const steps = [
             conditionalLabel: {
               Individual: 'Enter Your PAN Number',
               sole_proprietership: 'Enter Your PAN Number',
-              partnership: 'Enter Your PAN Number'
-            }
+              partnership: 'Enter Your PAN Number',
+            },
           },
           {
             label: 'CIN',
@@ -50,8 +50,8 @@ const steps = [
             conditionalLabel: {
               Individual: 'Aadhaar Number',
               sole_proprietership: 'Aadhaar Number',
-              partnership: 'Aadhaar Number'
-            }
+              partnership: 'Aadhaar Number',
+            },
           },
           {
             label: 'Company name',
