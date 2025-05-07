@@ -380,43 +380,28 @@ const MultiStepVendorSignupPage = () => {
 
   useEffect(() => {
     const getPincodeLocationDetails1 = async (pincode) => {
-      // Only proceed if pincode is 6 digits
       if (!pincode || pincode.length !== 6) {
         setDisableCountrySelection(false);
         return;
       }
 
-      const pincodeLocationDetails = await getPincodeLocationDetails(pincode);
+      const locationData = await getPincodeLocationDetails(pincode);
 
-      if (pincodeLocationDetails) {
-        // Create an object with all available location details
-        const locationData = {
-          country: pincodeLocationDetails.country || '',
-          state: pincodeLocationDetails.state || '',
-          city: pincodeLocationDetails.city || '',
-        };
-
-        // Update form data with all available location details at once
+      if (locationData) {
         setFormData((prev) => ({
           ...prev,
-          ...locationData,
+          country: locationData.country || '',
+          state: locationData.state || '',
+          city: locationData.city || '',
         }));
 
-        // Enable or disable country selection based on data completeness
-        if (locationData.country && locationData.state && locationData.city) {
-          setDisableCountrySelection(true);
-          console.log('Pincode location details complete:', locationData);
-        } else {
-          setDisableCountrySelection(false);
-          console.log('Incomplete pincode location details:', locationData);
-        }
+        setDisableCountrySelection(true);
       } else {
-        // When no data available
         setDisableCountrySelection(false);
-        loadCountries();
         console.log('No location data found for pincode:', pincode);
       }
     };
+
     getPincodeLocationDetails1(debouncedPincode);
   }, [debouncedPincode]);
 
