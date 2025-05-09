@@ -71,6 +71,7 @@ const MultiStepVendorSignupPage = () => {
     handleSubmit,
     toggleSection,
     isSectionCompleted,
+    clearFormData,
     handleDisable,
     handleOptions,
     handleOtpVerify,
@@ -826,27 +827,51 @@ const MultiStepVendorSignupPage = () => {
                   Back
                 </button>
               )}
-              {currentStep < steps.length - 1 && (
+              <div className="flex ml-auto space-x-4">
+                {/* Clear Button */}
                 <button
                   type="button"
-                  onClick={handleNext}
-                  className="flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium ml-auto"
+                  onClick={clearFormData}
+                  className="flex items-center px-6 py-3 border-2 rounded-lg text-red-600 border-red-300 hover:bg-red-50 transition-all duration-300 font-medium"
                 >
-                  Next
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 ml-2"
-                    viewBox="0 0 20 20"
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-5 w-5 mr-2" 
+                    viewBox="0 0 20 20" 
                     fill="currentColor"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H7a1 1 0 110-2h5.586l-2.293-2.293a1 1 0 010-1.414z"
-                      clipRule="evenodd"
+                    <path 
+                      fillRule="evenodd" 
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" 
+                      clipRule="evenodd" 
                     />
                   </svg>
+                  Clear
                 </button>
-              )}
+                
+                {/* Next Button */}
+                {currentStep < steps.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+                  >
+                    Next
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 ml-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H7a1 1 0 110-2h5.586l-2.293-2.293a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
               {currentStep === steps.length - 1 && (
                 <button
                   type="submit"

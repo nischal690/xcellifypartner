@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { viteExternalsPlugin } from 'vite-plugin-externals';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -42,6 +43,12 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      // Add aliases for problematic packages
+      'pizzip': path.resolve(__dirname, 'node_modules/pizzip/dist/pizzip.js'),
+    },
+  },
   server: {
     host: '0.0.0.0', // Allows external devices to connect
     port: 5174,

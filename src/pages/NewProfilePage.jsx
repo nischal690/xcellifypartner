@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FiCheckCircle } from 'react-icons/fi';
 import PrimaryLogo from '../assets/logo-primary.png';
 import useVendorProfile from '../hooks/profile/useVendorProfile';
-import { MdDownload, MdEditNote, MdOutlineModeEdit } from 'react-icons/md';
+import { MdDownload, MdEditNote, MdOutlineModeEdit, MdBusinessCenter, MdLocationOn, MdPerson, MdEmail, MdPhone, MdDescription, MdVerified } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import steps from '../utils/MultiStepVendorSignupFormData';
 import { TextInput } from '../components/commonComponents';
@@ -22,8 +22,9 @@ import Products from './products';
 import Sidebar from '../components/sidebar';
 import getEssentialDocuments from '../utils/getEssentialDocuments';
 import MSMECertificateIcon from '../assets/svg-icons/MSMECertificateIcon';
-import { FaDownload } from 'react-icons/fa';
+import { FaDownload, FaBuilding, FaIdCard, FaFileAlt, FaGlobe, FaPhoneAlt, FaUser } from 'react-icons/fa';
 import EssentialDocuments from '../components/profile/EssentialDocuments';
+import { motion } from 'framer-motion';
 
 const useDebouncedValue = (inputValue, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(inputValue);
@@ -80,9 +81,11 @@ export default function ProfilePage() {
   const sections = {
     companyDetails: {
       title: 'Company Details',
+      icon: <FaBuilding className="text-purple-600" />,
       subSections: [
         {
           subSectionTitle: 'Company details',
+          icon: <MdBusinessCenter />,
           fields: [
             { label: 'Company Name', name: 'company_name' },
             { label: 'GST', name: 'GST' },
@@ -96,6 +99,7 @@ export default function ProfilePage() {
         },
         {
           subSectionTitle: 'Contact details',
+          icon: <MdPerson />,
           fields: [
             { label: 'Contact Person Name', name: 'contact_person_name' },
             { label: "Contact Person's Email", name: 'contact_person_email' },
@@ -107,35 +111,37 @@ export default function ProfilePage() {
         },
         {
           subSectionTitle: 'Address details',
+          icon: <MdLocationOn />,
           fields: [
             { label: 'Country', name: 'country' },
-            { label: 'PIN/ZIP Code', name: 'pincode' },
-            { label: 'State/Province', name: 'state' },
+            { label: 'State', name: 'state' },
             { label: 'City', name: 'city' },
-            { label: 'Address Line 1', name: 'address_line_1' },
-            { label: 'Address Line 2', name: 'address_line_2' },
+            { label: 'Pincode', name: 'pincode' },
+            { label: 'Address', name: 'address' },
           ],
         },
         {
-          subSectionTitle: 'Marketing materials',
+          subSectionTitle: 'Bank details',
+          icon: <FaIdCard />,
           fields: [
-            { label: 'Google Rating', name: 'google_rating' },
-            { label: 'Google Rating Url', name: 'google_rating_url' },
+            { label: 'Bank Name', name: 'bank_name' },
+            { label: 'Bank Account Number', name: 'bank_account_number' },
+            { label: 'Bank IFSC', name: 'bank_ifsc' },
+            { label: 'Bank Account Type', name: 'bank_account_type' },
           ],
         },
       ],
     },
     complianceDetails: {
       title: 'Compliance Details',
+      icon: <MdVerified className="text-purple-600" />,
       subSections: [
         {
-          subSectionTitle: 'Bank details',
+          subSectionTitle: 'Compliance details',
+          icon: <FaFileAlt />,
           fields: [
-            { label: 'Account Holder Name', name: 'account_holder_name' },
-            { label: 'Bank Name', name: 'bank_name' },
-            { label: 'Account Type', name: 'bank_account_type' },
-            { label: 'Account Number', name: 'bank_account_number' },
-            { label: 'IFSC Code', name: 'bank_ifsc' },
+            { label: 'MSME Registered', name: 'MSME_registered' },
+            { label: 'MSME Certificate Number', name: 'MSME_certificate_number' },
           ],
         },
       ],
@@ -143,277 +149,388 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    const getDocuments = async () => {
-      if (profile.partner_id && !hasFetchedDocuments.current) {
-        console.log('Fetching documents...');
-        const docs = await getEssentialDocuments(
-          profile.user_id,
-          profile.partner_id
-        );
-        setEssentialDocs(docs);
-        console.log('Documents fetched:', docs);
-        hasFetchedDocuments.current = true;
-      }
+    const fetchData = async () => {
+      setFormData(profile);
+      setEditProfileData(profile);
     };
-    getDocuments();
-  }, [profile.partner_id]);
+    fetchData();
+  }, [profile]);
 
   useEffect(() => {
-    const getPincodeLocationDetails1 = async (pincode) => {
-      const pincodeLocationDetails = await getPincodeLocationDetails(pincode);
-      if (!!pincodeLocationDetails) {
-        setFormData((prev) => ({
-          ...prev,
-          country: pincodeLocationDetails.country,
-        }));
-        if (!!pincodeLocationDetails?.state && !!pincodeLocationDetails?.city) {
-          setFormData((prev) => ({
-            ...prev,
-            country: pincodeLocationDetails.country,
-            state: pincodeLocationDetails.state,
-            city: pincodeLocationDetails.city,
-          }));
-          setEditProfileData((prev) => ({
-            ...prev,
-            country: pincodeLocationDetails.country,
-            state: pincodeLocationDetails.state,
-            city: pincodeLocationDetails.city,
-          }));
-          setDisableCountrySelection(true); // when there are all fields
-        } //when one of state or city is missing
-        else setDisableCountrySelection(false);
-      }
-      //when do data available
-      else {
-        setDisableCountrySelection(false);
-        loadCountries();
-      }
-    };
-    getPincodeLocationDetails1(debouncedPincode);
-  }, [debouncedPincode]);
-
-  useEffect(() => {
-    let { countriesList } = loadCountries();
-    if (!!countriesList) {
-      setcountryOptions(converToOptions(countriesList));
+    if (!hasFetchedDocuments.current) {
+      getDocuments();
+      hasFetchedDocuments.current = true;
     }
-    if (!!editProfileData.country) loadStates();
   }, []);
 
   useEffect(() => {
-    if (editProfileData.country) {
-      const states = loadStates(editProfileData.country);
-      if (!!states) {
-        setStateOptions(converToOptions(states));
+    const loadGeoData = async () => {
+      try {
+        const countries = await loadCountries();
+        setcountryOptions(converToOptions(countries));
+      } catch (error) {
+        console.error('Error loading countries:', error);
       }
-    }
+    };
+    loadGeoData();
+  }, []);
+
+  useEffect(() => {
+    const loadStatesData = async () => {
+      if (editProfileData.country) {
+        try {
+          const states = await loadStates(editProfileData.country);
+          setStateOptions(converToOptions(states));
+        } catch (error) {
+          console.error('Error loading states:', error);
+        }
+      }
+    };
+    loadStatesData();
   }, [editProfileData.country]);
 
   useEffect(() => {
-    if (editProfileData.state) {
-      let cities = loadCities(editProfileData.state);
-      setCityOptions(converToOptions(cities));
+    const loadCitiesData = async () => {
+      if (editProfileData.country && editProfileData.state) {
+        try {
+          const cities = await loadCities(
+            editProfileData.country,
+            editProfileData.state
+          );
+          setCityOptions(converToOptions(cities));
+        } catch (error) {
+          console.error('Error loading cities:', error);
+        }
+      }
+    };
+    loadCitiesData();
+  }, [editProfileData.country, editProfileData.state]);
+
+  useEffect(() => {
+    const fetchPincodeDetails = async () => {
+      if (debouncedPincode && debouncedPincode.length >= 6) {
+        try {
+          await getPincodeLocationDetails1(debouncedPincode);
+        } catch (error) {
+          console.error('Error fetching pincode details:', error);
+        }
+      }
+    };
+    fetchPincodeDetails();
+  }, [debouncedPincode]);
+
+  const getDocuments = async () => {
+    try {
+      const response = await getEssentialDocuments();
+      if (response.status === HTTP_CODE.SUCCESS) {
+        setEssentialDocs(response.data);
+      }
+    } catch (error) {
+      console.error('Error fetching documents:', error);
     }
-  }, [editProfileData.state]);
+  };
+
+  const getPincodeLocationDetails1 = async (pincode) => {
+    try {
+      const response = await getPincodeLocationDetails(pincode);
+      if (response.status === HTTP_CODE.SUCCESS) {
+        const data = response.data;
+        if (data.length > 0) {
+          const locationData = data[0];
+          const country = locationData.country;
+          const state = locationData.state;
+          const city = locationData.city;
+
+          setEditProfileData((prev) => ({
+            ...prev,
+            country,
+            state,
+            city,
+          }));
+
+          setDisableCountrySelection(true);
+
+          // Load states and cities
+          const states = await loadStates(country);
+          setStateOptions(converToOptions(states));
+
+          const cities = await loadCities(country, state);
+          setCityOptions(converToOptions(cities));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching pincode details:', error);
+    }
+  };
 
   const handleDisable = (name) => {
-    if (name === 'country' || name === 'state' || name === 'city')
+    if (name === 'country' || name === 'state' || name === 'city') {
       return disableCountrySelction;
+    }
     return false;
   };
 
   const handleOptions = (name) => {
-    let options;
-    switch (name) {
-      case 'country':
-        options = countryOptions;
-        break;
-      case 'state':
-        options = stateOptions;
-        break;
-      case 'city':
-        options = cityOptions;
-        break;
+    if (name === 'country') {
+      return countryOptions;
+    } else if (name === 'state') {
+      return stateOptions;
+    } else if (name === 'city') {
+      return cityOptions;
+    } else if (name === 'company_type') {
+      return [
+        { label: 'Private Limited', value: 'Private Limited' },
+        { label: 'LLP', value: 'LLP' },
+        { label: 'Proprietorship', value: 'Proprietorship' },
+        { label: 'Partnership', value: 'Partnership' },
+      ];
     }
-    return options;
+    return [];
   };
 
   const converToOptions = (list) => {
-    return list.map((value) => {
-      return { label: value, value: value };
-    });
+    return list.map((item) => ({
+      label: item,
+      value: item,
+    }));
   };
 
-  useEffect(() => {
-    setEditProfileData({ ...profile });
-  }, [profile]);
-
   const handleBreadcrumbClick = (step) => {
-    if (step === 'Profile') {
-      return;
-    }
-    if (step === 'dashboard') navigate('/home/dashboard');
-
     setActiveTab(step);
-    setBreadcrumbs((prev) =>
-      prev.slice(0, 2).concat({ label: sections[step].title, step })
-    );
   };
 
   const handleEdit = (e, subSectionIndex) => {
+    e.preventDefault();
     setEditingCard(true);
     setEditSubSection(subSectionIndex);
   };
 
   const handleBack = () => {
     setEditingCard(false);
-    setFormData({});
   };
 
   const checkFieldErrors = () => {
-    let fieldErrors = {};
-    let hasErrors = false;
-    Object.keys(formData).forEach((name, index) => {
-      const error = vendorValidField(name, formData[name]);
-      if (error) {
-        fieldErrors[name] = error;
-        hasErrors = true;
-      }
+    const errors = {};
+    const fields =
+      steps[tabsIndex[activeTab]].sections[editSubSection].fields || [];
+
+    if (editSubSection === 1 && tabsIndex[activeTab] !== 1) {
+      fields.push(...(steps[tabsIndex[activeTab]].sections[2].fields || []));
+    }
+
+    if (editSubSection === 2 && tabsIndex[activeTab] !== 1) {
+      fields.push(...(steps[tabsIndex[activeTab]].sections[3].fields || []));
+    }
+
+    fields.forEach((field) => {
+      const error = vendorValidField(field, editProfileData);
+      if (error) errors[field.name] = error;
     });
-    setFieldErrors(fieldErrors);
-    return hasErrors;
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSaveAndUpdate = async (e) => {
-    if (checkFieldErrors() || Object.keys(formData).length === 0) return;
-    if (Object.hasOwn(formData, 'MSME_registered')) {
-      formData.MSME_registered = formData.MSME_registered === 'Yes' ? 1 : 0;
-    }
-    const updateresp = await apiRequest({
-      url: '/mic-login/partnerProfileInfo',
-      method: 'post',
-      data: formData,
-    });
-    if (updateresp?.status == HTTP_CODE.SUCCESS) {
-      setEditingCard(false);
-      setFormData({});
-      toast.success(updateresp.data.message);
-      //navigate('/home/profile')
-      location.reload();
-    } else {
-      !!updateresp.data.message
-        ? toast.info(updateresp.data.message)
-        : toast.error('Something went wrong');
-      console.log('update failed');
+    e.preventDefault();
+    if (!checkFieldErrors()) return;
+
+    try {
+      const response = await apiRequest.put('/vendor/profile', editProfileData);
+      if (response.status === HTTP_CODE.SUCCESS) {
+        toast.success('Profile updated successfully!');
+        setEditingCard(false);
+        // Refresh the profile data
+        window.location.reload();
+      } else {
+        toast.error('Failed to update profile.');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('An error occurred while updating the profile.');
     }
   };
 
   const handleChange = (e) => {
-    const value = e.target.type == 'file' ? e.target.files[0] : e.target.value;
-    setFormData((prev) => ({ ...prev, [e.target.name]: value }));
-    setEditProfileData((prev) => ({ ...prev, [e.target.name]: value }));
+    const { name, value } = e.target;
+    setEditProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
   const GetSection = ({ subSection, index }) => {
     return (
-      <div key={index} className="w-full">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">
-            {subSection.subSectionTitle}
-          </h3>
-          {/* <button onClick={(e) => handleEdit(e,index)} className="border-2 p-0.5 text-purple-primary rounded-full border-purple-primary ">
-                <MdOutlineModeEdit />
-            </button> */}
-        </div>
-        <div
-          key={index}
-          className="mb-6 sm:mb-8 rounded-lg shadow p-6 bg-white w-full max-w-full sm:max-w-2xl lg:max-w-3xl"
-        >
-          {subSection.fields.map((field, index) => (
-            <div
-              key={field.name}
-              className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0"
-            >
-              <label className="block text-sm font-medium text-gray-700 ">
-                {field.label}
-              </label>
-              <p>{profile[field.name] || '-'}</p>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: index * 0.1 }}
+        className="w-full mb-6"
+      >
+        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-indigo-50">
+            <div className="flex items-center gap-2">
+              {subSection.icon && <span className="text-purple-600 text-xl">{subSection.icon}</span>}
+              <h3 className="text-lg font-semibold text-gray-800">{subSection.subSectionTitle}</h3>
             </div>
-          ))}
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {subSection.fields.map((field) => (
+                <div key={field.name} className="flex flex-col">
+                  <span className="text-sm text-gray-500 mb-1">{field.label}</span>
+                  <span className="font-medium text-gray-800 bg-gray-50 p-2 rounded-md">
+                    {profile[field.name] || '-'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
+      </motion.div>
     );
   };
 
   const renderTabContent = () => {
-    const currentSection = sections[activeTab];
     return (
       <>
-        <div className="w-full sm:w-1/2 flex flex-col pr-5 sm:pr-6 lg:pr-8">
-          {currentSection.subSections.map(
-            (subSection, index) =>
-              index % 2 == 0 && (
-                <GetSection key={index} subSection={subSection} index={index} />
-              )
-          )}
-        </div>
-        <div className="w-full sm:w-1/2 flex flex-col pl-5 sm:pl-6 lg:pl-8">
-          {currentSection.subSections.map(
-            (subSection, index) =>
-              index % 2 == 1 && (
-                <GetSection key={index} subSection={subSection} index={index} />
-              )
-          )}
+        <div className="w-full">
+          {sections[activeTab].subSections.map((subSection, index) => (
+            <GetSection key={index} subSection={subSection} index={index} />
+          ))}
         </div>
       </>
     );
   };
 
-  return (
-    <div className="w-full">
-      <h2 className="text-3xl font-bold text-gray-800 mb-5">Partner Profile</h2>
+  // Animation variants
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.5 } }
+  };
 
-      <main className="w-full bg-gray-50">
+  const slideUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+  };
+
+  return (
+    <motion.div 
+      initial="hidden"
+      animate="visible"
+      variants={fadeIn}
+      className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8"
+    >
+      <motion.div 
+        variants={slideUp} 
+        className="flex items-center justify-between mb-8"
+      >
+        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
+          Partner Profile
+        </h2>
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">Last updated: {new Date().toLocaleDateString()}</span>
+        </div>
+      </motion.div>
+
+      <main className="w-full">
         {!editingCard && (
           <>
-            <div className="flex border-b mb-10">
+            <motion.div 
+              variants={slideUp}
+              className="mb-10"
+            >
+              <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div className="h-24 bg-gradient-to-r from-purple-500 to-indigo-600 relative">
+                  <div className="absolute -bottom-12 left-6 w-24 h-24 rounded-full border-4 border-white bg-white shadow-md flex items-center justify-center overflow-hidden">
+                    {profile.company_logo ? (
+                      <img 
+                        src={profile.company_logo} 
+                        alt={profile.company_name} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold">
+                        {profile.company_name?.charAt(0) || "X"}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="pt-16 pb-6 px-6">
+                  <h3 className="text-2xl font-bold text-gray-800">{profile.company_name || "Your Company"}</h3>
+                  <div className="flex flex-wrap items-center gap-4 mt-2">
+                    {profile.website && (
+                      <a 
+                        href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-purple-600 hover:text-purple-800 transition-colors"
+                      >
+                        <FaGlobe /> {profile.website}
+                      </a>
+                    )}
+                    {profile.contact_person_mobile && (
+                      <span className="flex items-center gap-1 text-gray-600">
+                        <FaPhoneAlt /> {profile.contact_person_mobile}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              variants={slideUp}
+              className="flex border-b mb-6 bg-white rounded-t-lg shadow-sm"
+            >
               {Object.keys(sections).map((key) => (
                 <button
                   key={key}
                   onClick={() => handleBreadcrumbClick(key)}
-                  className={`py-2 px-4 text-sm font-medium ${
+                  className={`py-4 px-6 text-sm font-medium flex items-center gap-2 transition-all duration-200 ${
                     activeTab === key
-                      ? 'text-blue-600 border-b-2 border-blue-600'
-                      : 'text-gray-500'
+                      ? 'text-purple-600 border-b-2 border-purple-600 bg-purple-50'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                   }`}
                 >
+                  {sections[key].icon}
                   {sections[key].title}
                 </button>
               ))}
-            </div>
-            <div className="flex flex-col justify-between">
-              <p className="mb-6 sm:mb-10 font-semibold text-gray-700 text-center sm:text-left px-4 sm:px-0">
-                <span class="text-red-500">*</span>
+            </motion.div>
+            
+            <motion.div 
+              variants={slideUp}
+              className="flex flex-col justify-between"
+            >
+              <p className="mb-6 font-medium text-gray-700 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
+                <span className="text-red-500">*</span>
                 <span>
                   {' '}
                   For any company or compliance-related changes and support,
                   please contact Partner Care.
                 </span>
               </p>
-              <div className="flex flex-col sm:flex-row justify-between gap-6 sm:gap-8">
+              <div className="flex flex-col justify-between gap-6">
                 {renderTabContent()}
               </div>
-              <EssentialDocuments
-                essentialDocs={essentialDocs}
-                activeTab={activeTab}
-              />
-            </div>
+              <motion.div variants={slideUp}>
+                <EssentialDocuments
+                  essentialDocs={essentialDocs}
+                  activeTab={activeTab}
+                />
+              </motion.div>
+            </motion.div>
           </>
         )}
         {editingCard && (
-          <div className="w-full flex flex-col items-center">
-            <h2 className="text-2xl font-semibold mb-5">
-              {sections[activeTab].title}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="w-full flex flex-col items-center bg-white rounded-xl shadow-sm p-8"
+          >
+            <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-2">
+              <span className="text-purple-600">
+                {sections[activeTab].icon}
+              </span>
+              {sections[activeTab].title} - {sections[activeTab].subSections[editSubSection].subSectionTitle}
             </h2>
             <div className="w-full sm:grid sm:grid-cols-2 sm:gap-x-10 gap-y-10 grid-cols-1 items-center">
               {editSubSection != 2 && (
@@ -452,23 +569,27 @@ export default function ProfilePage() {
                 />
               )}
             </div>
-            <div className="space-x-10 mt-10 flex flex-row">
-              <button
-                className="bg-white text-purple-500 font-semibold px-6 py-3 rounded-lg shadow hover:bg-purple-300 border-2 border-purple-300"
+            <div className="space-x-4 mt-10 flex flex-row">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-white text-gray-700 font-medium px-6 py-3 rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200 flex items-center gap-2"
                 onClick={handleBack}
               >
-                Back
-              </button>
-              <button
-                className="flex items-center bg-purple-500 text-white font-semibold px-6 py-3 rounded-lg shadow hover:bg-purple-600"
+                Cancel
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium px-6 py-3 rounded-lg shadow-md hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 flex items-center gap-2"
                 onClick={handleSaveAndUpdate}
               >
                 Save and Update
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         )}
       </main>
-    </div>
+    </motion.div>
   );
 }

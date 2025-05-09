@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import { removeBackground } from '@imgly/background-removal';
 
@@ -40,18 +40,26 @@ export function useVendorSignupForm(steps, appStore) {
   // console.log('partnerInfo==', partnerInfo?.first_name);
 
   // Dynamically initialize form data
-  const initialFormData = steps
-    .flatMap((step) =>
-      step.sections.flatMap((section) =>
-        section.fields.map((field) => field.name)
+  const generateInitialFormData = () => {
+    return steps
+      .flatMap((step) =>
+        step.sections.flatMap((section) =>
+          section.fields.map((field) => field.name)
+        )
       )
-    )
-    .reduce((acc, fieldName) => {
-      acc[fieldName] = '';
-      return acc;
-    }, {});
+      .reduce((acc, fieldName) => {
+        acc[fieldName] = '';
+        return acc;
+      }, {});
+  };
+  
+  // Get saved form data from localStorage or initialize empty form
+  const getSavedFormData = () => {
+    const savedData = localStorage.getItem('vendorSignupFormData');
+    return savedData ? JSON.parse(savedData) : generateInitialFormData();
+  };
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(getSavedFormData);
   const [errors, setErrors] = useState({});
   //geoCoding
   const [countryOptions, setcountryOptions] = useState([]);
@@ -567,6 +575,24 @@ export function useVendorSignupForm(steps, appStore) {
     return true;
   };
 
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('vendorSignupFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  // Function to clear form data
+  const clearFormData = useCallback(() => {
+    const emptyFormData = generateInitialFormData();
+    setFormData(emptyFormData);
+    localStorage.removeItem('vendorSignupFormData');
+    setErrors({});
+    setIsPANValidated(false);
+    setIsGSTValidated(false);
+    setIsCINValidated(false);
+    setIsBankAccountVerified(false);
+    toast.success('Form data has been cleared');
+  }, []);
+
   // Update your handleChange function
   const handleChange = async (e) => {
     const { name, value, files } = e.target;
@@ -987,8 +1013,14 @@ export function useVendorSignupForm(steps, appStore) {
     setIsPANValidated,
     isGSTValidated,
     setIsGSTValidated,
+    isCINValidated,
+    setIsCINValidated,
+    isBankAccountVerified,
+    setIsBankAccountVerified,
     sameAsAbove,
     setSameAsAbove,
+    sameAsContactPerson,
+    setSameAsContactPerson,
     disableCountrySelction,
     setDisableCountrySelection,
     isAadhaarVerified,
@@ -1015,5 +1047,6 @@ export function useVendorSignupForm(steps, appStore) {
     isFieldRequired,
     validateField,
     handleLogout,
+    clearFormData, // Added clear form data function
   };
 }

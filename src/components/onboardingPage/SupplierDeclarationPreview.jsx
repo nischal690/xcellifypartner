@@ -62,20 +62,22 @@ const SupplierDeclarationPreview = ({ formData }) => {
         <button
           type="button"
           onClick={handleGenerateDoc}
-          className="flex-1 bg-white border border-purple-200 hover:bg-purple-50 transition-all duration-300 rounded-lg shadow-sm p-3 flex items-center justify-between group"
+          className="flex-1 bg-white border hover:bg-purple-50 transition-all duration-300 rounded-lg shadow-sm p-3 flex items-center justify-between group"
+          style={{ borderColor: 'rgba(134, 110, 252, 0.3)' }}
         >
           <div className="flex items-center">
-            <div className="bg-purple-100 p-2 rounded-lg mr-3">
+            <div className="p-2 rounded-lg mr-3" style={{ backgroundColor: 'rgba(134, 110, 252, 0.15)' }}>
               <img src={wordDocIcon} alt="Word Document" className="w-6 h-6" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-gray-900 font-medium text-sm">
+              <span className="font-medium text-sm" style={{ color: '#18064A' }}>
                 Declaration (DOCX)
               </span>
               <span className="text-xs text-gray-500">Microsoft Word</span>
             </div>
           </div>
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105">
+          <div className="text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
+               style={{ background: 'linear-gradient(to right, #18064A, #866EFC)' }}>
             <FaDownload size={16} />
           </div>
         </button>
@@ -84,30 +86,31 @@ const SupplierDeclarationPreview = ({ formData }) => {
         <button
           type="button"
           onClick={handleGenerateDoc}
-          className="flex-1 bg-white border border-purple-200 hover:bg-purple-50 transition-all duration-300 rounded-lg shadow-sm p-3 flex items-center justify-between group"
+          className="flex-1 bg-white border hover:bg-purple-50 transition-all duration-300 rounded-lg shadow-sm p-3 flex items-center justify-between group"
+          style={{ borderColor: 'rgba(134, 110, 252, 0.3)' }}
         >
           <div className="flex items-center">
             <div className="bg-red-100 p-2 rounded-lg mr-3">
               <FaFilePdf className="w-6 h-6 text-red-500" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="text-gray-900 font-medium text-sm">
+              <span className="font-medium text-sm" style={{ color: '#18064A' }}>
                 Declaration (PDF)
               </span>
               <span className="text-xs text-gray-500">Adobe PDF</span>
             </div>
           </div>
-          <div className="bg-gradient-to-r from-red-500 to-pink-500 text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105">
+          <div className="text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
+               style={{ background: 'linear-gradient(to right, #18064A, #866EFC)' }}>
             <FaDownload size={16} />
           </div>
         </button>
       </div>
 
       {/* Preview of declaration language style */}
-      <div className="bg-white border border-purple-100 rounded-lg p-4 text-sm text-gray-600">
-        <p className="font-medium text-purple-800 mb-2">
-          Preview of declaration language:
-        </p>
+      <div className="bg-white border rounded-lg p-4 text-sm text-gray-600"
+           style={{ borderColor: 'rgba(134, 110, 252, 0.3)' }}>
+        <p className="font-medium mb-2" style={{ color: '#18064A' }}>Preview of declaration language:</p>
         <p className="italic">
           "{getLanguageStyle()} hereby declare that the information provided is
           true and correct..."

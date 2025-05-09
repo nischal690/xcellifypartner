@@ -1,4 +1,6 @@
-import PizZip from 'pizzip';
+// Using the global PizZip object from window
+// We've added this via a script tag in index.html
+const PizZip = window.PizZip;
 import Docxtemplater from 'docxtemplater';
 import { saveAs } from 'file-saver';
 import ImageModule from 'docxtemplater-image-module-free';
