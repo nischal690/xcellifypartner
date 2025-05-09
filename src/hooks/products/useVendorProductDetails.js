@@ -714,7 +714,7 @@ export const useVendorProductDetails = (appStore) => {
       );
       setCropperImage(null);
       setCurrentFileInfo(null);
-      console.log('Crop complete and file uploaded successfully!');
+      // console.log('Crop complete and file uploaded successfully!');
     } catch (error) {
       console.error('Error during cropping/upload process:', error);
       toast.error('Failed to upload cropped image. Please try again.');

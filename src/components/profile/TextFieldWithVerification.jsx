@@ -52,7 +52,6 @@ const TextFieldWithVerification = ({
     if (isGSTValidated && isAddressField)
       return 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500';
     if (field.name === 'CIN' && isAadhaarVerified)
-      // 👉 Add this line
       return 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500';
     if (
       formData.pincode?.length === 6 &&
@@ -121,7 +120,7 @@ const TextFieldWithVerification = ({
             disabled={handleDisable(field.name)}
             placeholder={getPlaceholder()}
             className={`w-full px-4 py-3 pr-24 rounded-lg border ${getBorderClass()} focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
-            maxLength={12} // ✅ Add this so users can't type more than 12 digits
+            maxLength={12}
           />
           {['Individual', 'sole_proprietership', 'partnership'].includes(
             formData.company_type
@@ -158,7 +157,7 @@ const TextFieldWithVerification = ({
               </div>
             ))}
 
-          {/* ✅ Aadhaar success message */}
+          {/*  Aadhaar success message */}
           {isAadhaarVerified && (
             <p className="mt-1 text-sm text-green-600">
               Aadhaar verified successfully
