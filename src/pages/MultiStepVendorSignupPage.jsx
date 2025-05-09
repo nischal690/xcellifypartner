@@ -26,6 +26,8 @@ import SupplierDeclarationPreview from '../components/onboardingPage/SupplierDec
 import { vendorBaiscInfoValidation } from '../utils/HelperFunction';
 import SupplierComDeclarationPreview from '../components/onboardingPage/SupplierComDeclarationPreview';
 import { useVendorSignupForm } from '../hooks/profile/useVendorSignupForm';
+import OTPVerificationModal from '../components/commonComponents/modals/OTPVerificationModal';
+import TextFieldWithVerification from '../components/profile/TextFieldWithVerification';
 
 const MultiStepVendorSignupPage = () => {
   const navigate = useNavigate();
@@ -52,6 +54,16 @@ const MultiStepVendorSignupPage = () => {
     setSameAsAbove,
     disableCountrySelction,
     setDisableCountrySelection,
+    isAadhaarVerified,
+    setIsAadhaarVerified,
+    showOtpModal,
+    setShowOtpModal,
+    otp,
+    setOtp,
+    otpMessage,
+    setOtpMessage,
+    isVerifying,
+    setIsVerifying,
 
     handleChange,
     handleNext,
@@ -61,6 +73,7 @@ const MultiStepVendorSignupPage = () => {
     isSectionCompleted,
     handleDisable,
     handleOptions,
+    handleOtpVerify,
     isFieldRequired,
     validateField,
     handleLogout,
@@ -248,227 +261,18 @@ const MultiStepVendorSignupPage = () => {
                             field.type === 'url' ||
                             field.type === 'email' ||
                             field.type === 'mobile') && (
-                            <div className="relative">
-                              <input
-                                type={
-                                  field.type === 'url'
-                                    ? 'url'
-                                    : field.type === 'email'
-                                    ? 'email'
-                                    : field.type === 'mobile'
-                                    ? 'tel'
-                                    : 'text'
-                                }
-                                id={field.name}
-                                name={field.name}
-                                value={formData[field.name] || ''}
-                                onChange={handleChange}
-                                disabled={
-                                  handleDisable(field.name) ||
-                                  (field.name === 'PAN' && isPANValidated)
-                                }
-                                className={`w-full px-4 py-3 rounded-lg border ${
-                                  errors[field.name]
-                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                                    : field.name === 'PAN' && isPANValidated
-                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : field.name === 'GST' && isGSTValidated
-                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : field.name === 'company_name' &&
-                                      isGSTValidated
-                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : isGSTValidated &&
-                                      (field.name === 'address_line_1' ||
-                                        field.name === 'address_line_2' ||
-                                        field.name === 'city' ||
-                                        field.name === 'state' ||
-                                        field.name === 'pincode' ||
-                                        field.name === 'country')
-                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
-                                    : formData.pincode &&
-                                      formData.pincode.length === 6 &&
-                                      disableCountrySelction &&
-                                      (field.name === 'country' ||
-                                        field.name === 'state' ||
-                                        field.name === 'city')
-                                    ? 'border-blue-500 bg-blue-50 focus:border-blue-500 focus:ring-blue-500'
-                                    : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
-                                } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200 ${
-                                  (field.name === 'PAN' && isPANValidated) ||
-                                  (field.name === 'GST' && isGSTValidated) ||
-                                  (field.name === 'company_name' &&
-                                    isGSTValidated) ||
-                                  (isGSTValidated &&
-                                    (field.name === 'address_line_1' ||
-                                      field.name === 'address_line_2' ||
-                                      field.name === 'city' ||
-                                      field.name === 'state' ||
-                                      field.name === 'pincode' ||
-                                      field.name === 'country')) ||
-                                  (formData.pincode &&
-                                    formData.pincode.length === 6 &&
-                                    disableCountrySelction &&
-                                    (field.name === 'country' ||
-                                      field.name === 'state' ||
-                                      field.name === 'city'))
-                                    ? 'pr-10'
-                                    : ''
-                                }`}
-                                placeholder={
-                                  field.name === 'CIN' &&
-                                  [
-                                    'Individual',
-                                    'sole_proprietership',
-                                    'partnership',
-                                  ].includes(formData.company_type)
-                                    ? 'Enter 12-digit Aadhaar number'
-                                    : field.name === 'CIN'
-                                    ? 'Enter 21-character CIN'
-                                    : field.name === 'PAN'
-                                    ? 'Format: ABCDE1234F'
-                                    : `Enter ${field.label.toLowerCase()}`
-                                }
-                              />
-                              {field.name === 'PAN' && isPANValidated && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
-                                  <svg
-                                    className="h-5 w-5 text-green-500"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M5 13l4 4L19 7"
-                                    />
-                                  </svg>
-                                </div>
-                              )}
-                              {field.name === 'GST' && isGSTValidated && (
-                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
-                                  <svg
-                                    className="h-5 w-5 text-green-500"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M5 13l4 4L19 7"
-                                    />
-                                  </svg>
-                                </div>
-                              )}
-                              {field.name === 'company_name' &&
-                                isGSTValidated && (
-                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
-                                    <svg
-                                      className="h-5 w-5 text-green-500"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M5 13l4 4L19 7"
-                                      />
-                                    </svg>
-                                  </div>
-                                )}
-                              {field.name === 'PAN' && isPANValidated && (
-                                <p className="mt-1 text-sm text-green-600">
-                                  PAN verified successfully
-                                </p>
-                              )}
-                              {field.name === 'GST' && isGSTValidated && (
-                                <p className="mt-1 text-sm text-green-600">
-                                  GST verified successfully
-                                </p>
-                              )}
-                              {field.name === 'company_name' &&
-                                isGSTValidated && (
-                                  <p className="mt-1 text-sm text-green-600">
-                                    Auto-filled from GST data
-                                  </p>
-                                )}
-                              {isGSTValidated &&
-                                (field.name === 'address_line_1' ||
-                                  field.name === 'address_line_2' ||
-                                  field.name === 'city' ||
-                                  field.name === 'state' ||
-                                  field.name === 'pincode' ||
-                                  field.name === 'country') && (
-                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
-                                    <svg
-                                      className="h-5 w-5 text-green-500"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M5 13l4 4L19 7"
-                                      />
-                                    </svg>
-                                  </div>
-                                )}
-                              {isGSTValidated &&
-                                (field.name === 'address_line_1' ||
-                                  field.name === 'address_line_2' ||
-                                  field.name === 'city' ||
-                                  field.name === 'state' ||
-                                  field.name === 'pincode' ||
-                                  field.name === 'country') && (
-                                  <p className="mt-1 text-sm text-green-600">
-                                    Auto-filled from GST data
-                                  </p>
-                                )}
-                              {formData.pincode &&
-                                formData.pincode.length === 6 &&
-                                disableCountrySelction &&
-                                (field.name === 'country' ||
-                                  field.name === 'state' ||
-                                  field.name === 'city') && (
-                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                    <svg
-                                      className="h-5 w-5 text-blue-500"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M5 13l4 4L19 7"
-                                      />
-                                    </svg>
-                                  </div>
-                                )}
-                              {formData.pincode &&
-                                formData.pincode.length === 6 &&
-                                disableCountrySelction &&
-                                (field.name === 'country' ||
-                                  field.name === 'state' ||
-                                  field.name === 'city') && (
-                                  <p className="mt-1 text-sm text-blue-600">
-                                    Auto-filled from Pincode
-                                  </p>
-                                )}
-                            </div>
+                            <TextFieldWithVerification
+                              field={field}
+                              formData={formData}
+                              errors={errors}
+                              handleChange={handleChange}
+                              handleDisable={handleDisable}
+                              isPANValidated={isPANValidated}
+                              isGSTValidated={isGSTValidated}
+                              isAadhaarVerified={isAadhaarVerified}
+                              setShowOtpModal={setShowOtpModal}
+                              disableCountrySelction={disableCountrySelction}
+                            />
                           )}
 
                           {field.type === 'textarea' && (
@@ -981,7 +785,7 @@ const MultiStepVendorSignupPage = () => {
                             </p>
                           )}
 
-                          {field.name === 'bank_name' && (
+                          {field.name === 'supplier_declaration_com' && (
                             <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
                               <SupplierComDeclarationPreview
                                 formData={formData}
@@ -1072,6 +876,20 @@ const MultiStepVendorSignupPage = () => {
       {isRemovingBG && (
         <LoaderMessage message={removalMessage || 'Processing...'} />
       )}
+
+      <OTPVerificationModal
+        isOpen={showOtpModal}
+        onClose={() => {
+          setShowOtpModal(false);
+          setOtp('');
+          setOtpMessage('');
+        }}
+        otp={otp}
+        setOtp={setOtp}
+        onVerifyOtp={handleOtpVerify}
+        message={otpMessage}
+        isVerifying={isVerifying}
+      />
     </div>
   );
 };

@@ -44,7 +44,11 @@ const SupplierDeclarationPreview = ({ formData }) => {
   // Determine language style based on company type
   const getLanguageStyle = () => {
     const { company_type } = formData;
-    if (company_type === 'Individual' || company_type === 'sole_proprietership' || company_type === 'partnership') {
+    if (
+      company_type === 'Individual' ||
+      company_type === 'sole_proprietership' ||
+      company_type === 'partnership'
+    ) {
       return 'I'; // Individual language style
     } else {
       return 'We'; // Company language style
@@ -79,7 +83,7 @@ const SupplierDeclarationPreview = ({ formData }) => {
         {/* PDF Download Button (could be implemented later) */}
         <button
           type="button"
-          onClick={handleGenerateDoc} 
+          onClick={handleGenerateDoc}
           className="flex-1 bg-white border border-purple-200 hover:bg-purple-50 transition-all duration-300 rounded-lg shadow-sm p-3 flex items-center justify-between group"
         >
           <div className="flex items-center">
@@ -101,12 +105,19 @@ const SupplierDeclarationPreview = ({ formData }) => {
 
       {/* Preview of declaration language style */}
       <div className="bg-white border border-purple-100 rounded-lg p-4 text-sm text-gray-600">
-        <p className="font-medium text-purple-800 mb-2">Preview of declaration language:</p>
+        <p className="font-medium text-purple-800 mb-2">
+          Preview of declaration language:
+        </p>
         <p className="italic">
-          "{getLanguageStyle()} hereby declare that the information provided is true and correct..."
+          "{getLanguageStyle()} hereby declare that the information provided is
+          true and correct..."
         </p>
         <p className="text-xs text-gray-500 mt-2">
-          Note: The declaration uses {getLanguageStyle() === 'I' ? 'first-person singular ("I")' : 'first-person plural ("We")'} language based on your company type.
+          Note: The declaration uses{' '}
+          {getLanguageStyle() === 'I'
+            ? 'first-person singular ("I")'
+            : 'first-person plural ("We")'}{' '}
+          language based on your company type.
         </p>
       </div>
     </div>

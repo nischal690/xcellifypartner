@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { removeBackground } from '@imgly/background-removal';
 
-import { toJS } from 'mobx';
+import { set, toJS } from 'mobx';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -73,15 +73,21 @@ export function useVendorSignupForm(steps, appStore) {
   const [bankData, setBankData] = useState({});
   const [isBankAccountVerified, setIsBankAccountVerified] = useState(false);
 
+  const [isAadhaarVerified, setIsAadhaarVerified] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpMessage, setOtpMessage] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+
   const debouncedCompanyName = useDebouncedValue(formData.company_name, 1000);
 
   const debouncedBrandName = useDebouncedValue(formData.brand_name, 1000);
 
-  useGoogleRating({
-    companyName: debouncedCompanyName,
-    brandName: debouncedBrandName,
-    setFormData,
-  });
+  // useGoogleRating({
+  //   companyName: debouncedCompanyName,
+  //   brandName: debouncedBrandName,
+  //   setFormData,
+  // });
 
   // console.log('rating:', formData.google_rating);
   // console.log('goggle rating url:', formData.google_rating_url);
@@ -209,13 +215,20 @@ export function useVendorSignupForm(steps, appStore) {
         setIsGSTValidated(true);
 
         // Add visual indicator for validated GST
-        setFormData((prev) => ({
-          ...prev,
-          GSTValidated: true,
-          // Auto-fill company name from GST data if available
-          company_name:
-            resp.data.legal_name || resp.data.trade_name || prev.company_name,
-        }));
+        setFormData((prev) => {
+          const formData = {
+            ...prev,
+            GSTValidated: true,
+            company_name:
+              resp.data.legal_name || resp.data.trade_name || prev.company_name,
+          };
+
+          if (prev.GST && prev.GST.length === 15) {
+            formData.PAN = prev.GST.substring(2, 12);
+          }
+
+          return formData;
+        });
 
         toast.success('Your GST number has been verified successfully');
         return resp.data;
@@ -770,6 +783,10 @@ export function useVendorSignupForm(steps, appStore) {
       const hasGSTnumber = formData.hasGSTnumber;
 
       if (!companyType || !hasGSTnumber) {
+        setCompletedSections((prev) => ({
+          ...prev,
+          [`${stepIndex}-${sectionIndex}`]: false,
+        }));
         return false;
       }
 
@@ -792,32 +809,43 @@ export function useVendorSignupForm(steps, appStore) {
         return formData[field] && formData[field].toString().trim() !== '';
       });
 
-      if (allCompanyFieldsFilled) {
-        setCompletedSections((prev) => ({
-          ...prev,
-          [`${stepIndex}-${sectionIndex}`]: true,
-        }));
-      }
+      setCompletedSections((prev) => ({
+        ...prev,
+        [`${stepIndex}-${sectionIndex}`]: allCompanyFieldsFilled,
+      }));
 
       return allCompanyFieldsFilled;
     }
 
-    // Default behavior for all other sections
     const requiredFields = section.fields.filter((field) => field.required);
-    const allFilled = requiredFields.every((field) => {
-      return (
-        formData[field.name] && formData[field.name].toString().trim() !== ''
-      );
-    });
 
-    if (allFilled) {
+    if (requiredFields.length > 0) {
+      const allRequiredFilled = requiredFields.every((field) => {
+        return (
+          formData[field.name] && formData[field.name].toString().trim() !== ''
+        );
+      });
+
       setCompletedSections((prev) => ({
         ...prev,
-        [`${stepIndex}-${sectionIndex}`]: true,
+        [`${stepIndex}-${sectionIndex}`]: allRequiredFilled,
       }));
-    }
 
-    return allFilled;
+      return allRequiredFilled;
+    } else {
+      const allOptionalFieldsFilled = section.fields.every((field) => {
+        return (
+          formData[field.name] && formData[field.name].toString().trim() !== ''
+        );
+      });
+
+      setCompletedSections((prev) => ({
+        ...prev,
+        [`${stepIndex}-${sectionIndex}`]: allOptionalFieldsFilled,
+      }));
+
+      return allOptionalFieldsFilled;
+    }
   };
 
   // Function to toggle section expansion
@@ -925,6 +953,22 @@ export function useVendorSignupForm(steps, appStore) {
     }
   };
 
+  const handleOtpVerify = async () => {
+    setIsVerifying(true);
+    setTimeout(() => {
+      if (otp === '123456') {
+        setOtpMessage('OTP Verified Successfully!');
+        setTimeout(() => {
+          setIsAadhaarVerified(true);
+          setShowOtpModal(false);
+        }, 1000);
+      } else {
+        toast.error('Invalid OTP. Please try again.');
+      }
+      setIsVerifying(false);
+    }, 1000);
+  };
+
   return {
     currentStep,
     partnerInfo: toJS(appStore.partnerInfo),
@@ -947,6 +991,17 @@ export function useVendorSignupForm(steps, appStore) {
     setSameAsAbove,
     disableCountrySelction,
     setDisableCountrySelection,
+    isAadhaarVerified,
+    setIsAadhaarVerified,
+    showOtpModal,
+    setShowOtpModal,
+    otp,
+    setOtp,
+    handleOtpVerify,
+    otpMessage,
+    setOtpMessage,
+    isVerifying,
+    setIsVerifying,
 
     // all your actions:
     handleChange,

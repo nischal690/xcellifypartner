@@ -102,6 +102,12 @@ const steps = [
             required: true,
           },
           {
+            label: 'Designation',
+            name: 'designation',
+            type: 'text',
+            required: true,
+          },
+          {
             label: "Contact person's Email ID",
             name: 'contact_person_email',
             type: 'email',
@@ -147,6 +153,12 @@ const steps = [
             name: 'owner_name',
             type: 'text',
             required: false,
+          },
+          {
+            label: 'Designation',
+            name: 'designation',
+            type: 'text',
+            required: true,
           },
           {
             label: 'Other key person Email ID',
@@ -301,6 +313,12 @@ const steps = [
             label: 'Bank name',
             name: 'bank_name',
             type: 'text',
+            required: true,
+          },
+          {
+            label: 'Upload Supplier Declaration Form',
+            name: 'supplier_declaration_com',
+            type: 'file',
             required: true,
           },
         ],
