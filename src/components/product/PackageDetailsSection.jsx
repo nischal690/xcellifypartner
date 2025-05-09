@@ -47,7 +47,7 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
       ...prev,
       package: packages,
     }));
-    console.log('🧩 Live package update sent to formData:', packages);
+    // console.log('🧩 Live package update sent to formData:', packages);
   }, [packages]);
 
   const handleChange = (e) => {
