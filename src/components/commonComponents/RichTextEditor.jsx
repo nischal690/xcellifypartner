@@ -4,6 +4,8 @@ import 'react-quill/dist/quill.snow.css';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 
+import AIPoweredButton from './AIPoweredButton';
+
 const toolbarOptions = [
   [{ header: [1, 2, 3, false] }],
   ['bold', 'italic', 'underline', 'strike'],
@@ -17,69 +19,78 @@ const toolbarOptions = [
   ['clean'],
 ];
 
-const RichTextEditor = ({ value, onChange, placeholder }) => {
+const RichTextEditor = ({
+  value,
+  onChange,
+  placeholder,
+  fieldName,
+  onAIRefine,
+}) => {
   const [editorHeight, setEditorHeight] = useState(600);
+  const [refinedText, setRefinedText] = useState('');
+  const [loading, setLoading] = useState(false);
   const quillRef = useRef(null);
 
-  // //  Handle Undo
-  // const handleUndo = () => {
-  //   if (quillRef.current) {
-  //     quillRef.current.getEditor().history.undo();
-  //   }
-  // };
+  const plainTextLength = value?.replace(/<[^>]*>/g, '')?.length || 0;
+  const isEligible = plainTextLength >= 50 && plainTextLength <= 1000;
 
-  // //  Handle Redo
-  // const handleRedo = () => {
-  //   if (quillRef.current) {
-  //     quillRef.current.getEditor().history.redo();
-  //   }
-  // };
+  const handleRefineClick = async () => {
+    setLoading(true);
+    const aiText = await onAIRefine(value, fieldName);
+    setRefinedText(aiText);
+    setLoading(false);
+  };
+
+  const handleApplyRefined = () => {
+    onChange(refinedText);
+    setRefinedText('');
+  };
 
   return (
     <div className="w-full border rounded-md relative bg-white">
-      {/* ✅ Sticky Toolbar */}
-      <div className="sticky top-0 bg-white z-1 border-b shadow-sm p-2">
-        <div className="flex justify-between items-center">
-          <span className="font-medium">Text Editor</span>
-          {/* <div className="flex space-x-2">
+      {/*  Toolbar with Refine Button */}
+      <div className="sticky top-0 bg-white z-1 border-b shadow-sm p-2 flex justify-between items-center">
+        <span className="font-medium">Text Editor</span>
+        <div className="flex gap-2 items-center">
+          <AIPoweredButton
+            isEligible={isEligible}
+            loading={loading}
+            onClick={handleRefineClick}
+          />
+
+          {refinedText && (
             <button
-              onClick={handleUndo}
-              className="px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md"
+              onClick={handleApplyRefined}
+              className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
             >
-              Undo ↩
+              Apply
             </button>
-            <button
-              onClick={handleRedo}
-              className="px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded-md"
-            >
-              Redo ↪
-            </button>
-          </div> */}
+          )}
         </div>
       </div>
 
-      {/* ✅ Resizable Editor Content */}
+      {/*  Resizable Editor */}
       <ResizableBox
         height={editorHeight}
         width="100%"
         axis="y"
-        minConstraints={[100, 100]} // Min height
-        maxConstraints={[Infinity, 600]} // Max height
+        minConstraints={[100, 100]}
+        maxConstraints={[Infinity, 600]}
         onResizeStop={(e, { size }) => setEditorHeight(size.height)}
       >
         <div style={{ height: editorHeight, overflow: 'auto' }}>
           <ReactQuill
-            ref={quillRef} // Attach ref to Quill
+            ref={quillRef}
             theme="snow"
             value={value}
             onChange={onChange}
             placeholder={placeholder}
             modules={{
               toolbar: toolbarOptions,
-              history: { delay: 2000, maxStack: 500, userOnly: true }, // Enable History Module
+              history: { delay: 2000, maxStack: 500, userOnly: true },
             }}
             className="bg-white rounded-md"
-            style={{ height: '100%' }} // Ensure full height of resizable box
+            style={{ height: '100%' }}
           />
         </div>
       </ResizableBox>

@@ -69,6 +69,7 @@ const StepVendorProductDetailsPage = () => {
     toggleMenu,
     toggleAccordion,
     generateYearOptions,
+    handleAIRefine,
   } = useVendorProductDetails(appStore);
 
   const renderErrorMessage = (errors, fieldName) => {
@@ -350,7 +351,10 @@ const StepVendorProductDetailsPage = () => {
                                       })
                                     }
                                     placeholder={`Enter ${field.label}`}
+                                    fieldName={field.name}
+                                    onAIRefine={handleAIRefine}
                                   />
+
                                   <p className="text-xs text-gray-500 mt-1">
                                     50 to 1000 characters
                                   </p>

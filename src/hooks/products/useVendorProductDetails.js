@@ -24,6 +24,7 @@ import {
 } from '../../utils/StepVendorProductDetails';
 
 import { toJS } from 'mobx';
+import { callGeminiRefineAPI } from '../../utils/geminiAI';
 
 export const useVendorProductDetails = (appStore) => {
   const navigate = useNavigate();
@@ -1306,6 +1307,22 @@ export const useVendorProductDetails = (appStore) => {
     return years;
   };
 
+  const handleAIRefine = async (rawInput, fieldName) => {
+    const plainText = rawInput?.replace(/<[^>]*>/g, '') || '';
+
+    if (plainText.length < 50 || plainText.length > 1000) return;
+
+    const refinedText = await callGeminiRefineAPI(plainText);
+
+    setCurrentForm((prev) => ({
+      ...prev,
+      formData: {
+        ...prev.formData,
+        [fieldName]: refinedText,
+      },
+    }));
+  };
+
   useEffect(() => {
     return () => {
       categories.forEach((category) => {
@@ -1358,5 +1375,6 @@ export const useVendorProductDetails = (appStore) => {
     toggleMenu,
     toggleAccordion,
     generateYearOptions,
+    handleAIRefine,
   };
 };
