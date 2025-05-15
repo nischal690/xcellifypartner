@@ -10,6 +10,7 @@ import Services from '../pages/services/index';
 import { useStore } from '../stores';
 import { getProfilePicture_API } from '../utils/getProfilePicture_API';
 import { observer } from 'mobx-react';
+import ChatPage from '../pages/chats';
 
 const HomePage = () => {
   const { appStore } = useStore();
@@ -43,6 +44,8 @@ const HomePage = () => {
             <Route path="product/:id" element={<ProductDetailedView />} />
             {/* <Route path="payouts" element={<ProductsView />} /> */}
             <Route path="services" element={<Services />} />
+            <Route path="chats/:id" element={<ChatPage />} />
+            <Route path="chats" element={<ChatPage />} />
           </Routes>
         </div>
       </main>

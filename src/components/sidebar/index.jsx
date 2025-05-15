@@ -3,6 +3,8 @@ import {
   RiDashboardLine,
   RiMessage2Line,
   RiSettings4Line,
+  RiWechatPayFill,
+  RiServiceFill,
 } from 'react-icons/ri';
 
 import { ProductsIcon } from '../../assets/svg-icons/Products';
@@ -80,6 +82,11 @@ function Sidebar() {
     setIsOpen(false);
     return;
   };
+  const goToChatsView = () => {
+    navigate('/home/chats');
+    setIsOpen(false);
+    return;
+  };
 
   const isCurrentTabActive = (currTab) => {
     if (currTab === 'dashboard') {
@@ -143,7 +150,7 @@ function Sidebar() {
             Main
           </div>
           <NavItem
-            icon={<RiDashboardLine className="text-blue-600" />}
+            icon={<RiDashboardLine className="text-purple-primary" />}
             onClick={goToDashboard}
             text="Dashboard"
             active={isCurrentTabActive('dashboard')}
@@ -155,19 +162,19 @@ function Sidebar() {
             active={isCurrentTabActive('products')}
           />
           <NavItem
-            icon={<ProductsIcon className="text-blue-600" />}
+            icon={<RiServiceFill className="text-purple-primary" />}
             onClick={goToServicesView}
             text="Services"
             active={isCurrentTabActive('services')}
           />
 
           {/* Messages Section - Now below Services */}
-          <div className="px-3 mt-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Messages
-          </div>
-          <div className="px-2">
-            <Messages />
-          </div>
+          <NavItem
+            icon={<RiWechatPayFill className="text-purple-primary" />}
+            onClick={goToChatsView}
+            text="Chats"
+            active={isCurrentTabActive('chats')}
+          />
 
           <div className="px-3 mt-6 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
             Account

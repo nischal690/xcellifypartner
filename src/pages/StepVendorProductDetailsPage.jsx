@@ -17,6 +17,7 @@ import {
   loadScholarShipCategories,
   loadScholarShipTypes,
   loadScholarShipCourses,
+  loadAgeGroup,
 } from '../utils/productsCodes';
 
 import ImageCropper from '../components/commonComponents/ImageCropper';
@@ -29,6 +30,8 @@ import LoadingSpinner from '../components/product/LoadingSpinner';
 import ProductFormsRenderer from '../components/product/ProductFormsRenderer';
 import ProductButtons from '../components/product/ProductButtons';
 import PreviewModal from '../components/product/PreviewModal';
+import SmartSelectWithOther from '../components/commonComponents/products/SmartSelectWithOther';
+import EvaluationSection from '../components/product/EvaluationSection';
 
 const StepVendorProductDetailsPage = () => {
   const { appStore } = useStore();
@@ -363,6 +366,17 @@ const StepVendorProductDetailsPage = () => {
                                     field.name
                                   )}
                                 </>
+                              ) : field.name === 'discipline' &&
+                                currentForm.category === 'Summer courses' ? (
+                                <SmartSelectWithOther
+                                  label={field.label}
+                                  name={field.name}
+                                  options={field.options}
+                                  formData={currentForm.formData}
+                                  errors={currentForm.errors}
+                                  onChange={handleProductChange}
+                                  placeholder={`Select ${field.label}`}
+                                />
                               ) : field.type === 'select' ? (
                                 <>
                                   <select
@@ -557,6 +571,8 @@ const StepVendorProductDetailsPage = () => {
                                         ? loadServiceDelivary
                                         : field.name === 'study_level'
                                         ? loadStudyLevel
+                                        : field.name === 'age_group'
+                                        ? loadAgeGroup
                                         : field.name ===
                                           'study_destination_states'
                                         ? states
@@ -617,48 +633,43 @@ const StepVendorProductDetailsPage = () => {
                                     field.name
                                   )}
                                 </div>
-                              ) : field.type === 'radio' ? (
+                              ) : field.name === 'refund_policy' ? (
                                 <>
-                                  <div className="flex flex-col gap-2">
-                                    {field.options.map(
-                                      (option, optionIndex) => (
-                                        <div
-                                          key={optionIndex}
-                                          className="flex items-center"
-                                        >
-                                          <input
-                                            type="radio"
-                                            id={`${field.name}-${option.value}-${currentForm.category}`}
-                                            name={field.name}
-                                            value={option.value}
-                                            checked={
-                                              currentForm.formData[
-                                                field.name
-                                              ] === option.value
-                                            }
-                                            onChange={handleProductChange}
-                                            className="mr-2"
-                                          />
-                                          <label
-                                            htmlFor={`${field.name}-${option.value}-${currentForm.category}`}
-                                            className="text-gray-700"
-                                          >
-                                            {option.label}
-                                            {field.name === 'refund_policy' &&
-                                              option.value === 'true' && (
-                                                <a
-                                                  href="https://xcellify.com/TermsOfUse#refund-policy"
-                                                  target="_blank"
-                                                  rel="noopener noreferrer"
-                                                  className="text-blue-500 underline hover:text-blue-700 ml-2"
-                                                >
-                                                  (Link)
-                                                </a>
-                                              )}
-                                          </label>
-                                        </div>
-                                      )
-                                    )}
+                                  <div className="flex items-center">
+                                    <input
+                                      type="checkbox"
+                                      id="refund_policy-checkbox"
+                                      name="refund_policy"
+                                      checked={
+                                        currentForm.formData.refund_policy ===
+                                        'true'
+                                      }
+                                      onChange={(e) =>
+                                        handleProductChange({
+                                          target: {
+                                            name: 'refund_policy',
+                                            value: e.target.checked
+                                              ? 'true'
+                                              : 'false',
+                                          },
+                                        })
+                                      }
+                                      className="mr-2"
+                                    />
+                                    <label
+                                      htmlFor="refund_policy-checkbox"
+                                      className="text-gray-700"
+                                    >
+                                      I agree with Xcellify's{' '}
+                                      <a
+                                        href="https://xcellify.com/TermsOfUse#refund-policy"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-500 underline hover:text-blue-700"
+                                      >
+                                        Refund Policy
+                                      </a>
+                                    </label>
                                   </div>
 
                                   {renderErrorMessage(
@@ -666,80 +677,15 @@ const StepVendorProductDetailsPage = () => {
                                     field.name
                                   )}
 
-                                  {/* Show file upload only if refund_policy is 'false' */}
-                                  {field.name === 'refund_policy' &&
-                                    currentForm.formData[field.name] ===
-                                      'false' && (
-                                      <div className="mt-4">
-                                        <div className="flex flex-col gap-2">
-                                          <label className="text-gray-700">
-                                            Upload Refund Policy Document{' '}
-                                            <span className="text-red-500">
-                                              *
-                                            </span>
-                                          </label>
-                                          <input
-                                            type="file"
-                                            name="refund_policy_media"
-                                            id={`refund_policy_media-${currentForm.category}`}
-                                            onChange={(e) =>
-                                              handleFileChange(
-                                                e,
-                                                'refund_policy_media'
-                                              )
-                                            }
-                                            accept="application/pdf, .pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, .doc, .docx, image/*"
-                                            className={`w-full p-2 border rounded-md ${
-                                              currentForm.errors[
-                                                'refund_policy_media'
-                                              ]
-                                                ? 'border-red-500'
-                                                : ''
-                                            }`}
-                                          />
-                                          <p className="text-xs text-gray-500">
-                                            Only PDFs, DOCX files, and images
-                                            (JPG, PNG) up to 5MB are accepted.
-                                          </p>
-
-                                          {currentForm.formData[
-                                            'refund_policy_media'
-                                          ]?.id && (
-                                            <div className="flex items-center gap-2 mt-2">
-                                              <span className="text-sm text-gray-700">
-                                                {
-                                                  currentForm.formData[
-                                                    'refund_policy_media'
-                                                  ].name
-                                                }
-                                              </span>
-                                              <button
-                                                type="button"
-                                                className="text-red-500 text-sm"
-                                                onClick={() =>
-                                                  handleFileRemove(
-                                                    'refund_policy_media',
-                                                    0
-                                                  )
-                                                }
-                                              >
-                                                Delete
-                                              </button>
-                                            </div>
-                                          )}
-                                          {renderErrorMessage(
-                                            currentForm.errors,
-                                            'refund_policy_media'
-                                          )}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                  {['Career counselling', 'Tutoring'].includes(
-                                    currentForm.category
-                                  ) && (
+                                  {[
+                                    'Career counselling',
+                                    'Tutoring',
+                                    'Mentoring',
+                                    'Competitative exam',
+                                  ].includes(currentForm.category) && (
                                     <PackageDetailsSection
                                       formData={currentForm.formData}
+                                      category={currentForm.category}
                                       setFormData={(updater) =>
                                         setCurrentForm((prev) => {
                                           const updatedFormData =
@@ -750,6 +696,28 @@ const StepVendorProductDetailsPage = () => {
                                                   ...updater,
                                                 };
 
+                                          return {
+                                            ...prev,
+                                            formData: updatedFormData,
+                                          };
+                                        })
+                                      }
+                                    />
+                                  )}
+
+                                  {currentForm.category ===
+                                    'Summer courses' && (
+                                    <EvaluationSection
+                                      formData={currentForm.formData}
+                                      setFormData={(updater) =>
+                                        setCurrentForm((prev) => {
+                                          const updatedFormData =
+                                            typeof updater === 'function'
+                                              ? updater(prev.formData)
+                                              : {
+                                                  ...prev.formData,
+                                                  ...updater,
+                                                };
                                           return {
                                             ...prev,
                                             formData: updatedFormData,
