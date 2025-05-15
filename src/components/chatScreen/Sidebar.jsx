@@ -1,17 +1,16 @@
 import UserCard from './UserCard';
-import { users } from './data/users';
 
-const Sidebar = ({ selectedId, setSelectedUser }) => {
+const Sidebar = ({ users, selectedId, onSelectUser }) => {
   return (
     <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
       <div className="p-4 flex justify-between items-center">
         <h2 className="font-semibold text-lg">Messages</h2>
         <div className="flex gap-2 items-center">
           <button className="text-gray-500 hover:text-purple-primary">
-            &#128269;
+            🔍
           </button>
           <button className="text-gray-500 hover:text-purple-primary">
-            &#9881;
+            ⚙️
           </button>
         </div>
       </div>
@@ -24,10 +23,10 @@ const Sidebar = ({ selectedId, setSelectedUser }) => {
       <div className="flex-1 overflow-y-auto">
         {users.map((user) => (
           <UserCard
-            key={user.id}
+            key={user.conversationId}
             user={user}
-            active={user.id === selectedId}
-            onClick={() => setSelectedUser(user)}
+            active={user.userId === selectedId}
+            onClick={() => onSelectUser(user)}
           />
         ))}
       </div>

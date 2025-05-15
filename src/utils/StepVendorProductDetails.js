@@ -369,38 +369,38 @@ export const ProductDetailsData = [
               type: 'text',
               required: true,
             },
-            {
-              label: 'Subjects',
-              name: 'subjects',
-              type: 'multiselect',
-              options: [
-                'Maths',
-                'Science',
-                'Physics',
-                'Chemistry',
-                'Biology',
-                'Economics',
-                'History',
-                'Geography',
-              ],
-              required: true,
-            },
+            // {
+            //   label: 'Subjects',
+            //   name: 'subjects',
+            //   type: 'multiselect',
+            //   options: [
+            //     'Maths',
+            //     'Science',
+            //     'Physics',
+            //     'Chemistry',
+            //     'Biology',
+            //     'Economics',
+            //     'History',
+            //     'Geography',
+            //   ],
+            //   required: true,
+            // },
             {
               label: 'Education qualification',
               name: 'education_qualification',
               type: 'text',
               required: true,
             },
-            {
-              label: 'Member since',
-              name: 'member_since',
-              type: 'select',
-              options: Array.from(
-                { length: new Date().getFullYear() - 1700 + 1 },
-                (_, i) => (new Date().getFullYear() - i).toString()
-              ),
-              required: true,
-            },
+            // {
+            //   label: 'Member since',
+            //   name: 'member_since',
+            //   type: 'select',
+            //   options: Array.from(
+            //     { length: new Date().getFullYear() - 1700 + 1 },
+            //     (_, i) => (new Date().getFullYear() - i).toString()
+            //   ),
+            //   required: true,
+            // },
             {
               label: 'Service provided since',
               name: 'service_provided_since',
@@ -411,26 +411,26 @@ export const ProductDetailsData = [
               ),
               required: true,
             },
-            {
-              label: 'Mode of teaching',
-              name: 'mode_of_teaching',
-              type: 'multiselect',
-              options: [
-                'Online(1 on 1)',
-                'Online(group)',
-                'Physical(1 on 1)',
-                'Physical(group)',
-                'Home Visits',
-              ],
-              required: true,
-            },
-            {
-              label: 'Study level',
-              name: 'study_level',
-              type: 'multiselect',
-              options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
-              required: true,
-            },
+            // {
+            //   label: 'Mode of teaching',
+            //   name: 'mode_of_teaching',
+            //   type: 'multiselect',
+            //   options: [
+            //     'Online(1 on 1)',
+            //     'Online(group)',
+            //     'Physical(1 on 1)',
+            //     'Physical(group)',
+            //     'Home Visits',
+            //   ],
+            //   required: true,
+            // },
+            // {
+            //   label: 'Study level',
+            //   name: 'study_level',
+            //   type: 'multiselect',
+            //   options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
+            //   required: true,
+            // },
             // {
             //   label: 'Product code',
             //   name: 'product_code',
@@ -798,8 +798,8 @@ export const ProductDetailsData = [
             {
               label: 'Age group(based on grade)',
               name: 'age_group',
-              type: 'select',
-              options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
+              type: 'multiselect',
+              options: [],
               required: true,
             },
             {
@@ -1606,6 +1606,287 @@ export const ProductDetailsData = [
         },
       ],
 
+      'Competitative exam': [
+        {
+          heading: 'Basic details',
+          fields: [
+            {
+              label: 'Product Title',
+              name: 'product_title',
+              type: 'text',
+              required: true,
+            },
+            {
+              label: 'Education qualification',
+              name: 'education_qualification',
+              type: 'text',
+              required: true,
+            },
+            // {
+            //   label: 'Member since',
+            //   name: 'member_since',
+            //   type: 'select',
+            //   options: Array.from(
+            //     { length: new Date().getFullYear() - 1700 + 1 },
+            //     (_, i) => (new Date().getFullYear() - i).toString()
+            //   ),
+            //   required: true,
+            // },
+            {
+              label: 'Service provided since',
+              name: 'service_provided_since',
+              type: 'select',
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
+              required: true,
+            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
+            {
+              label: 'HSN code',
+              name: 'hsn_code',
+              type: 'text',
+              required: false,
+            },
+            {
+              label: 'GST rate',
+              name: 'gst_rate',
+              type: 'number',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Service locations',
+          fields: [
+            {
+              label: 'Cities where service is available',
+              name: 'service_available_cities',
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
+            {
+              label: 'Can travel up to in km*(N/A for online & home visits)',
+              name: 'travel_upto',
+              type: 'select',
+              options: [5, 10, 20, 50],
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Additional details',
+          fields: [
+            {
+              label: 'Product description',
+              name: 'product_description',
+              type: 'textarea',
+              required: true,
+            },
+            {
+              label: 'Unique Selling Proposition',
+              name: 'product_unique_selling_point',
+              type: 'textarea',
+              required: true,
+            },
+          ],
+        },
+        {
+          heading: 'Marketing materials',
+          fields: [
+            {
+              label: 'Upload product images',
+              name: 'product_images',
+              type: 'file',
+              required: false,
+            },
+            {
+              label: 'Upload product video',
+              name: 'product_videos',
+              type: 'file',
+              required: false,
+            },
+
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
+              required: true,
+            },
+          ],
+        },
+      ],
+
+      Mentoring: [
+        {
+          heading: 'Basic details',
+          fields: [
+            {
+              label: 'Product Title',
+              name: 'product_title',
+              type: 'text',
+              required: true,
+            },
+            {
+              label: 'Education qualification',
+              name: 'education_qualification',
+              type: 'text',
+              required: false,
+            },
+            {
+              label: 'Service provided since',
+              name: 'service_provided_since',
+              type: 'select',
+              options: Array.from(
+                { length: new Date().getFullYear() - 1700 + 1 },
+                (_, i) => (new Date().getFullYear() - i).toString()
+              ),
+              required: true,
+            },
+            {
+              label: 'Study level',
+              name: 'study_level',
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
+            {
+              label: 'Counselling duration in hours',
+              name: 'counselling_duration',
+              type: 'number',
+              required: true,
+            },
+            // {
+            //   label: 'Product code',
+            //   name: 'product_code',
+            //   type: 'text',
+            //   required: false,
+            // },
+            {
+              label: 'HSN code',
+              name: 'hsn_code',
+              type: 'text',
+              required: false,
+            },
+            {
+              label: 'GST rate',
+              name: 'gst_rate',
+              type: 'number',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Service locations',
+          fields: [
+            {
+              label: 'Study destination country',
+              name: 'study_destination_countries',
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
+            {
+              label: 'Cities where service is available',
+              name: 'service_available_cities',
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
+            {
+              label: 'Service delivery',
+              name: 'service_delivery',
+              type: 'multiselect',
+              options: [],
+              required: true,
+            },
+          ],
+        },
+        {
+          heading: 'Additional details',
+          fields: [
+            {
+              label: 'Product description',
+              name: 'product_description',
+              type: 'textarea',
+              required: true,
+            },
+            {
+              label: 'Unique Selling Proposition',
+              name: 'product_unique_selling_point',
+              type: 'textarea',
+              required: true,
+            },
+          ],
+        },
+        {
+          heading: 'Marketing materials',
+          fields: [
+            {
+              label: 'Upload product images',
+              name: 'product_images',
+              type: 'file',
+              required: false,
+            },
+            {
+              label: 'Upload product video',
+              name: 'product_videos',
+              type: 'file',
+              required: false,
+            },
+            {
+              label: 'YouTube Video URL for product',
+              name: 'youtube_url',
+              type: 'text',
+              required: false,
+            },
+          ],
+        },
+        {
+          heading: 'Refund Policy',
+          fields: [
+            {
+              label: 'Refund Policy',
+              name: 'refund_policy',
+              type: 'radio',
+              options: [
+                {
+                  label: 'I agree with Xcellify`s refund policy.',
+                  value: 'true',
+                },
+                { label: 'I have my own refund policy', value: 'false' },
+              ],
+              required: true,
+            },
+          ],
+        },
+      ],
+
       Merchandise: [
         {
           heading: 'Basic details',
@@ -1950,9 +2231,9 @@ export const validationSchemas = {
     education_qualification: Yup.string().required(
       'Education qualification is required'
     ),
-    member_since: Yup.date()
-      .max(new Date())
-      .required('Member since is required'),
+    // member_since: Yup.date()
+    //   .max(new Date())
+    //   .required('Member since is required'),
     mode_of_teaching: Yup.string().required('Teaching mode is required'),
     service_provided_since: Yup.date().required(
       'Service provided since is required'
@@ -2001,6 +2282,15 @@ export const validationSchemas = {
     ...commonValidations,
     age_group: Yup.string().required('Age group is required'),
     discipline: Yup.string().required('Discipline is required'),
+    custom_discipline: Yup.string().when('discipline', {
+      is: 'Others',
+      then: (schema) =>
+        schema
+          .required('Please specify your discipline')
+          .min(2, 'Discipline must be at least 2 characters')
+          .max(100, 'Discipline must not exceed 100 characters'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
     duration_type: Yup.string().required('Duration type is required'),
     duration: Yup.string().required('Duration is required'),
     program_eligibility: Yup.string().required(

@@ -44,6 +44,7 @@ const HomePage = () => {
             <Route path="product/:id" element={<ProductDetailedView />} />
             {/* <Route path="payouts" element={<ProductsView />} /> */}
             <Route path="services" element={<Services />} />
+            <Route path="chats/:id" element={<ChatPage />} />
             <Route path="chats" element={<ChatPage />} />
           </Routes>
         </div>

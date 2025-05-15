@@ -15,7 +15,40 @@ const currencies = [
   { label: 'USD', value: 'USD' },
 ];
 
-const PackageDetailsSection = ({ formData, setFormData }) => {
+const tutoringFields = [
+  {
+    label: 'Mode of Teaching',
+    name: 'mode_of_teaching',
+    options: [
+      'Online(1 on 1)',
+      'Online(group)',
+      'Physical(1 on 1)',
+      'Physical(group)',
+      'Home Visits',
+    ],
+  },
+  {
+    label: 'Study Level',
+    name: 'study_level',
+    options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
+  },
+  {
+    label: 'Subjects',
+    name: 'subjects',
+    options: [
+      'Maths',
+      'Science',
+      'Physics',
+      'Chemistry',
+      'Biology',
+      'Economics',
+      'History',
+      'Geography',
+    ],
+  },
+];
+
+const PackageDetailsSection = ({ formData, setFormData, category }) => {
   const [packages, setPackages] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
 
@@ -160,9 +193,96 @@ const PackageDetailsSection = ({ formData, setFormData }) => {
     setEditingIndex(index);
   };
 
+  const handleMultiSelectChange = (selectedOptions, name) => {
+    const values = selectedOptions.map((opt) => opt.value).join(', ');
+    setFormData((prev) => ({
+      ...prev,
+      [name]: values,
+    }));
+  };
+
   return (
     <div className="mb-6 mx-auto p-6 w-full max-w-4xl">
       <h3 className="text-md font-semibold mb-4 text-lg">Package Details</h3>
+
+      {category === 'Competitative exam' && (
+        <div className="mt-4 space-y-6">
+          <div>
+            <label className="block font-medium mb-1">Exam Name</label>
+            <Select
+              name="exam"
+              options={[
+                { label: 'JEE Mains', value: 'JEE Mains' },
+                { label: 'NEET', value: 'NEET' },
+                { label: 'UPSC', value: 'UPSC' },
+                { label: 'GATE', value: 'GATE' },
+                { label: 'CAT', value: 'CAT' },
+              ]}
+              value={
+                formData.exam
+                  ? { label: formData.exam, value: formData.exam }
+                  : null
+              }
+              onChange={(selected) =>
+                setFormData((prev) => ({ ...prev, exam: selected.value }))
+              }
+              placeholder="Select an exam"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tutoringFields.map((field) => (
+              <div key={field.name}>
+                <label className="block font-medium mb-1">{field.label}</label>
+                <Select
+                  isMulti
+                  options={field.options.map((opt) => ({
+                    value: opt,
+                    label: opt,
+                  }))}
+                  value={
+                    (formData[field.name] || '')
+                      .split(', ')
+                      .filter(Boolean)
+                      .map((val) => ({ value: val, label: val })) || []
+                  }
+                  onChange={(selected) =>
+                    handleMultiSelectChange(selected, field.name)
+                  }
+                  placeholder={`Select ${field.label}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {category === 'Tutoring' && (
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {tutoringFields.map((field) => (
+            <div key={field.name}>
+              <label className="block font-medium mb-1">{field.label}</label>
+              <Select
+                isMulti
+                options={field.options.map((opt) => ({
+                  value: opt,
+                  label: opt,
+                }))}
+                value={
+                  (formData[field.name] || '')
+                    .split(', ')
+                    .filter(Boolean)
+                    .map((val) => ({ value: val, label: val })) || []
+                }
+                onChange={(selected) =>
+                  handleMultiSelectChange(selected, field.name)
+                }
+                placeholder={`Select ${field.label}`}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {packages.map((pkg, index) => (
         <div

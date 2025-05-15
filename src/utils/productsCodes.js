@@ -95,6 +95,20 @@ export const loadLoanStudyLevel = [
   label: level,
 }));
 
+export const loadAgeGroup = [
+  '6',
+  '7',
+  '8',
+  '9',
+  '10',
+  '11',
+  '12',
+  'Graduation',
+].map((age) => ({
+  value: age,
+  label: age,
+}));
+
 export const loadScholarShipCategories = [
   'General',
   'SC/ST/OBC',

@@ -206,6 +206,9 @@ export const useVendorProductDetails = (appStore) => {
     if (name === 'hsn_code') {
       return;
     }
+    if (name === 'gst_rate') {
+      return;
+    }
 
     if (name === 'study_destination_states' && value) {
       fetchCities(value);
@@ -914,6 +917,11 @@ export const useVendorProductDetails = (appStore) => {
 
     const normalizedData = normalizeFields(formData);
 
+    if (normalizedData.discipline === 'Others') {
+      normalizedData.discipline = formData.custom_discipline?.trim() || '';
+    }
+    delete normalizedData.custom_discipline;
+
     const processedData = {
       ...normalizedData,
       category: currentForm.category,
@@ -1138,6 +1146,12 @@ export const useVendorProductDetails = (appStore) => {
         category.products.map((product) => {
           const { formData } = product;
           const normalizedData = normalizeFields(formData);
+
+          if (normalizedData.discipline === 'Others') {
+            normalizedData.discipline =
+              formData.custom_discipline?.trim() || '';
+          }
+          delete normalizedData.custom_discipline;
 
           let processedData = {
             ...normalizedData,
