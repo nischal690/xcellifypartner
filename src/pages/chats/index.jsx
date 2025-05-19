@@ -8,6 +8,7 @@ import MessageInput from '../../components/chatScreen/MessageInput';
 import { useStore } from '../../stores';
 import { toJS } from 'mobx';
 import useIsMobile from '../../utils/useIsMobile';
+import { supabase } from '../../utils/supabase/supabaseClient';
 
 export default function MyChatsPage() {
   const navigate = useNavigate();
@@ -119,6 +120,39 @@ export default function MyChatsPage() {
       console.error('Error sending message:', error?.response?.data || error);
     }
   };
+
+  useEffect(() => {
+    if (!conversationId) return;
+
+    const messageChannel = supabase
+      .channel(`chat:${conversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          const msg = payload.new;
+          if (String(msg.sender_user_id) !== String(userId)) {
+            const newMsg = {
+              id: msg.id,
+              sender: 'received',
+              text: msg.content,
+              time: new Date(msg.created_at).toLocaleTimeString(),
+            };
+            setMessages((prev) => [...prev, newMsg]);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(messageChannel);
+    };
+  }, [conversationId, userId]);
 
   return (
     <>

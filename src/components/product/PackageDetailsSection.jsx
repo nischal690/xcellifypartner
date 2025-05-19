@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
+import CreatableSelect from 'react-select/creatable';
+
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -55,7 +57,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
   const [errors, setErrors] = useState({
     price: '',
     discount: '',
-    package_duration: '',
+    package_duration_hours: '',
   });
 
   const [newPackage, setNewPackage] = useState({
@@ -66,7 +68,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
     final_package_price: '',
     package_details: '',
     currency: 'INR',
-    package_duration: '',
+    package_duration_hours: '',
   });
 
   useEffect(() => {
@@ -80,13 +82,13 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
       ...prev,
       package: packages,
     }));
-    // console.log('🧩 Live package update sent to formData:', packages);
+    console.log('🧩 Live package update sent to formData:', packages);
   }, [packages]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (['price', 'discount', 'package_duration'].includes(name)) {
+    if (['price', 'discount', 'package_duration_hours'].includes(name)) {
       const numericValue = parseFloat(value);
 
       if (numericValue < 0) {
@@ -111,14 +113,17 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
   };
 
   const calculateFinalPrice = (price, discount) => {
-    const final = price - (price * discount) / 100;
-    return final >= 0 ? final : 0;
+    const p = parseFloat(price) || 0;
+    const d = parseFloat(discount) || 0;
+
+    const final = p - (p * d) / 100;
+    return parseFloat(final.toFixed(2)); // 2 decimal precision
   };
 
   const handleAddPackage = () => {
-    const { pricing_type, package_duration, discount } = newPackage;
+    const { pricing_type, package_duration_hours, discount } = newPackage;
 
-    if (!pricing_type || !package_duration) {
+    if (!pricing_type || !package_duration_hours) {
       toast.error('Please fill in all package * required fields.');
       return;
     }
@@ -126,11 +131,11 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
     if (
       errors.price ||
       errors.discount ||
-      errors.package_duration ||
+      errors.package_duration_hours ||
       parseFloat(newPackage.price) < 0 ||
       parseFloat(newPackage.discount) < 0 ||
       parseFloat(newPackage.discount) > 100 ||
-      parseInt(newPackage.package_duration) < 0
+      parseInt(newPackage.package_duration_hours) < 0
     ) {
       toast.error('Please fix all errors in package fields before adding.');
       return;
@@ -144,7 +149,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
 
     const price = parseFloat(newPackage.price) || 0;
     const finalPrice = calculateFinalPrice(price, discountVal);
-    const duration = parseInt(package_duration) || 0;
+    const duration = parseInt(package_duration_hours) || 0;
 
     const newEntry = {
       package_title: newPackage.package_title || '',
@@ -154,7 +159,14 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
       final_package_price: finalPrice,
       package_details: newPackage.package_details || '',
       currency: newPackage.currency || '',
-      package_duration: duration,
+      package_duration_hours: duration,
+
+      mode_of_teaching: formData.mode_of_teaching || '',
+      study_level: formData.study_level || '',
+      subjects: formData.subjects || '',
+      language_medium: formData.language_medium || '',
+      materials_provided: formData.materials_provided || '',
+      available_slots: formData.available_slots || '',
     };
 
     const updatedPackages = [...packages, newEntry].slice(0, 5);
@@ -170,7 +182,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
       final_package_price: '',
       package_details: '',
       currency: '',
-      package_duration: '',
+      package_duration_hours: '',
     });
   };
 
@@ -178,6 +190,18 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
     const updated = [...packages];
     updated.splice(index, 1);
     setPackages(updated);
+
+    if (updated.length === 0) {
+      setFormData((prev) => ({
+        ...prev,
+        mode_of_teaching: '',
+        study_level: '',
+        subjects: '',
+        language_medium: '',
+        materials_provided: '',
+        available_slots: '',
+      }));
+    }
   };
 
   const handleEditPackage = (index) => {
@@ -188,7 +212,20 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
       return;
     }
 
-    setNewPackage(packages[index]);
+    const pkg = packages[index];
+
+    setNewPackage(pkg);
+
+    setFormData((prev) => ({
+      ...prev,
+      mode_of_teaching: pkg.mode_of_teaching || '',
+      study_level: pkg.study_level || '',
+      subjects: pkg.subjects || '',
+      language_medium: pkg.language_medium || '',
+      materials_provided: pkg.materials_provided || '',
+      available_slots: pkg.available_slots || '',
+    }));
+
     handleDeletePackage(index);
     setEditingIndex(index);
   };
@@ -257,32 +294,100 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
         </div>
       )}
 
-      {category === 'Tutoring' && (
-        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {tutoringFields.map((field) => (
-            <div key={field.name}>
-              <label className="block font-medium mb-1">{field.label}</label>
+      {(editingIndex !== null || packages.length === 0) &&
+        category === 'Tutoring' && (
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tutoringFields.map((field) => (
+              <div key={field.name}>
+                <label className="block font-medium mb-1">{field.label}</label>
+                <Select
+                  isMulti
+                  options={field.options.map((opt) => ({
+                    value: opt,
+                    label: opt,
+                  }))}
+                  value={
+                    (formData[field.name] || '')
+                      .split(', ')
+                      .filter(Boolean)
+                      .map((val) => ({ value: val, label: val })) || []
+                  }
+                  onChange={(selected) =>
+                    handleMultiSelectChange(selected, field.name)
+                  }
+                  placeholder={`Select ${field.label}`}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+      {(editingIndex !== null || packages.length === 0) &&
+        ['Tutoring', 'Competitative exam'].includes(category) && (
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-medium mb-1">Language Medium</label>
               <Select
-                isMulti
-                options={field.options.map((opt) => ({
-                  value: opt,
-                  label: opt,
+                options={['English', 'Hindi'].map((lang) => ({
+                  label: lang,
+                  value: lang,
                 }))}
                 value={
-                  (formData[field.name] || '')
-                    .split(', ')
-                    .filter(Boolean)
-                    .map((val) => ({ value: val, label: val })) || []
+                  formData.language_medium
+                    ? {
+                        label: formData.language_medium,
+                        value: formData.language_medium,
+                      }
+                    : null
                 }
                 onChange={(selected) =>
-                  handleMultiSelectChange(selected, field.name)
+                  setFormData((prev) => ({
+                    ...prev,
+                    language_medium: selected.value,
+                  }))
                 }
-                placeholder={`Select ${field.label}`}
+                placeholder="Select language"
               />
             </div>
-          ))}
-        </div>
-      )}
+
+            <div>
+              <label className="block font-medium mb-1">
+                Materials Provided
+              </label>
+              <CreatableSelect
+                isMulti
+                value={(formData.materials_provided || '')
+                  .split(', ')
+                  .filter(Boolean)
+                  .map((val) => ({ label: val, value: val }))}
+                onChange={(selected) => {
+                  const values = selected.map((opt) => opt.value).join(', ');
+                  setFormData((prev) => ({
+                    ...prev,
+                    materials_provided: values,
+                  }));
+                }}
+                placeholder="Add or select materials"
+              />
+            </div>
+
+            <div>
+              <label className="block font-medium mb-1">Available Slots</label>
+              <CreatableSelect
+                isMulti
+                value={(formData.available_slots || '')
+                  .split(', ')
+                  .filter(Boolean)
+                  .map((val) => ({ label: val, value: val }))}
+                onChange={(selected) => {
+                  const values = selected.map((opt) => opt.value).join(', ');
+                  setFormData((prev) => ({ ...prev, available_slots: values }));
+                }}
+                placeholder="Add available time slots"
+              />
+            </div>
+          </div>
+        )}
 
       {packages.map((pkg, index) => (
         <div
@@ -350,16 +455,16 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
               <span className="text-red-500">*</span>
             </label>
             <input
-              name="package_duration"
-              value={newPackage.package_duration}
+              name="package_duration_hours"
+              value={newPackage.package_duration_hours}
               onChange={handleChange}
               placeholder="Duration"
               type="number"
               className="p-2 border rounded w-full"
             />
-            {errors.package_duration && (
+            {errors.package_duration_hours && (
               <p className="text-red-500 text-sm mt-1">
-                {errors.package_duration}
+                {errors.package_duration_hours}
               </p>
             )}
           </div>
