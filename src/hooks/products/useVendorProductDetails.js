@@ -213,7 +213,7 @@ export const useVendorProductDetails = (appStore) => {
     if (name === 'study_destination_states' && value) {
       fetchCities(value);
     }
-    if (name === 'service_available_cities' && value) {
+    if (name === 'service_cities' && value) {
       fetchCities(value);
     }
     if (name === 'event_location' && value) {
@@ -853,7 +853,7 @@ export const useVendorProductDetails = (appStore) => {
 
       if (['Career counselling', 'Tutoring'].includes(currentForm.category)) {
         const pkg = currentForm.formData?.package?.[0]; // take the first package
-        if (!pkg?.pricing_type || !pkg?.package_duration) {
+        if (!pkg?.pricing_type || !pkg?.package_duration_hours) {
           toast.error(
             'Fill All input fields with Pricing Type, Package Duration and save it in Package Details.'
           );
@@ -925,10 +925,12 @@ export const useVendorProductDetails = (appStore) => {
     const processedData = {
       ...normalizedData,
       category: currentForm.category,
-      company_name: partnerInfo?.company_name || '',
-      company_website: partnerInfo?.website || '',
-      google_reviews: partnerInfo?.google_rating || 0, // (number)
-      google_rating_url: partnerInfo?.google_rating_url || '', // (string)
+      // company_name: partnerInfo?.company_name || '',
+      // company_website: partnerInfo?.website || '',
+      partner_id: partnerInfo.id,
+
+      google_reviews_rating: partnerInfo?.google_rating || 0, // (number)
+      google_rating_link: partnerInfo?.google_rating_url || '', // (string)
       status: 'published',
       refund_policy:
         formData.refund_policy === 'true'
@@ -965,8 +967,8 @@ export const useVendorProductDetails = (appStore) => {
     }
 
     const requestBody = {
-      partner_id: partnerInfo.id,
-      products_details: [processedData],
+      // partner_id: partnerInfo.id,
+      product_details: [processedData],
     };
 
     //  console.log to check the single product submission body
@@ -999,7 +1001,7 @@ export const useVendorProductDetails = (appStore) => {
           ['Career counselling', 'Tutoring'].includes(currentForm.category)
         ) {
           const pkg = currentForm.formData?.package?.[0]; // take the first package
-          if (!pkg?.pricing_type || !pkg?.package_duration) {
+          if (!pkg?.pricing_type || !pkg?.package_duration_hours) {
             toast.error(
               'Fill All input fields with Pricing Type, Package Duration and save it in Package Details.'
             );
@@ -1048,7 +1050,7 @@ export const useVendorProductDetails = (appStore) => {
 
       console.log('Submitting with formData:', formData);
 
-      const groupedProducts = formData.products_details.reduce(
+      const groupedProducts = formData.product_details.reduce(
         (acc, product) => {
           const { category } = product;
           if (!acc[category]) {
@@ -1066,7 +1068,7 @@ export const useVendorProductDetails = (appStore) => {
         async ([category, categoryProducts]) => {
           const categoryFormData = {
             partner_id: formData.partner_id,
-            products_details: categoryProducts,
+            product_details: categoryProducts,
           };
 
           console.log(
@@ -1081,16 +1083,15 @@ export const useVendorProductDetails = (appStore) => {
             );
 
             if (success) {
-              console.log(
-                `Products for category ${category} submitted successfully.`
-              );
               return { success: true, category };
             } else {
+              const errorMessage =
+                error?.message || response?.message || 'Unknown error';
               console.error(
                 `Failed to submit products for category ${category}:`,
-                error || response
+                errorMessage
               );
-              return { success: false, category, error };
+              return { success: false, category, error: errorMessage };
             }
           } catch (error) {
             console.error(
@@ -1225,7 +1226,7 @@ export const useVendorProductDetails = (appStore) => {
       'counselling_duration',
       'loan_interest_percentage',
       'fee_range_min',
-      'travel_upto',
+      'can_travel_upto_km',
       'fee_range_max',
       'loan_duration',
       'loan_amount_range',

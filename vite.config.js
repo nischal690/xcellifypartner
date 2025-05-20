@@ -46,13 +46,18 @@ export default defineConfig({
   resolve: {
     alias: {
       // Add aliases for problematic packages
-      'pizzip': path.resolve(__dirname, 'node_modules/pizzip/dist/pizzip.js'),
+      pizzip: path.resolve(__dirname, 'node_modules/pizzip/dist/pizzip.js'),
     },
   },
   server: {
-    host: '0.0.0.0', // Allows external devices to connect
+    host: '0.0.0.0',
     port: 5174,
     strictPort: true,
     allowedHosts: ['.ngrok-free.app'],
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+      port: 5174,
+    },
   },
 });

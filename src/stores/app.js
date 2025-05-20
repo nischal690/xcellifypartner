@@ -60,7 +60,7 @@ class AppStore {
       case 'Tutoring':
       case 'Career counselling':
       case 'Summer courses':
-        return 'mic-counselling';
+        return '/mic-counselling/v2/tutoring';
       case 'Study Finance':
       case 'Loans and scholarships':
         return 'mic-finance';
@@ -77,7 +77,7 @@ class AppStore {
     console.log('Category passed to submitProducts:', category);
 
     const baseUrl = this.getApiBaseUrl(category);
-    const url = `${baseUrl}/create`;
+    const url = `${baseUrl}/products`;
 
     this.setAppProperty('loading', true);
     try {

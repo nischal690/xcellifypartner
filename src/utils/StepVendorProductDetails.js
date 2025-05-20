@@ -456,14 +456,14 @@ export const ProductDetailsData = [
           fields: [
             {
               label: 'Cities where service is available',
-              name: 'service_available_cities',
+              name: 'service_cities',
               type: 'multiselect',
               options: [],
               required: true,
             },
             {
               label: 'Can travel up to in km*(N/A for online & home visits)',
-              name: 'travel_upto',
+              name: 'can_travel_upto_km',
               type: 'select',
               options: [5, 10, 20, 50],
               required: false,
@@ -481,7 +481,7 @@ export const ProductDetailsData = [
             },
             {
               label: 'Unique Selling Proposition',
-              name: 'product_unique_selling_point',
+              name: 'unique_selling_proposition',
               type: 'textarea',
               required: true,
             },
@@ -542,7 +542,7 @@ export const ProductDetailsData = [
 
             {
               label: 'YouTube Video URL for product',
-              name: 'youtube_url',
+              name: 'youtube_video_url',
               type: 'text',
               required: false,
             },
@@ -2093,7 +2093,7 @@ const commonValidations = {
     .min(50, 'Description must be at least 50 characters')
     .max(1500, 'Description must not exceed 1000 characters')
     .required('Description is required'),
-  product_unique_selling_point: Yup.string()
+  unique_selling_proposition: Yup.string()
     .min(50, 'USP must be at least 50 characters')
     .max(1500, 'USP must not exceed 1000 characters')
     .required('USP is required'),
@@ -2129,7 +2129,7 @@ const commonValidations = {
     .transform((value) => (value === '' || value === undefined ? null : value))
     .url('Invalid URL'),
 
-  youtube_url: Yup.string()
+  youtube_video_url: Yup.string()
     .nullable()
     .optional()
     .transform((value) => (value === '' || value === undefined ? null : value))
@@ -2238,10 +2238,8 @@ export const validationSchemas = {
     service_provided_since: Yup.date().required(
       'Service provided since is required'
     ),
-    service_available_cities: Yup.string().required(
-      'Destination city is required'
-    ),
-    travel_upto: Yup.string().when('mode_of_teaching', {
+    service_cities: Yup.string().required('Destination city is required'),
+    can_travel_upto_km: Yup.string().when('mode_of_teaching', {
       is: (value) =>
         typeof value === 'string' &&
         value.split(', ').some((v) => v.startsWith('Physical')),
@@ -2268,7 +2266,7 @@ export const validationSchemas = {
       .required('Counselling duration is required')
       .min(0, 'Counselling duration cannot be negative'),
 
-    service_available_cities: Yup.string().required('Service city is required'),
+    service_cities: Yup.string().required('Service city is required'),
     study_destination_countries: Yup.string().required(
       'Study destination is required'
     ),

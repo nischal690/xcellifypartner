@@ -337,7 +337,7 @@ const StepVendorProductDetailsPage = () => {
                               </label>
                               {[
                                 'product_description',
-                                'product_unique_selling_point',
+                                'unique_selling_proposition',
                                 'scholarship_description',
                               ].includes(field.name) ? (
                                 <>
@@ -576,8 +576,7 @@ const StepVendorProductDetailsPage = () => {
                                         : field.name ===
                                           'study_destination_states'
                                         ? states
-                                        : field.name ===
-                                          'service_available_cities'
+                                        : field.name === 'service_cities'
                                         ? cities
                                         : field.name === 'event_location'
                                         ? cities

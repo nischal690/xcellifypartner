@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { saveAs } from 'file-saver';
 import wordDocIcon from '../../assets/onboardingAssests/icons/word-doc-icon.png';
 import { FaDownload, FaFilePdf, FaEye } from 'react-icons/fa';
+import { Packer } from 'docx';
 
 import { generateDocFromTemplate } from '../../utils/generateDocFromTemplate';
+import { generateComIndividualDoc } from '../../utils/supplierDeclarationHelpers';
+import DocumentPreview from './DocumentPreview';
 
 const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
   const handleAgree =
@@ -21,7 +24,16 @@ const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
 
   const [showPreview, setShowPreview] = useState(false);
 
-  const handleGenerateDoc = async (autoAttach = false) => {
+  /**
+   * mode = 'declaration' is Partner Declaration for generateDocFromTemplate
+   * mode = 'service'     is Service Agreement   for generateComIndividualDoc
+   */
+  const handleGenerateDoc = async (
+    mode = 'declaration',
+    autoAttach = false
+  ) => {
+    const { signature } = formData;
+
     const today = new Date();
     const formattedDate = [
       String(today.getDate()).padStart(2, '0'),
@@ -34,19 +46,34 @@ const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
         ? formData.signature
         : null;
 
-    const blob = await generateDocFromTemplate(
-      formData,
-      sigFile,
-      formattedDate
-    );
+    let blob;
+    if (mode === 'service') {
+      let signatureImage = null;
+      if (signature && typeof signature !== 'string') {
+        const arrayBuffer = await signature.arrayBuffer();
+        signatureImage = new Uint8Array(arrayBuffer);
+      }
+      const doc = await generateComIndividualDoc(
+        formData,
+        signatureImage,
+        formattedDate
+      );
+      blob = await Packer.toBlob(doc);
+    } else {
+      blob = await generateDocFromTemplate(formData, sigFile, formattedDate);
+    }
 
-    if (autoAttach) {
+    if (autoAttach && mode === 'declaration') {
       const file = new File([blob], 'PartnerServiceAgreement.docx', {
         type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       });
       handleAgree(file);
     } else {
-      saveAs(blob, 'PartnerServiceAgreement.docx');
+      const filename =
+        mode === 'service'
+          ? 'Service_Agreement.docx'
+          : 'PartnerServiceAgreement.docx';
+      saveAs(blob, filename);
     }
   };
 
@@ -108,7 +135,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
         {/* DOCX Download Button */}
         <button
           type="button"
-          onClick={() => handleGenerateDoc(false)} // Only download the file
+          onClick={() => handleGenerateDoc('service', false)}
           className="flex-1 bg-white border hover:bg-purple-50 transition-all duration-300 rounded-lg shadow-sm p-3 flex items-center justify-between group"
           style={{ borderColor: 'rgba(134, 110, 252, 0.3)' }}
         >
@@ -170,51 +197,25 @@ const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
                 </button>
               </div>
 
-              {previewLines.map((item, index) =>
-                item.heading ? (
-                  <h3
-                    key={index}
-                    className="text-lg font-bold text-purple-900 my-4"
-                  >
-                    {item.heading}
-                  </h3>
-                ) : (
-                  <p key={index} className="text-sm text-gray-700 my-1">
-                    <span className="font-semibold">{item.label}:</span>{' '}
-                    {item.value || '-'}
-                  </p>
-                )
+              {showPreview && (
+                <DocumentPreview
+                  formData={formData}
+                  signatureFile={
+                    formData.signature && typeof formData.signature !== 'string'
+                      ? formData.signature
+                      : null
+                  }
+                  onClose={() => setShowPreview(false)}
+                  onDownload={() => {
+                    handleGenerateDoc('service', false);
+                    setShowPreview(false);
+                  }}
+                  onAttach={() => {
+                    handleGenerateDoc('declaration', true);
+                    setShowPreview(false);
+                  }}
+                />
               )}
-
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  onClick={() => setShowPreview(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-                >
-                  Close
-                </button>
-                <button
-                  onClick={() => {
-                    handleGenerateDoc(false);
-                    setShowPreview(false);
-                  }}
-                  className="px-4 py-2 rounded-lg text-white hover:opacity-90"
-                  style={{
-                    background: 'linear-gradient(to right, #18064A, #866EFC)',
-                  }}
-                >
-                  Download Document
-                </button>
-                <button
-                  onClick={() => {
-                    handleGenerateDoc(true);
-                    setShowPreview(false);
-                  }}
-                  className="px-4 py-2 bg-green-600 rounded-lg text-white hover:bg-green-700"
-                >
-                  I Agree & Attach
-                </button>
-              </div>
             </div>
           </div>
         </div>
