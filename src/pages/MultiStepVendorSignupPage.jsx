@@ -1,458 +1,913 @@
 import React, { useEffect, useState } from 'react';
+
 import Joyride from 'react-joyride';
+
+import PrimaryLogo from '../assets/logo-primary.png';
 import { useNavigate } from 'react-router-dom';
-import clsx from 'clsx'; // For cleaner conditional classnames
-import { toast } from 'react-toastify';
-
-// Your existing imports
-import PrimaryLogo from '../assets/logo-primary.png'; // Assuming this might be used in OnBoardingHeader
-import stepsData from '../utils/MultiStepVendorSignupFormData'; // Renamed for clarity if it's not just steps
-import { tourSteps, fileUploadInfo, fileHintMessage } from '../utils/MultiStepVendorSignupFormData';
+import steps from '../utils/MultiStepVendorSignupFormData'; // Updated data
+import { tourSteps } from '../utils/MultiStepVendorSignupFormData';
+import {
+  fileUploadInfo,
+  fileHintMessage,
+} from '../utils/MultiStepVendorSignupFormData';
 import { useStore } from '../stores';
-import { useVendorSignupForm } from '../hooks/profile/useVendorSignupForm';
 
-// Child Components (These would need internal styling updates)
-import OnBoardingHeader from '../components/onboardingPage/OnBoardingHeader';
-import CollapsibleSection from '../components/commonComponents/CollapsibleSection';
 import Dropdown from '../components/commonComponents/Dropdown';
 import StepVendorProductDetailsPage from './StepVendorProductDetailsPage';
 import FileUploadPreviewCard from '../components/commonComponents/profileDetails/FileUploadPreviewCard';
-import SupplierDeclarationPreview from '../components/onboardingPage/SupplierDeclarationPreview';
-import SupplierComDeclarationPreview from '../components/onboardingPage/SupplierComDeclarationPreview';
-import PartnerServiceAgreementPreview from '../components/onboardingPage/PartnerServiceAgreementPreview';
-import TextFieldWithVerification from '../components/profile/TextFieldWithVerification';
-import OTPVerificationModal from '../components/commonComponents/modals/OTPVerificationModal';
+import CollapsibleSection from '../components/commonComponents/CollapsibleSection';
+
+import { toast } from 'react-toastify';
+import OnBoardingHeader from '../components/onboardingPage/OnBoardingHeader';
+import SupplierDeclarationCard from '../components/onboardingPage/SupplierDeclarationCard';
 import LoaderMessage from '../components/commonComponents/LoaderMessage';
 
-// Placeholder SVG Icons (Replace with actual SVG components or imports e.g., from heroicons)
-const CheckIcon = ({ className }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-  </svg>
-);
-const ChevronDownIcon = ({ className }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-  </svg>
-);
-const BackArrowIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-  </svg>
-);
-const NextArrowIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H7a1 1 0 110-2h5.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-  </svg>
-);
-const SubmitCheckIcon = ({ className }) => (
- <svg className={className} viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L9 10.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-  </svg>
-);
-const ClearIcon = ({ className }) => (
-  <svg className={className} viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-  </svg>
-);
-const InfoIcon = ({ className }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-  </svg>
-);
-
+import SupplierDeclarationPreview from '../components/onboardingPage/SupplierDeclarationPreview';
+import { vendorBaiscInfoValidation } from '../utils/HelperFunction';
+import SupplierComDeclarationPreview from '../components/onboardingPage/SupplierComDeclarationPreview';
+import { useVendorSignupForm } from '../hooks/profile/useVendorSignupForm';
+import OTPVerificationModal from '../components/commonComponents/modals/OTPVerificationModal';
+import TextFieldWithVerification from '../components/profile/TextFieldWithVerification';
 
 const MultiStepVendorSignupPage = () => {
   const navigate = useNavigate();
   const { appStore } = useStore();
   const {
-    currentStep, partnerInfo, formData, setFormData, errors,
-    countryOptions, stateOptions, cityOptions,
-    isRemovingBG, removalMessage, uploadingFields,
-    activeSections, completedSections,
-    isPANValidated, setIsPANValidated, isGSTValidated, setIsGSTValidated,
-    sameAsAbove, setSameAsAbove,
-    disableCountrySelction, setDisableCountrySelection, // Note: typo in original, kept for consistency with hook
-    isAadhaarVerified, setIsAadhaarVerified,
-    showOtpModal, setShowOtpModal, otp, setOtp, otpMessage, setOtpMessage, isVerifying, setIsVerifying,
-    handleChange, handleNext, handleBack, handleSubmit, toggleSection, isSectionCompleted,
-    clearFormData, handleDisable, handleOptions, handleOtpVerify, isFieldRequired, validateField, handleLogout,
-    requestAadhaarOtp,
-  } = useVendorSignupForm(stepsData, appStore); // Assuming stepsData is your main configuration for steps
+    currentStep,
+    partnerInfo,
+    formData,
+    setFormData,
+    errors,
+    countryOptions,
+    stateOptions,
+    cityOptions,
+    isRemovingBG,
+    removalMessage,
+    uploadingFields,
+    activeSections,
+    completedSections,
+    isPANValidated,
+    setIsPANValidated,
+    isGSTValidated,
+    setIsGSTValidated,
+    sameAsAbove,
+    setSameAsAbove,
+    disableCountrySelction,
+    setDisableCountrySelection,
+    isAadhaarVerified,
+    setIsAadhaarVerified,
+    showOtpModal,
+    setShowOtpModal,
+    otp,
+    setOtp,
+    otpMessage,
+    setOtpMessage,
+    isVerifying,
+    setIsVerifying,
 
-  // Ensure steps is an array for the progress indicator
-  const steps = stepsData || [];
+    handleChange,
+    handleNext,
+    handleBack,
+    handleSubmit,
+    toggleSection,
+    isSectionCompleted,
+    clearFormData,
+    handleDisable,
+    handleOptions,
+    handleOtpVerify,
+    isFieldRequired,
+    validateField,
+    handleLogout,
+  } = useVendorSignupForm(steps, appStore);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 text-gray-800">
-      {/*
-        TODO: Update OnBoardingHeader internal styling for a modern look.
-        Example: className="bg-white shadow-md sticky top-0 z-50"
-      */}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
       <OnBoardingHeader partnerInfo={partnerInfo} handleLogout={handleLogout} />
 
+      {/* Tour Guide */}
       <Joyride
         steps={tourSteps}
-        run={false} // Consider managing this with a state like `runTour`
+        run={false}
         continuous={true}
         showProgress={true}
         showSkipButton={true}
         styles={{
           options: {
-            primaryColor: '#7C3AED', // Purple-600
+            primaryColor: '#7C3AED',
             zIndex: 10000,
           },
-          // You can further customize spotLight, beacon, tooltip, etc.
         }}
       />
 
+      {/* Main Content */}
       <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        {/* Welcome Message & Enhanced Progress Indicator */}
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-purple-700 sm:text-5xl mb-4">
-            Welcome to Your Onboarding Journey!
+        {/* Welcome Message & Progress Indicator */}
+        <div className="mb-10 text-center">
+          <h1 className="text-3xl font-bold text-purple-800 mb-3">
+            Welcome to Your Onboarding Journey
           </h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Complete your profile to unlock all features and start connecting with potential customers. Please fill out each section carefully.
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Complete your profile to unlock all features and start connecting
+            with potential customers.
           </p>
 
-          {steps.length > 0 && (
-            <div className="mt-12 relative max-w-3xl mx-auto">
-              <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gray-200 -translate-y-1/2 rounded-full"></div>
-              <div
-                className="absolute top-1/2 left-0 h-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 -translate-y-1/2 rounded-full transition-all duration-500 ease-in-out"
-                style={{ width: `${((currentStep) / (steps.length-1)) * 100}%` }} // Adjusted for 0-indexed currentStep
-              ></div>
-              <div className="relative flex justify-between">
-                {steps.map((step, index) => (
-                  <div key={index} className="flex flex-col items-center group w-1/3 px-2"> {/* Added w-1/3 for equal spacing if 3 steps */}
-                    <div
-                      className={clsx(
-                        'w-12 h-12 rounded-full flex items-center justify-center z-10 border-2 transition-all duration-300 font-semibold',
-                        index < currentStep ? 'bg-purple-600 border-purple-600 text-white' :
-                        index === currentStep ? 'bg-purple-600 border-purple-700 text-white scale-110 shadow-lg' :
-                        'bg-white border-gray-300 text-gray-400 group-hover:border-purple-400'
-                      )}
-                    >
-                      {index < currentStep ? <CheckIcon className="w-6 h-6" /> : <span>{index + 1}</span>}
-                    </div>
-                    <span className={clsx(
-                        'mt-3 text-sm font-medium text-center transition-colors duration-300',
-                        index <= currentStep ? 'text-purple-600' : 'text-gray-500 group-hover:text-purple-500'
-                      )}
-                    >
-                      {step.title}
-                    </span>
+          {/* Progress Steps */}
+          <div className="mt-8 relative">
+            <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2"></div>
+            <div
+              className="absolute top-1/2 left-0 h-1 bg-purple-600 -translate-y-1/2"
+              style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+            ></div>
+            <div className="relative flex justify-between">
+              {steps.map((step, index) => (
+                <div key={index} className="flex flex-col items-center">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center z-10 ${
+                      index < currentStep
+                        ? 'bg-purple-600 text-white'
+                        : index === currentStep
+                        ? 'bg-purple-600 text-white'
+                        : 'bg-white border-2 border-gray-300 text-gray-500'
+                    }`}
+                  >
+                    {index < currentStep ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : (
+                      <span>{index + 1}</span>
+                    )}
                   </div>
-                ))}
-              </div>
+                  <span
+                    className={`mt-2 text-sm font-medium ${
+                      index <= currentStep ? 'text-purple-600' : 'text-gray-500'
+                    }`}
+                  >
+                    {step.title}
+                  </span>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Form Container */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white rounded-2xl shadow-2xl p-6 sm:p-10 border border-gray-200/80"
+          className="bg-white rounded-xl shadow-xl p-6 sm:p-8 transition-all duration-500 border border-purple-100"
         >
-          {/* Render sections for current step (0 and 1) */}
-          {(currentStep === 0 || currentStep === 1) && steps[currentStep]?.sections.map((section, sectionIndex) => (
-            /*
-              TODO: Update CollapsibleSection component internally:
-              - Use a structure like:
-                <div className="mb-8 last:mb-0 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
-                  <button (Header) className="w-full flex justify-between items-center p-5 text-left focus:outline-none transition-colors duration-200 ${isActive ? 'bg-purple-50' : 'hover:bg-gray-50'}">
-                    <div (title + icon)> ... </div>
-                    <ChevronDownIcon />
-                  </button>
-                  {isOpen && <div className="p-6 border-t border-gray-200"> ...content... </div>}
-                </div>
-              - Pass `isActive` and `isCompleted` to style the header and completion icon.
-            */
-            <CollapsibleSection
-              key={`${currentStep}-${sectionIndex}`} // More specific key
-              title={section.heading}
-              isOpen={activeSections[`${currentStep}-${sectionIndex}`] || false}
-              onToggle={(isOpen) => toggleSection(currentStep, sectionIndex, isOpen)}
-              isCompleted={isSectionCompleted(sectionIndex, currentStep)}
-              isActive={!isSectionCompleted(sectionIndex, currentStep) && activeSections[`${currentStep}-${sectionIndex}`]}
-              index={sectionIndex} // For numbering or styling if needed inside CollapsibleSection
-              totalSections={steps[currentStep].sections.length}
-              // Add custom classes for card-like appearance if not handled internally by CollapsibleSection
-              className="mb-8 last:mb-0 bg-gray-50/50 rounded-xl shadow-lg border border-gray-200 overflow-hidden"
-            >
-              {/* "Same as above" checkbox styling */}
-              {currentStep === 0 && section.heading === 'CEO/Owner details' && (
-                <div className="mb-6 flex items-center p-3 bg-indigo-100 rounded-md border border-indigo-200">
-                  <input
-                    type="checkbox"
-                    id="sameAsAbove"
-                    checked={sameAsAbove}
-                    onChange={(e) => {
-                      setSameAsAbove(e.target.checked);
-                      // ... (rest of your logic for sameAsAbove)
-                        if (e.target.checked) {
-                            setFormData((prev) => ({
-                            ...prev,
-                            owner_name: prev.contact_person_name,
-                            owner_email: prev.contact_person_email,
-                            owner_country_code: prev.contact_person_country_code,
-                            owner_mobile: prev.contact_person_mobile,
-                            }));
-                        } else {
-                            setFormData((prev) => ({
-                            ...prev,
-                            owner_name: '',
-                            owner_email: '',
-                            owner_mobile: '',
-                            }));
-                        }
-                    }}
-                    className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500 focus:ring-offset-2"
-                  />
-                  <label htmlFor="sameAsAbove" className="ml-3 text-sm font-medium text-purple-800">
-                    Fill the data as Contact person's details
-                  </label>
-                </div>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6"> {/* Increased gap-x */}
-                {section.fields.map((field, fieldIndex) => {
-                  if (field.name === 'GST' && formData.hasGSTnumber !== 'Yes') {
-                    return null;
+          {currentStep === 0 && (
+            <>
+              {steps[currentStep].sections.map((section, sectionIndex) => (
+                <CollapsibleSection
+                  key={sectionIndex}
+                  title={section.heading}
+                  isOpen={
+                    activeSections[`${currentStep}-${sectionIndex}`] || false
                   }
-
-                  const fieldError = errors[field.name];
-                  const isRequired = isFieldRequired(field.name);
-
-                  return (
-                    <div
-                      key={fieldIndex}
-                      className={clsx(fieldError ? 'animate-shake' : '', 'space-y-1.5')} // Added space-y for label & input
-                    >
-                      <label
-                        htmlFor={field.name}
-                        className={clsx(
-                          'block text-sm font-medium',
-                          fieldError ? 'text-red-600' : 'text-gray-700'
-                        )}
-                      >
-                        {field.conditionalLabel && field.conditionalLabel[formData.company_type]
-                          ? field.conditionalLabel[formData.company_type]
-                          : field.label}
-                        {isRequired && <span className="text-red-500 ml-1">*</span>}
-                      </label>
-
-                      {/*
-                        TODO: Update TextFieldWithVerification, Dropdown, FileUploadPreviewCard
-                        internally for modern styling. Example for input part of TextFieldWithVerification:
-                        className={clsx(
-                          'w-full px-4 py-2.5 rounded-lg border transition-all duration-200 shadow-sm',
-                          // ... (error, success, focus, disabled states) ...
-                        )}
-                      */}
-                      {(field.type === 'text' || field.type === 'url' || field.type === 'email' || field.type === 'mobile') && (
-                        <TextFieldWithVerification
-                          field={field}
-                          formData={formData}
-                          errors={errors} // Pass down specific error if needed by component
-                          handleChange={handleChange}
-                          handleDisable={handleDisable} // Ensure this is used correctly inside
-                          isPANValidated={isPANValidated}
-                          isGSTValidated={isGSTValidated}
-                          isAadhaarVerified={isAadhaarVerified}
-                          setShowOtpModal={setShowOtpModal}
-                          disableCountrySelction={disableCountrySelction}
-                          requestAadhaarOtp={requestAadhaarOtp}
-                          // Add custom styling classes if TextFieldWithVerification accepts them
+                  onToggle={(isOpen) =>
+                    toggleSection(currentStep, sectionIndex, isOpen)
+                  }
+                  isCompleted={isSectionCompleted(sectionIndex, currentStep)}
+                  isActive={
+                    !isSectionCompleted(sectionIndex, currentStep) &&
+                    activeSections[`${currentStep}-${sectionIndex}`]
+                  }
+                  index={sectionIndex}
+                  totalSections={steps[currentStep].sections.length}
+                >
+                  {currentStep === 0 &&
+                    section.heading === 'CEO/Owner details' && (
+                      <div className="mb-6 flex items-center">
+                        <input
+                          type="checkbox"
+                          id="sameAsAbove"
+                          checked={sameAsAbove}
+                          onChange={(e) => {
+                            setSameAsAbove(e.target.checked);
+                            if (e.target.checked) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                owner_name: prev.contact_person_name,
+                                owner_email: prev.contact_person_email,
+                                owner_country_code:
+                                  prev.contact_person_country_code,
+                                owner_mobile: prev.contact_person_mobile,
+                              }));
+                            } else {
+                              setFormData((prev) => ({
+                                ...prev,
+                                owner_name: '',
+                                owner_email: '',
+                                owner_mobile: '',
+                              }));
+                            }
+                          }}
+                          className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
                         />
-                      )}
+                        <label
+                          htmlFor="sameAsAbove"
+                          className="ml-2 text-purple-700 font-medium"
+                        >
+                          Fill the data as Contact person's details
+                        </label>
+                      </div>
+                    )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                    {section.fields.map((field, fieldIndex) => {
+                      // Skip rendering the GST field if hasGSTnumber is not 'Yes'
+                      if (
+                        field.name === 'GST' &&
+                        formData.hasGSTnumber !== 'Yes'
+                      ) {
+                        return null;
+                      }
 
-                      {field.type === 'textarea' && (
-                        <textarea
-                          id={field.name}
-                          name={field.name}
-                          value={formData[field.name] || ''}
-                          onChange={handleChange}
-                          rows={4}
-                          className={clsx(
-                            'w-full px-4 py-2.5 rounded-lg border transition-all duration-200 shadow-sm focus:outline-none focus:ring-2',
-                            fieldError
-                              ? 'border-red-500 focus:border-red-600 focus:ring-red-600'
-                              : 'border-gray-300 hover:border-gray-400 focus:border-purple-500 focus:ring-purple-500 focus:ring-opacity-50'
+                      return (
+                        <div
+                          key={fieldIndex}
+                          className={`${
+                            errors[field.name] ? 'animate-shake' : ''
+                          }`}
+                        >
+                          <label
+                            htmlFor={field.name}
+                            className={`block text-sm font-medium ${
+                              errors[field.name]
+                                ? 'text-red-700'
+                                : 'text-gray-700'
+                            } mb-1`}
+                          >
+                            {field.conditionalLabel &&
+                            field.conditionalLabel[formData.company_type]
+                              ? field.conditionalLabel[formData.company_type]
+                              : field.label}
+                            {isFieldRequired(field.name) && (
+                              <span className="text-red-500 ml-1">*</span>
+                            )}
+                          </label>
+
+                          {(field.type === 'text' ||
+                            field.type === 'url' ||
+                            field.type === 'email' ||
+                            field.type === 'mobile') && (
+                            <TextFieldWithVerification
+                              field={field}
+                              formData={formData}
+                              errors={errors}
+                              handleChange={handleChange}
+                              handleDisable={handleDisable}
+                              isPANValidated={isPANValidated}
+                              isGSTValidated={isGSTValidated}
+                              isAadhaarVerified={isAadhaarVerified}
+                              setShowOtpModal={setShowOtpModal}
+                              disableCountrySelction={disableCountrySelction}
+                            />
                           )}
-                          placeholder={field.placeholder || `Enter ${field.label}`}
-                        />
-                      )}
 
-                      {(field.type === 'dropdown' || field.type === 'select') && (
-                        <Dropdown
-                          id={field.name}
-                          name={field.name}
-                          value={formData[field.name] || ''}
-                          onChange={handleChange}
-                          options={handleOptions(field.name) || field.options}
-                          placeholder={field.placeholder || `Select ${field.label}`}
-                          className={clsx( // Assuming Dropdown accepts className for its main wrapper/button
-                            'w-full', // Internal styling should handle padding, border, etc.
-                            fieldError ? 'dropdown-error-state' : 'dropdown-default-state' // Placeholder for internal state classes
+                          {field.type === 'textarea' && (
+                            <textarea
+                              id={field.name}
+                              name={field.name}
+                              value={formData[field.name] || ''}
+                              onChange={handleChange}
+                              rows={4}
+                              className={`w-full px-4 py-3 rounded-lg border ${
+                                errors[field.name]
+                                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                  : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
+                              } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                              placeholder={
+                                field.placeholder || `Enter ${field.label}`
+                              }
+                            />
                           )}
-                        />
-                      )}
 
-                      {field.type === 'file' && (
-                        <>
-                          <FileUploadPreviewCard
-                            id={field.name}
-                            name={field.name}
-                            onChange={(e) => handleChange(e)}
-                            onRemove={() => setFormData((prev) => ({ ...prev, [field.name]: '' }))}
-                            value={formData[field.name]}
-                            accept={fileUploadInfo[field.name]?.accept || ''}
-                            fileType={fileUploadInfo[field.name]?.fileType || ''}
-                            isUploading={uploadingFields[field.name] || false}
-                            progress={0} // Assuming progress is handled
-                            className={clsx(fieldError ? 'border-red-500' : '')} // For overall card border
-                            // TODO: FileUploadPreviewCard needs internal styling for a modern dropzone/preview.
-                          />
-                          {field.documentPreview && (
-                            <div className="mt-2">
-                              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 text-sm">
-                                <div className="flex items-start">
-                                  <InfoIcon className="w-5 h-5 text-purple-500 mr-2 flex-shrink-0 mt-0.5" />
-                                  <div>
-                                    <p className="text-purple-700 font-semibold mb-1">
-                                      Download & preview the Partner Service Agreement
-                                    </p>
-                                    <PartnerServiceAgreementPreview formData={formData} />
-                                  </div>
-                                </div>
-                              </div>
+                          {(field.type === 'dropdown' ||
+                            field.type === 'select') && (
+                            <Dropdown
+                              id={field.name}
+                              name={field.name}
+                              value={formData[field.name] || ''}
+                              onChange={handleChange}
+                              options={
+                                handleOptions(field.name) || field.options
+                              }
+                              placeholder={
+                                field.placeholder || `Select ${field.label}`
+                              }
+                              className={`w-full px-4 py-3 rounded-lg border ${
+                                errors[field.name]
+                                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                  : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
+                              } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                            />
+                          )}
+
+                          {field.type === 'file' && (
+                            <FileUploadPreviewCard
+                              id={field.name}
+                              name={field.name}
+                              onChange={(e) => handleChange(e)}
+                              onRemove={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  [field.name]: '',
+                                }));
+                              }}
+                              value={formData[field.name]}
+                              accept={fileUploadInfo[field.name]?.accept || ''}
+                              fileType={
+                                fileUploadInfo[field.name]?.fileType || ''
+                              }
+                              isUploading={uploadingFields[field.name] || false}
+                              progress={0}
+                              className={`${
+                                errors[field.name] ? 'border-red-500' : ''
+                              }`}
+                            />
+                          )}
+
+                          {errors[field.name] && (
+                            <p className="mt-1 text-sm text-red-500">
+                              {errors[field.name]}
+                            </p>
+                          )}
+
+                          {field.type === 'file' && (
+                            <p className="text-sm text-gray-500 mt-1 italic">
+                              {fileHintMessage}
+                            </p>
+                          )}
+
+                          {field.name === 'supplier_declaration' && (
+                            <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+                              <p className="text-sm text-gray-700 mb-3">
+                                Accepted: Only PDFs, Docx, PNG, JPG, JPEG (Max:
+                                2MB)
+                              </p>
+                              <p className="text-sm text-purple-700 font-medium mb-3">
+                                Download & upload the declaration form docx file
+                              </p>
+                              <SupplierDeclarationPreview formData={formData} />
                             </div>
                           )}
-                        </>
-                      )}
-
-                      {fieldError && (
-                        <p className="mt-1.5 text-xs text-red-600 flex items-center">
-                           {/* Optional: <ErrorIcon className="w-4 h-4 mr-1" /> */}
-                          {fieldError}
-                        </p>
-                      )}
-
-                      {field.type === 'file' && fileHintMessage && (
-                        <p className="text-xs text-gray-500 mt-1 italic">{fileHintMessage}</p>
-                      )}
-
-
-
-                      {(field.name === 'supplier_declaration' || field.name === 'supplier_declaration_com') && (
-                        <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200 text-sm">
-                          <div className="flex items-start">
-                            <InfoIcon className="w-5 h-5 text-purple-500 mr-2 flex-shrink-0 mt-0.5" />
-                            <div>
-                              {field.name === 'supplier_declaration' && (
-                                <>
-                                  <p className="text-purple-700 font-semibold mb-1">
-                                    Download & upload the supplier declaration form.
-                                  </p>
-                                  <p className="text-gray-600 text-xs mb-2">
-                                    Accepted: PDFs, Docx, PNG, JPG, JPEG (Max: 2MB)
-                                  </p>
-                                  {/* TODO: Update SupplierDeclarationPreview for consistent styling */}
-                                  <SupplierDeclarationPreview formData={formData} />
-                                </>
-                              )}
-                              {field.name === 'supplier_declaration_com' && (
-                                 <>
-                                  <p className="text-purple-700 font-semibold mb-1">
-                                    Download & upload the commercial declaration form.
-                                  </p>
-                                   {/* TODO: Update SupplierComDeclarationPreview for consistent styling */}
-                                  <SupplierComDeclarationPreview formData={formData} />
-                                 </>
-                              )}
-                            </div>
-                          </div>
+                          {field.name === 'signature' && (
+                            <p className="text-sm text-gray-500 mt-1 italic">
+                              Accepted file formats images: .jpg, .jpeg, .png
+                            </p>
+                          )}
                         </div>
-                      )}
-                      {field.name === 'signature' && (
-                        <p className="text-xs text-gray-500 mt-1 italic">
-                          Accepted file formats images: .jpg, .jpeg, .png
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </CollapsibleSection>
-          ))}
-
-          {/* Product Details Step */}
-          {currentStep === 2 && (
-            /* TODO: Update StepVendorProductDetailsPage for consistent styling */
-            <StepVendorProductDetailsPage />
+                      );
+                    })}
+                  </div>
+                </CollapsibleSection>
+              ))}
+            </>
           )}
+          {currentStep === 1 && (
+            <>
+              {steps[currentStep].sections.map((section, sectionIndex) => (
+                <CollapsibleSection
+                  key={sectionIndex}
+                  title={section.heading}
+                  isOpen={
+                    activeSections[`${currentStep}-${sectionIndex}`] || false
+                  }
+                  onToggle={(isOpen) =>
+                    toggleSection(currentStep, sectionIndex, isOpen)
+                  }
+                  isCompleted={isSectionCompleted(sectionIndex, currentStep)}
+                  isActive={
+                    !isSectionCompleted(sectionIndex, currentStep) &&
+                    activeSections[`${currentStep}-${sectionIndex}`]
+                  }
+                  index={sectionIndex}
+                  totalSections={steps[currentStep].sections.length}
+                >
+                  {section.heading === 'CEO/Owner details' && (
+                    <div className="mb-6 flex items-center">
+                      <input
+                        type="checkbox"
+                        id="sameAsAbove"
+                        checked={sameAsAbove}
+                        onChange={(e) => {
+                          setSameAsAbove(e.target.checked);
+                          if (e.target.checked) {
+                            setFormData((prev) => ({
+                              ...prev,
+                              owner_name: prev.contact_person_name,
+                              owner_email: prev.contact_person_email,
+                              owner_country_code:
+                                prev.contact_person_country_code,
+                              owner_mobile: prev.contact_person_mobile,
+                            }));
+                          } else {
+                            setFormData((prev) => ({
+                              ...prev,
+                              owner_name: '',
+                              owner_email: '',
+                              owner_mobile: '',
+                            }));
+                          }
+                        }}
+                        className="w-5 h-5 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+                      />
+                      <label
+                        htmlFor="sameAsAbove"
+                        className="ml-2 text-purple-700 font-medium"
+                      >
+                        Fill the data as Contact person's details
+                      </label>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                    {section.fields.map((field, fieldIndex) => {
+                      // Skip rendering the GST field if hasGSTnumber is not 'Yes'
+                      if (
+                        field.name === 'GST' &&
+                        formData.hasGSTnumber !== 'Yes'
+                      ) {
+                        return null;
+                      }
 
+                      return (
+                        <div
+                          key={fieldIndex}
+                          className={`${
+                            errors[field.name] ? 'animate-shake' : ''
+                          }`}
+                        >
+                          <label
+                            htmlFor={field.name}
+                            className={`block text-sm font-medium ${
+                              errors[field.name]
+                                ? 'text-red-700'
+                                : 'text-gray-700'
+                            } mb-1`}
+                          >
+                            {field.conditionalLabel &&
+                            field.conditionalLabel[formData.company_type]
+                              ? field.conditionalLabel[formData.company_type]
+                              : field.label}
+                            {isFieldRequired(field.name) && (
+                              <span className="text-red-500 ml-1">*</span>
+                            )}
+                          </label>
+
+                          {(field.type === 'text' ||
+                            field.type === 'url' ||
+                            field.type === 'email' ||
+                            field.type === 'mobile') && (
+                            <div className="relative">
+                              <input
+                                type={
+                                  field.type === 'url'
+                                    ? 'url'
+                                    : field.type === 'email'
+                                    ? 'email'
+                                    : field.type === 'mobile'
+                                    ? 'tel'
+                                    : 'text'
+                                }
+                                id={field.name}
+                                name={field.name}
+                                value={formData[field.name] || ''}
+                                onChange={handleChange}
+                                disabled={
+                                  handleDisable(field.name) ||
+                                  (field.name === 'PAN' && isPANValidated)
+                                }
+                                className={`w-full px-4 py-3 rounded-lg border ${
+                                  errors[field.name]
+                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                    : field.name === 'PAN' && isPANValidated
+                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
+                                    : field.name === 'GST' && isGSTValidated
+                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
+                                    : field.name === 'company_name' &&
+                                      isGSTValidated
+                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
+                                    : isGSTValidated &&
+                                      (field.name === 'address_line_1' ||
+                                        field.name === 'address_line_2' ||
+                                        field.name === 'city' ||
+                                        field.name === 'state' ||
+                                        field.name === 'pincode' ||
+                                        field.name === 'country')
+                                    ? 'border-green-500 bg-green-50 focus:border-green-500 focus:ring-green-500'
+                                    : formData.pincode &&
+                                      formData.pincode.length === 6 &&
+                                      disableCountrySelction &&
+                                      (field.name === 'country' ||
+                                        field.name === 'state' ||
+                                        field.name === 'city')
+                                    ? 'border-blue-500 bg-blue-50 focus:border-blue-500 focus:ring-blue-500'
+                                    : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
+                                } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200 ${
+                                  (field.name === 'PAN' && isPANValidated) ||
+                                  (field.name === 'GST' && isGSTValidated) ||
+                                  (field.name === 'company_name' &&
+                                    isGSTValidated) ||
+                                  (isGSTValidated &&
+                                    (field.name === 'address_line_1' ||
+                                      field.name === 'address_line_2' ||
+                                      field.name === 'city' ||
+                                      field.name === 'state' ||
+                                      field.name === 'pincode' ||
+                                      field.name === 'country')) ||
+                                  (formData.pincode &&
+                                    formData.pincode.length === 6 &&
+                                    disableCountrySelction &&
+                                    (field.name === 'country' ||
+                                      field.name === 'state' ||
+                                      field.name === 'city'))
+                                    ? 'pr-10'
+                                    : ''
+                                }`}
+                                placeholder={
+                                  field.name === 'CIN' &&
+                                  [
+                                    'Individual',
+                                    'sole_proprietership',
+                                    'partnership',
+                                  ].includes(formData.company_type)
+                                    ? 'Enter 12-digit Aadhaar number'
+                                    : field.name === 'CIN'
+                                    ? 'Enter 21-character CIN'
+                                    : field.name === 'PAN'
+                                    ? 'Format: ABCDE1234F'
+                                    : `Enter ${field.label.toLowerCase()}`
+                                }
+                              />
+                              {field.name === 'PAN' && isPANValidated && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                  <svg
+                                    className="h-5 w-5 text-green-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
+                                  </svg>
+                                </div>
+                              )}
+                              {field.name === 'GST' && isGSTValidated && (
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                  <svg
+                                    className="h-5 w-5 text-green-500"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M5 13l4 4L19 7"
+                                    />
+                                  </svg>
+                                </div>
+                              )}
+                              {field.name === 'company_name' &&
+                                isGSTValidated && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">
+                                    <svg
+                                      className="h-5 w-5 text-green-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {field.name === 'PAN' && isPANValidated && (
+                                <p className="mt-1 text-sm text-green-600">
+                                  PAN verified successfully
+                                </p>
+                              )}
+                              {field.name === 'GST' && isGSTValidated && (
+                                <p className="mt-1 text-sm text-green-600">
+                                  GST verified successfully
+                                </p>
+                              )}
+                              {field.name === 'company_name' &&
+                                isGSTValidated && (
+                                  <p className="mt-1 text-sm text-green-600">
+                                    Auto-filled from GST data
+                                  </p>
+                                )}
+                              {isGSTValidated &&
+                                (field.name === 'address_line_1' ||
+                                  field.name === 'address_line_2' ||
+                                  field.name === 'city' ||
+                                  field.name === 'state' ||
+                                  field.name === 'pincode' ||
+                                  field.name === 'country') && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg
+                                      className="h-5 w-5 text-green-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {isGSTValidated &&
+                                (field.name === 'address_line_1' ||
+                                  field.name === 'address_line_2' ||
+                                  field.name === 'city' ||
+                                  field.name === 'state' ||
+                                  field.name === 'pincode' ||
+                                  field.name === 'country') && (
+                                  <p className="mt-1 text-sm text-green-600">
+                                    Auto-filled from GST data
+                                  </p>
+                                )}
+                              {formData.pincode &&
+                                formData.pincode.length === 6 &&
+                                disableCountrySelction &&
+                                (field.name === 'country' ||
+                                  field.name === 'state' ||
+                                  field.name === 'city') && (
+                                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                    <svg
+                                      className="h-5 w-5 text-blue-500"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                  </div>
+                                )}
+                              {formData.pincode &&
+                                formData.pincode.length === 6 &&
+                                disableCountrySelction &&
+                                (field.name === 'country' ||
+                                  field.name === 'state' ||
+                                  field.name === 'city') && (
+                                  <p className="mt-1 text-sm text-blue-600">
+                                    Auto-filled from Pincode
+                                  </p>
+                                )}
+                            </div>
+                          )}
+
+                          {field.type === 'textarea' && (
+                            <textarea
+                              id={field.name}
+                              name={field.name}
+                              value={formData[field.name] || ''}
+                              onChange={handleChange}
+                              rows={4}
+                              className={`w-full px-4 py-3 rounded-lg border ${
+                                errors[field.name]
+                                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                  : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
+                              } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                              placeholder={
+                                field.placeholder || `Enter ${field.label}`
+                              }
+                            />
+                          )}
+
+                          {(field.type === 'dropdown' ||
+                            field.type === 'select') && (
+                            <Dropdown
+                              id={field.name}
+                              name={field.name}
+                              value={formData[field.name] || ''}
+                              onChange={handleChange}
+                              options={
+                                handleOptions(field.name) || field.options
+                              }
+                              placeholder={
+                                field.placeholder || `Select ${field.label}`
+                              }
+                              className={`w-full px-4 py-3 rounded-lg border ${
+                                errors[field.name]
+                                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                                  : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'
+                              } focus:border-transparent focus:outline-none focus:ring-2 transition-all duration-200`}
+                            />
+                          )}
+
+                          {field.type === 'file' && (
+                            <FileUploadPreviewCard
+                              id={field.name}
+                              name={field.name}
+                              onChange={(e) => handleChange(e)}
+                              onRemove={() => {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  [field.name]: '',
+                                }));
+                              }}
+                              value={formData[field.name]}
+                              accept={fileUploadInfo[field.name]?.accept || ''}
+                              fileType={
+                                fileUploadInfo[field.name]?.fileType || ''
+                              }
+                              isUploading={uploadingFields[field.name] || false}
+                              progress={0}
+                              className={`${
+                                errors[field.name] ? 'border-red-500' : ''
+                              }`}
+                            />
+                          )}
+
+                          {errors[field.name] && (
+                            <p className="mt-1 text-sm text-red-500">
+                              {errors[field.name]}
+                            </p>
+                          )}
+
+                          {field.type === 'file' && (
+                            <p className="text-sm text-gray-500 mt-1 italic">
+                              {fileHintMessage}
+                            </p>
+                          )}
+
+                          {field.name === 'supplier_declaration' && (
+                            <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+                              <p className="text-sm text-gray-700 mb-3">
+                                Accepted: Only PDFs, Docx, PNG, JPG, JPEG (Max:
+                                2MB)
+                              </p>
+                              <p className="text-sm text-purple-700 font-medium mb-3">
+                                Download & upload the declaration form docx file
+                              </p>
+                              <SupplierDeclarationPreview formData={formData} />
+                            </div>
+                          )}
+                          {field.name === 'signature' && (
+                            <p className="text-sm text-gray-500 mt-1 italic">
+                              Accepted file formats images: .jpg, .jpeg, .png
+                            </p>
+                          )}
+
+                          {field.name === 'supplier_declaration_com' && (
+                            <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
+                              <SupplierComDeclarationPreview
+                                formData={formData}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CollapsibleSection>
+              ))}
+            </>
+          )}
+          {currentStep === 2 && <StepVendorProductDetailsPage />}
 
           {/* Navigation Buttons */}
-          {currentStep < steps.length && ( // Show buttons also on the last data entry step if it's not step 2
-            <div className={clsx(
-                "flex items-center mt-10 pt-6 border-t border-gray-200",
-                currentStep > 0 ? "justify-between" : "justify-end" // Adjust based on Back button presence
-            )}>
+          {currentStep < 2 && (
+            <div className="flex justify-between items-center mt-10">
               {currentStep > 0 && (
                 <button
                   type="button"
                   onClick={handleBack}
-                  className="flex items-center px-6 py-2.5 border-2 rounded-lg text-purple-600 border-purple-400 hover:bg-purple-50 hover:border-purple-500 active:bg-purple-100 transition-all duration-200 font-medium text-base shadow-sm"
+                  className="flex items-center px-6 py-3 border-2 rounded-lg text-purple-600 border-purple-300 hover:bg-purple-50 transition-all duration-300 font-medium"
                 >
-                  <BackArrowIcon className="h-5 w-5 mr-2" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                   Back
                 </button>
               )}
-              <div className="flex space-x-4">
+              <div className="flex ml-auto space-x-4">
+                {/* Clear Button */}
                 <button
                   type="button"
                   onClick={clearFormData}
-                  className="flex items-center px-6 py-2.5 border-2 rounded-lg text-red-600 border-red-300 hover:bg-red-50 hover:border-red-400 active:bg-red-100 transition-all duration-200 font-medium text-base shadow-sm"
+                  className="flex items-center px-6 py-3 border-2 rounded-lg text-red-600 border-red-300 hover:bg-red-50 transition-all duration-300 font-medium"
                 >
-                  <ClearIcon className="h-5 w-5 mr-2" />
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    className="h-5 w-5 mr-2" 
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                  >
+                    <path 
+                      fillRule="evenodd" 
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" 
+                      clipRule="evenodd" 
+                    />
+                  </svg>
                   Clear
                 </button>
-
+                
+                {/* Next Button */}
                 {currentStep < steps.length - 1 && (
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="flex items-center justify-center px-8 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg active:shadow-inner font-semibold text-base"
+                    className="flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
                   >
                     Next
-                    <NextArrowIcon className="h-5 w-5 ml-2" />
-                  </button>
-                )}
-                {currentStep === steps.length - 1 && (
-                  <button
-                    type="submit"
-                    className="flex items-center justify-center px-8 py-2.5 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-lg hover:from-green-600 hover:to-teal-700 transition-all duration-300 shadow-md hover:shadow-lg active:shadow-inner font-semibold text-base"
-                  >
-                    Submit
-                    <SubmitCheckIcon className="h-5 w-5 ml-2" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 ml-2"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H7a1 1 0 110-2h5.586l-2.293-2.293a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   </button>
                 )}
               </div>
+              {currentStep === steps.length - 1 && (
+                <button
+                  type="submit"
+                  className="flex items-center px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+                >
+                  Submit
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 ml-2"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L9 10.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
           )}
         </form>
       </div>
 
-      {/* Loading Overlay & Modals */}
-      {/* TODO: Update LoaderMessage and OTPVerificationModal for consistent styling */}
-      {isRemovingBG && <LoaderMessage message={removalMessage || 'Processing...'} />}
+      {/* Loading Overlay */}
+      {isRemovingBG && (
+        <LoaderMessage message={removalMessage || 'Processing...'} />
+      )}
+
       <OTPVerificationModal
         isOpen={showOtpModal}
         onClose={() => {
-          setShowOtpModal(false); setOtp(''); setOtpMessage('');
+          setShowOtpModal(false);
+          setOtp('');
+          setOtpMessage('');
         }}
         otp={otp}
         setOtp={setOtp}

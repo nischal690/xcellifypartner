@@ -31,7 +31,6 @@
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-http-backend": "^2.6.2",
     "lucide-react": "^0.474.0",
-    "mammoth": "^1.9.0",
     "mobx": "^6.13.5",
     "mobx-react": "^9.1.1",
     "onnxruntime-web": "^1.21.0-dev.20250206-d981b153d3",

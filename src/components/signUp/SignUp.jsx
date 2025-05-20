@@ -35,68 +35,48 @@ export default function SignUp() {
   }, []);
 
   return (
-    <div className="w-full min-h-screen flex flex-col md:flex-row">
-      {/* Left Container - Benefits Section */}
-      <div className="hidden md:flex flex-col w-1/2 h-screen bg-white relative overflow-hidden">
-        {/* Purple accent circles */}
-        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-purple-primary/10"></div>
-        <div className="absolute top-1/2 right-0 w-32 h-32 rounded-full bg-purple-primary/5 transform translate-x-1/2"></div>
-        
-        {/* Content container with better spacing */}
-        <div className="px-8 lg:px-16 py-16 flex flex-col h-full relative z-10">
-          <h3 className="text-4xl font-bold font-dmsans text-purple-primary mb-8">
-            Why Partner with Us?
-          </h3>
-          
-          <div className="flex-grow space-y-8">
-            {SignUpData.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-start space-x-5 group transition-all duration-300 hover:translate-x-1"
-              >
-                <div className="w-14 h-14 rounded-xl bg-purple-primary/10 flex items-center justify-center shadow-sm">
+    <div className="w-full min-h-screen flex flex-col max-md:items-center md:flex-row justify-start overflow-y-auto">
+      {/* Login Left Container */}
+      <div className="hidden md:flex flex-col w-1/2 lg:px-16 lg:py-8 md:px-10 md:py-6 bg-white mt-9">
+        <h3 className="text-4xl font-bold font-dmsans text-purple-primary mb-4">
+          Why Partner with Us?
+        </h3>
+        <div className="w-full flex flex-col flex-1 mt-2">
+          <div className="w-full flex">
+            <div className="space-y-4 w-full md:w-3/4 lg:w-2/3">
+              {SignUpData.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-row items-center space-x-3 text-left w-full"
+                >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-8 h-8 object-contain"
+                    className="w-12 h-12 object-contain"
                   />
+
+                  <div className="flex-1 mt-4">
+                    <p className="text-xl text-purple-primary">
+                      <span className="font-bold text-purple-primary">
+                        {item.title}:{' '}
+                      </span>
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-lg text-gray-800">
-                    <span className="font-bold text-purple-primary">
-                      {item.title}:{' '}
-                    </span>
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-          
-          {/* Logo section at bottom */}
-          <div className="mt-auto flex justify-center items-center pt-10">
-            <img
-              src={Icon}
-              alt="Xcellify Logo"
-              className="w-40 h-28 object-contain"
-            />
-          </div>
-          
-          {/* Bottom accent shape */}
-          <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-primary/5 rounded-tl-full"></div>
+        </div>
+        {/* Fixing the gap between text and logo */}
+        <div className="mb-4">
+          <img src={Icon} alt="Xcellify Logo" className="w-48 h-36 mx-auto" />
         </div>
       </div>
 
-      {/* Right Container - SignUp Form */}
-      <div className="w-full md:w-1/2 min-h-screen flex flex-col items-center justify-center px-6 md:px-8 lg:px-12 bg-gradient-to-br from-purple-primary via-[#7249DB] to-[#6C59CA] relative overflow-hidden">
-        {/* Design elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-bl-full"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-tr-full"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-24 h-24 rounded-full bg-white/5"></div>
-        
-        {/* Content container */}
-        <div className="w-full max-w-md relative z-10">
-          {/* Mobile logo */}
+      {/* Sign Right Container */}
+      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 px-8 md:px-4 bg-gradient-to-b from-purple-primary to-[#6C59CA]">
+        <div className="w-full justify-center max-w-md pt-10">
           <div className="block md:hidden w-full mb-10">
             <img
               src={WhiteIcon}
@@ -104,50 +84,38 @@ export default function SignUp() {
               onClick={() => {
                 navigate('/');
               }}
-              className="w-20 cursor-pointer"
+              className="w-[80px] cursor-pointer"
             />
           </div>
-          
-          {/* Sign up header with subtle animation */}
-          <div className="text-center mb-8">
-            <h1 className="text-white text-4xl font-bold mb-2">Create Account</h1>
-            <p className="text-white/80 text-lg">Join our partner network today</p>
+          <h1 className="text-white text-4xl font-semibold mb-12 text-center">
+            Sign Up
+          </h1>
+
+          <SignUpForm />
+
+          <SeparatorWithText
+            text="Or continue with"
+            lineClass="h-px bg-gray-400"
+            textClass="text-white px-4"
+          />
+
+          <div className="w-full flex items-center justify-center max-w-md mt-6 space-x-5">
+            <SocialMediaButton
+              icon={GoogleAuthIcon}
+              text=""
+              onClick={continueWithGoogle}
+            />
+            <SocialMediaButton
+              icon={FacebookAuthIcon}
+              text=""
+              onClick={continueWithFacebook}
+            />
           </div>
 
-          {/* SignUp form with improved styling */}
-          <div className="backdrop-blur-sm bg-white/5 p-6 rounded-2xl border border-white/20 shadow-xl mb-6">
-            <SignUpForm />
-          </div>
-
-          {/* Social login section with improved styling */}
-          <div className="mt-6">
-            <div className="flex items-center mb-4">
-              <span className="flex-1 h-px bg-white/20"></span>
-              <span className="text-white/80 px-4">Or Sign Up With</span>
-              <span className="flex-1 h-px bg-white/20"></span>
-            </div>
-
-            <div className="flex justify-center space-x-4 mt-4">
-              <button
-                className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-                onClick={continueWithGoogle}
-              >
-                <img src={GoogleAuthIcon} alt="Google" className="w-6 h-6" />
-              </button>
-              <button
-                className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-                onClick={continueWithFacebook}
-              >
-                <img src={FacebookAuthIcon} alt="Facebook" className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-
-          {/* Login link with improved styling */}
-          <div className="text-center mt-8">
-            <p className="text-white/80">
+          <div className="text-center my-6">
+            <p className="text-white">
               Already have an account?{' '}
-              <Link to="/login" className="font-medium text-white hover:underline transition-all">
+              <Link to="/login" className="font-medium underline">
                 Login
               </Link>
             </p>
@@ -155,18 +123,7 @@ export default function SignUp() {
         </div>
       </div>
 
-      <ToastContainer 
-        position="top-right"
-        autoClose={3000} 
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      <ToastContainer autoClose={1000} />
     </div>
   );
 }

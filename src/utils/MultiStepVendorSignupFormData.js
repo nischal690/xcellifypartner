@@ -316,14 +316,10 @@ const steps = [
             required: true,
           },
           {
-            label: 'Upload Partner Service Agreement',
-            name: 'partner_service_agreement',
+            label: 'Upload Supplier Declaration Form',
+            name: 'supplier_declaration_com',
             type: 'file',
             required: true,
-            documentPreview: {
-              name: 'preview_partner_service_agreement',
-              documentPath: '/docs/PartnerServiceAgreementInd.docx'
-            }
           },
         ],
       },

@@ -11,7 +11,6 @@ const TextFieldWithVerification = ({
   isAadhaarVerified,
   setShowOtpModal,
   disableCountrySelction,
-  requestAadhaarOtp,
 }) => {
   const isAddressField = [
     'address_line_1',
@@ -129,12 +128,7 @@ const TextFieldWithVerification = ({
             (!isAadhaarVerified ? (
               <button
                 type="button"
-                onClick={async () => {
-                  const success = await requestAadhaarOtp();
-                  if (success) {
-                    setShowOtpModal(true);
-                  }
-                }}
+                onClick={() => setShowOtpModal(true)}
                 disabled={formData[field.name]?.length !== 12}
                 className={`absolute top-1/2 right-3 transform -translate-y-1/2 px-3 py-1 rounded-md text-xs transition-all duration-300 ${
                   formData[field.name]?.length === 12
@@ -142,7 +136,7 @@ const TextFieldWithVerification = ({
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                Verify OTP
+                Verify
               </button>
             ) : (
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none mb-5">

@@ -258,219 +258,188 @@ export default function Login() {
 
   return (
     <div className="w-full min-h-screen flex flex-col md:flex-row">
-      {/* Left Container - Benefits Section */}
-      <div className="hidden md:flex flex-col w-1/2 h-screen bg-white relative overflow-hidden">
-        {/* Purple accent circle */}
-        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-purple-primary/10"></div>
-        
-        {/* Content container with better spacing */}
-        <div className="px-8 lg:px-16 py-16 flex flex-col h-full relative z-10">
-          <h3 className="text-4xl font-bold font-dmsans text-purple-primary mb-8">
-            Why Partner with Us?
-          </h3>
-          
-          <div className="flex-grow space-y-8">
-            {SignUpData.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-start space-x-5 group transition-all duration-300 hover:translate-x-1"
-              >
-                <div className="w-14 h-14 rounded-xl bg-purple-primary/10 flex items-center justify-center shadow-sm">
+      {/* Login Left Container */}
+      <div className="hidden md:flex flex-col w-1/2 h-screen lg:px-16 lg:py-16 md:px-10 md:py-12 bg-white">
+        <h3 className="text-4xl font-bold font-dmsans text-purple-primary mb-6">
+          Why Partner with Us?
+        </h3>
+        <div className="w-full flex flex-col">
+          <div className="w-full flex">
+            <div className="space-y-6 w-full md:w-3/4 lg:w-2/3">
+              {SignUpData.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-row items-center space-x-4 text-left w-full"
+                >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-8 h-8 object-contain"
+                    className="w-12 h-12 object-contain"
                   />
+
+                  <div className="flex-1">
+                    <p className="text-xl text-purple-primary">
+                      <span className="font-bold text-purple-primary">
+                        {item.title}:{' '}
+                      </span>
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-lg text-gray-800">
-                    <span className="font-bold text-purple-primary">
-                      {item.title}:{' '}
-                    </span>
-                    {item.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-          
-          {/* Logo section at bottom */}
-          <div className="mt-auto flex justify-center items-center pt-10">
-            <img
-              src={Icon}
-              alt="Xcellify Logo"
-              className="w-40 h-28 object-contain"
-            />
-          </div>
-          
-          {/* Bottom accent shape */}
-          <div className="absolute bottom-0 right-0 w-32 h-32 bg-purple-primary/5 rounded-tl-full"></div>
+        </div>
+        {/* Fixing the gap between text and logo */}
+        <div className="flex flex-col items-start mt-8">
+          <img
+            src={Icon}
+            alt="Xcellify Logo"
+            className="w-44 h-32 mb-4 self-center"
+          />
         </div>
       </div>
 
-      {/* Right Container - Login Form */}
-      <div className="w-full md:w-1/2 min-h-screen flex flex-col items-center justify-center px-6 md:px-8 lg:px-12 bg-gradient-to-br from-purple-primary via-[#7249DB] to-[#6C59CA] relative overflow-hidden">
-        {/* Design elements */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-bl-full"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-tr-full"></div>
-        
-        {/* Content container */}
-        <div className="w-full max-w-md relative z-10">
-          {/* Mobile logo */}
-          <div className="block md:hidden w-full mb-10">
-            <img
-              src={WhiteIcon}
-              alt="Xcellify Logo"
-              onClick={() => {
-                navigate('/');
-              }}
-              className="w-20 cursor-pointer"
+      {/* Login Right Container */}
+      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 px-8 md:px-4 bg-gradient-to-b from-purple-primary to-[#6C59CA]">
+        <div className="block md:hidden w-full mb-10">
+          <img
+            src={WhiteIcon}
+            alt="Xcellify Logo"
+            onClick={() => {
+              navigate('/');
+            }}
+            className="w-[80px] cursor-pointer"
+          />
+        </div>
+        <h1 className="text-white text-4xl font-semibold mb-12">Login</h1>
+        <form className="w-full max-w-lg" onSubmit={(e) => e.preventDefault()}>
+          <div className="flex items-center rounded-xl bg-[#F5F5F5] mb-7">
+            <img src={emailIcon} alt="Email Icon" className=" py-4 px-8" />
+            <input
+              id="loginEmailInpt"
+              className="w-full bg-transparent border-0 outline-none pl-2"
+              placeholder="Enter your email address"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
-          
-          {/* Login header with subtle animation */}
-          <div className="text-center mb-10">
-            <h1 className="text-white text-4xl font-bold mb-2">Welcome Back</h1>
-            <p className="text-white/80 text-lg">Login to your account</p>
-          </div>
-
-          {/* Login form with improved styling */}
-          <form className="w-full space-y-6" onSubmit={(e) => e.preventDefault()}>
-            {/* Email input */}
-            <div className="relative group">
-              <div className="flex items-center rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 group-hover:border-white/30 focus-within:border-white/40">
-                <img src={emailIcon} alt="Email Icon" className="py-4 px-5" />
-                <input
-                  id="loginEmailInpt"
-                  className="w-full bg-transparent border-0 outline-none pl-2 pr-5 py-4 text-white placeholder-white/60"
-                  placeholder="Enter your email address"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
-            {/* Password input */}
-            <div className="relative group">
-              <div className="flex items-center rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 group-hover:border-white/30 focus-within:border-white/40">
-                <img src={lockIcon} alt="Password Icon" className="py-4 px-5" />
-                <input
-                  className="w-full bg-transparent border-0 outline-none pl-2 pr-5 py-4 text-white placeholder-white/60"
-                  placeholder="Enter your password"
-                  type={isPasswordVisible ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                <span
-                  onClick={togglePasswordVisibility}
-                  className="cursor-pointer pe-4"
-                >
-                  <img
-                    src={isPasswordVisible ? eyeOn : eyeOff}
-                    alt="Toggle Visibility"
-                    className="w-6 h-6 opacity-70 hover:opacity-100 transition-opacity"
-                  />
-                </span>
-              </div>
-            </div>
-
-            {/* Forgot password link */}
-            <div className="text-right">
-              <p
-                onClick={handleClick}
-                className="text-white/80 text-sm cursor-pointer hover:text-white hover:underline transition-all"
-              >
-                Forgot password?
-              </p>
-            </div>
-
-            {/* Captcha component */}
-            <div className="backdrop-blur-sm bg-white/5 p-4 rounded-xl border border-white/20">
-              <Captcha
-                captchaValidation={captchaValidation}
-                refreshCaptcha={refreshCaptcha}
-                updateRefreshCaptcha={updateRefreshCaptcha}
-                captchaValue={captchaValue}
-                setCaptchaValue={setCaptchaValue}
-              />
-            </div>
-
-            {/* Login button with improved styling */}
-            <button
-              disabled={!isButtonEnabled}
-              className={`w-full py-4 rounded-xl mt-4 font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg ${
-                isButtonEnabled
-                  ? 'bg-white text-purple-primary hover:shadow-purple-500/20'
-                  : 'bg-white/50 text-purple-800/50 cursor-not-allowed'
-              }`}
-              type="button"
-              onClick={handleSubmit}
+          <div className="flex items-center rounded-xl bg-[#F5F5F5]">
+            <img src={lockIcon} alt="Password Icon" className=" py-4 px-8" />
+            <input
+              className="w-full bg-transparent border-0 outline-none pl-2"
+              placeholder="Enter your password"
+              type={isPasswordVisible ? 'text' : 'password'}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <span
+              onClick={togglePasswordVisibility}
+              className="cursor-pointer pe-4"
             >
-              {loading ? (
-                <div className="flex items-center justify-center">
-                  <svg
-                    aria-hidden="true"
-                    className="w-6 h-6 text-purple-300 animate-spin fill-purple-600"
-                    viewBox="0 0 100 101"
-                  >
-                    <path
-                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591..."
-                      fill="currentColor"
-                    />
-                    <path
-                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539..."
-                      fill="currentFill"
-                    />
-                  </svg>
-                </div>
-              ) : (
-                'Log in'
-              )}
-            </button>
-          </form>
-
-          {/* Social login section */}
-          <div className="mt-8">
-            <div className="flex items-center">
-              <span className="flex-1 h-px bg-white/20"></span>
-              <span className="text-white/80 px-4">Or Continue With</span>
-              <span className="flex-1 h-px bg-white/20"></span>
-            </div>
-
-            <div className="flex justify-center space-x-4 mt-6">
-              <button
-                className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-                onClick={continueWithGoogle}
-              >
-                <img src={GoogleAuthIcon} alt="Google" className="w-6 h-6" />
-              </button>
-              <button
-                className="w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg transition-all duration-300 hover:scale-110"
-                onClick={continueWithFacebook}
-              >
-                <img src={FacebookAuthIcon} alt="Facebook" className="w-6 h-6" />
-              </button>
-            </div>
+              <img
+                src={isPasswordVisible ? eyeOn : eyeOff}
+                alt="Toggle Visibility"
+                className="w-8 h-6"
+              />
+            </span>
           </div>
-
-          {/* Sign up link */}
-          <div className="text-center mt-10">
-            <p className="text-white/80">
-              Don't have an account?{' '}
-              <Link to="/signup" className="font-medium text-white hover:underline transition-all">
-                Sign Up
-              </Link>
+          <div className="text-right mt-2 mb-5 mr-5">
+            <p
+              onClick={handleClick}
+              className="text-white text-sm cursor-pointer"
+            >
+              Forgot password?
             </p>
           </div>
+          <Captcha
+            captchaValidation={captchaValidation}
+            refreshCaptcha={refreshCaptcha}
+            updateRefreshCaptcha={updateRefreshCaptcha}
+            captchaValue={captchaValue}
+            setCaptchaValue={setCaptchaValue}
+          />
+          <button
+            disabled={!isButtonEnabled}
+            className={`w-full text-white py-3 rounded-xl mt-10 transition-all ${
+              isButtonEnabled
+                ? 'bg-[#6A3CB3] hover:bg-[#57359E]'
+                : 'bg-gray-400 cursor-not-allowed'
+            }`}
+            type="button"
+            onClick={handleSubmit}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <svg
+                  aria-hidden="true"
+                  className="w-6 h-6 text-gray-200 animate-spin fill-white"
+                  viewBox="0 0 100 101"
+                >
+                  <path
+                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591..."
+                    fill="currentColor"
+                  />
+                  <path
+                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539..."
+                    fill="currentFill"
+                  />
+                </svg>
+              </div>
+            ) : (
+              'Log in'
+            )}
+          </button>
+        </form>
+        <div className="flex items-center mt-8 w-full max-w-md">
+          <span className="flex-1 h-px bg-gray-400"></span>
+          <span className="text-white px-4">Or Continue With</span>
+          <span className="flex-1 h-px bg-gray-400"></span>
+        </div>
+        <div className="w-full flex items-center justify-center max-w-md mt-8 space-x-5">
+          <button
+            className="w-10 h-10 flex items-center justify-center border-2 border-white py-2 px-2 rounded-full text-white transition-all bg-white "
+            onClick={continueWithGoogle}
+          >
+            <img src={GoogleAuthIcon} alt="Google" className="w-full" />
+          </button>
+          <button
+            className="w-10 h-10 flex items-center justify-center border-2 border-white py-2 px-2 rounded-full text-white transition-all bg-white "
+            onClick={continueWithFacebook}
+          >
+            <img src={FacebookAuthIcon} alt="Facebook" className="w-full" />
+          </button>
+        </div>
+        {/* <div className="w-full max-w-md mt-6 space-y-3">
+					<button
+						className="flex items-center justify-center w-full  py-2 rounded-xl transition-all bg-white text-[#6A3CB3] hover:bg-slate-100"
+						onClick={continueWithGoogle}
+					>
+						<img src={GoogleAuthIcon} alt="Google" className="w-5 mr-2" />
+						Continue with Google
+					</button>
+					<button
+						className="flex items-center justify-center w-full py-2 rounded-xl transition-all bg-white text-[#6A3CB3] hover:bg-slate-100"
+						onClick={continueWithFacebook}
+					>
+						<img src={FacebookAuthIcon} alt="Facebook" className="w-5 mr-2" />
+						Continue with Facebook
+					</button>
+				</div> */}
+        <div className="text-center mt-8">
+          <p className="text-white">
+            Don't have an account?{' '}
+            <Link to="/signup" className="font-medium underline">
+              Sign Up
+            </Link>
+          </p>
         </div>
       </div>
-
-      {/* Password reset dialog */}
       <dialog
-        className="rounded-2xl shadow-xl bg-white p-6 max-w-md w-full"
+        className="items-center justify-center w-font-dmsans rounded-lg shadow-md"
         ref={emailDialog}
       >
         <EmailVerificationPwd closeDialog={closeDialog} />
