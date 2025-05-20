@@ -3,6 +3,9 @@ import { saveAs } from 'file-saver';
 import { Packer } from 'docx';
 import wordDocIcon from '../../assets/onboardingAssests/icons/word-doc-icon.png';
 import { FaDownload, FaEye } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import apiRequest from '../../utils/apiRequest';
+import { getLocalStorageItem } from '../../utils/localStorageService';
 
 import {
   generateSupplierDoc,
@@ -10,9 +13,44 @@ import {
 } from '../../utils/supplierDeclarationHelpers';
 
 const SupplierDeclarationPreview = ({ formData, onAgree }) => {
+  // Function to upload the supplier declaration to the server
+  const uploadSupplierDeclaration = async (file) => {
+    try {
+      // Create form data for the API request
+      const formData = new FormData();
+      formData.append('attachment', file);
+      formData.append('fileType', 'supplier_declaration');
+      
+      // Make the API request
+      const response = await apiRequest({
+        url: 'mic-login/uploadAttachments',
+        method: 'post',
+        data: formData,
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      
+      // Handle the response
+      if (response?.data?.success) {
+        toast.success('Supplier Declaration uploaded successfully');
+      } else {
+        toast.error(
+          `Failed to upload Supplier Declaration. ${response?.data?.message || 'Please try again.'}`
+        );
+      }
+    } catch (error) {
+      console.error('Error uploading Supplier Declaration:', error);
+      toast.error(
+        `Error uploading Supplier Declaration: ${error.message || 'Unknown error'}`
+      );
+    }
+  };
+  
   // If no onAgree function is provided, create a default one that creates a File object
   // and attaches it to the supplier_declaration field in the form
   const handleAgree = onAgree || ((file) => {
+    // Upload the file to the server first
+    uploadSupplierDeclaration(file);
+    
     // Find the supplier_declaration input field
     const declarationInput = document.querySelector('input[name="supplier_declaration"]');
     
@@ -43,8 +81,13 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
 
     let signatureImage = null;
     if (signature && typeof signature !== 'string') {
-      const arrayBuffer = await signature.arrayBuffer();
-      signatureImage = new Uint8Array(arrayBuffer);
+      try {
+        const arrayBuffer = await signature.arrayBuffer();
+        signatureImage = new Uint8Array(arrayBuffer);
+      } catch (err) {
+        console.error('Error processing signature for document:', err);
+        toast.error('Error processing signature for document');
+      }
     }
 
     // Generate the document using the unified helper function
@@ -54,16 +97,19 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
     if (autoAttach) {
       // Create a File object from the blob that can be attached to a form input
       const file = new File([blob], 'Supplier_Declaration.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      // handleAgree will handle both the local attachment and the API upload
       handleAgree(file);
     } else {
       // Just download the file
       saveAs(blob, 'Supplier_Declaration.docx');
     }
   };
+  
+
 
   // Preview the document content
   const handlePreview = () => {
-    const { company_type, company_name, contact_person_name, GST, PAN, address_line_1, address_line_2 } = formData;
+    const { company_type, company_name, contact_person_name, GST, PAN, address_line_1, address_line_2, contact_person_mobile, contact_person_email, signature } = formData;
     
     // Get the language template - using the same helper as the document generator
     const lang = getLanguageTemplate(company_type);
@@ -88,7 +134,30 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
       { text: `➢ ${lang.confirmInvoices}`, type: 'paragraph' },
       { text: `➢ ${lang.undertakeToInform}`, type: 'paragraph' },
       { text: `${lang.declareTrue}`, type: 'paragraph', style: 'italic' },
+      { text: '', type: 'paragraph' },
+      { text: 'Authorised Signatory', type: 'paragraph', style: 'bold' },
+      { text: 'For', type: 'paragraph' }
     ];
+    
+    // Add signature if available
+    if (signature) {
+      if (signature instanceof File) {
+        const url = URL.createObjectURL(signature);
+        content.push({ type: 'signature', data: url });
+      } else if (typeof signature === 'string') {
+        content.push({ type: 'signature', data: signature });
+      } else {
+        content.push({ text: '(Signature format not supported)', type: 'paragraph', style: 'italic' });
+      }
+    } else {
+      content.push({ text: '(Signature Missing)', type: 'paragraph', style: 'italic' });
+    }
+    
+    // Add contact details
+    content.push({ text: `Name: ${contact_person_name || '-'}`, type: 'paragraph' });
+    content.push({ text: 'Designation: CEO', type: 'paragraph' });
+    content.push({ text: `Contact number: ${contact_person_mobile || '-'}`, type: 'paragraph' });
+    content.push({ text: `Email Address: ${contact_person_email || '-'}`, type: 'paragraph' });
     
     setPreviewContent(content);
     setShowPreview(true);
@@ -157,7 +226,7 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-purple-900">Declaration Preview</h2>
+                <h2 className="text-xl font-bold text-purple-900">Supplier Declaration</h2>
                 <button 
                   onClick={() => setShowPreview(false)}
                   className="text-gray-500 hover:text-gray-700"
@@ -175,6 +244,20 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
                       <h3 key={index} className="text-xl font-bold text-center my-4 text-purple-900">
                         {item.text || item.heading}
                       </h3>
+                    );
+                  } else if (item.type === 'signature') {
+                    return (
+                      <div key={index} className="my-4">
+                        <img 
+                          src={item.data} 
+                          alt="Signature" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2232%22%20height%3D%2232%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20fill%3D%22%23ddd%22%20width%3D%2232%22%20height%3D%2232%22%2F%3E%3Ctext%20fill%3D%22%23aaa%22%20font-family%3D%22Arial%2CHelvetica%2Csans-serif%22%20font-size%3D%224%22%20dy%3D%225%22%20font-weight%3D%22bold%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%3ESignature%3C%2Ftext%3E%3C%2Fsvg%3E';
+                          }}
+                          className="max-h-16 border border-gray-200 p-1 rounded"
+                        />
+                      </div>
                     );
                   } else {
                     return (

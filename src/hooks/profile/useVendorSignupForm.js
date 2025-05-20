@@ -726,27 +726,62 @@ export function useVendorSignupForm(steps, appStore) {
 
       // Special logic only for signature field
       if (name === 'signature') {
-        try {
-          setIsRemovingBG(true);
-          setRemovalMessage('Removing background...');
-
-          const arrayBuffer = await file.arrayBuffer();
-          const imageBlob = new Blob([arrayBuffer], { type: file.type });
-
-          const outputBlob = await removeBackground(imageBlob, {
-            output: { format: 'image/png' },
-            progress: (p) => console.log('BG removal progress:', p),
-          });
-
-          file = new File([outputBlob], 'signature.png', { type: 'image/png' });
-          toast.success('Background removed from signature!');
-        } catch (err) {
-          console.error('Background removal failed:', err);
-          toast.error('Failed to remove background from signature.');
-        } finally {
-          setIsRemovingBG(false);
-          setRemovalMessage('');
-        }
+        // Create a promise that we can await to ensure background removal completes
+        const processSignature = async () => {
+          try {
+            // Show loading state
+            setIsRemovingBG(true);
+            setRemovalMessage('Removing background from signature...');
+            toast.info('Processing signature, please wait...', { autoClose: false, toastId: 'removing-bg' });
+            
+            console.log('Starting background removal for signature');
+            
+            // Convert file to blob for processing
+            const arrayBuffer = await file.arrayBuffer();
+            const imageBlob = new Blob([arrayBuffer], { type: file.type });
+            
+            // Use the imgly background removal library
+            console.log('Calling removeBackground API');
+            const outputBlob = await removeBackground(imageBlob, {
+              output: { format: 'image/png' },
+              progress: (p) => {
+                console.log(`Background removal progress: ${Math.round(p * 100)}%`);
+                setRemovalMessage(`Removing background: ${Math.round(p * 100)}%`);
+              },
+            });
+            
+            console.log('Background removal completed successfully');
+            
+            // Create a new file with the processed image
+            const processedFile = new File([outputBlob], 'signature.png', { type: 'image/png' });
+            
+            // Dismiss the loading toast and show success
+            toast.dismiss('removing-bg');
+            toast.success('Background removed from signature!', { autoClose: 3000 });
+            
+            return processedFile;
+          } catch (err) {
+            console.error('Background removal failed:', err);
+            toast.dismiss('removing-bg');
+            toast.error('Failed to remove background from signature. Using original image.');
+            return file; // Return original file as fallback
+          } finally {
+            setIsRemovingBG(false);
+            setRemovalMessage('');
+          }
+        };
+        
+        // Wait for background removal to complete before updating form data
+        processSignature().then(processedFile => {
+          // Update form data with the processed file
+          setFormData(prev => ({ ...prev, [name]: processedFile }));
+          
+          // Upload the processed file
+          uploadFile(name, userInfo?.id, processedFile);
+        });
+        
+        // Return early since we're handling the form update in the promise
+        return;
       }
 
       // Upload file
@@ -979,20 +1014,107 @@ export function useVendorSignupForm(steps, appStore) {
     }
   };
 
+  const requestAadhaarOtp = async () => {
+    try {
+      const aadhaarNumber = formData.CIN;
+      if (!aadhaarNumber || aadhaarNumber.length !== 12) {
+        toast.error('Please enter a valid 12-digit Aadhaar number');
+        return false;
+      }
+
+      setIsVerifying(true);
+      setOtpMessage('Requesting OTP...');
+
+      console.log('Requesting Aadhaar OTP for:', aadhaarNumber);
+      
+      // Direct API call to Cashfree
+      const response = await fetch('https://cashfree.com/verification/offline-aadhaar/otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-client-id': 'CF925547D0LNAJVBL13C73BKMVN0',
+          'x-client-secret': 'cfsk_ma_prod_25a9fd685a0a745c9f735c5bf01f1a74_73af97a2'
+        },
+        body: JSON.stringify({
+          aadhaar_number: aadhaarNumber
+        })
+      });
+
+      const data = await response.json();
+      console.log('Aadhaar OTP response:', data);
+      
+      if (response.ok && data.request_id) {
+        setOtpMessage('OTP sent successfully to your registered mobile number');
+        localStorage.setItem('aadhaar_request_id', data.request_id);
+        setIsVerifying(false);
+        return true;
+      } else {
+        setOtpMessage('');
+        toast.error(data.message || 'Failed to send OTP. Please try again.');
+        setIsVerifying(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error requesting Aadhaar OTP:', error);
+      toast.error('Failed to send OTP. Please try again.');
+      setIsVerifying(false);
+      return false;
+    }
+  };
+
   const handleOtpVerify = async () => {
     setIsVerifying(true);
-    setTimeout(() => {
-      if (otp === '123456') {
+    try {
+      const requestId = localStorage.getItem('aadhaar_request_id');
+      if (!requestId) {
+        toast.error('OTP request expired. Please try again.');
+        setIsVerifying(false);
+        setShowOtpModal(false);
+        return;
+      }
+
+      if (!otp || otp.length !== 6) {
+        toast.error('Please enter a valid 6-digit OTP');
+        setIsVerifying(false);
+        return;
+      }
+
+      console.log('Verifying Aadhaar OTP:', otp);
+      console.log('Using request ID:', requestId);
+      
+      // Direct API call to Cashfree
+      const response = await fetch('https://cashfree.com/verification/offline-aadhaar/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-client-id': 'CF925547D0LNAJVBL13C73BKMVN0',
+          'x-client-secret': 'cfsk_ma_prod_25a9fd685a0a745c9f735c5bf01f1a74_73af97a2'
+        },
+        body: JSON.stringify({
+          request_id: requestId,
+          otp: otp
+        })
+      });
+
+      const data = await response.json();
+      console.log('Aadhaar OTP verification response:', data);
+      
+      if (response.ok && data.verification_status === 'SUCCESS') {
         setOtpMessage('OTP Verified Successfully!');
         setTimeout(() => {
           setIsAadhaarVerified(true);
           setShowOtpModal(false);
+          localStorage.removeItem('aadhaar_request_id');
         }, 1000);
       } else {
-        toast.error('Invalid OTP. Please try again.');
+        toast.error(data.message || 'Invalid OTP. Please try again.');
       }
+    } catch (error) {
+      console.error('Error verifying Aadhaar OTP:', error);
+      toast.error('Error verifying OTP. Please try again.');
+    } finally {
       setIsVerifying(false);
-    }, 1000);
+    }
   };
 
   return {
@@ -1030,6 +1152,7 @@ export function useVendorSignupForm(steps, appStore) {
     otp,
     setOtp,
     handleOtpVerify,
+    requestAadhaarOtp,
     otpMessage,
     setOtpMessage,
     isVerifying,
