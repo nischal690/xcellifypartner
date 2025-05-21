@@ -52,7 +52,7 @@ export function useVendorSignupForm(steps, appStore) {
         return acc;
       }, {});
   };
-  
+
   // Get saved form data from localStorage or initialize empty form
   const getSavedFormData = () => {
     const savedData = localStorage.getItem('vendorSignupFormData');
@@ -86,6 +86,9 @@ export function useVendorSignupForm(steps, appStore) {
   const [otp, setOtp] = useState('');
   const [otpMessage, setOtpMessage] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+
+  const [aadhaarCareOf, setAadhaarCareOf] = useState('');
+  const [aadhaarDob, setAadhaarDob] = useState('');
 
   const debouncedCompanyName = useDebouncedValue(formData.company_name, 1000);
 
@@ -979,20 +982,129 @@ export function useVendorSignupForm(steps, appStore) {
     }
   };
 
+  const requestAadhaarOtp = async () => {
+    try {
+      const aadhaarNumber = formData.CIN;
+      if (!aadhaarNumber || aadhaarNumber.length !== 12) {
+        toast.error('Please enter a valid 12-digit Aadhaar number');
+        return false;
+      }
+
+      setIsVerifying(true);
+      setOtpMessage('Requesting OTP...');
+
+      console.log('Requesting Aadhaar OTP for:', aadhaarNumber);
+
+      // Direct API call to Cashfree
+      const response = await fetch(
+        'https://cashfree.com/verification/offline-aadhaar/otp',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-client-id': 'CF925547D0LNAJVBL13C73BKMVN0',
+            'x-client-secret':
+              'cfsk_ma_prod_25a9fd685a0a745c9f735c5bf01f1a74_73af97a2',
+          },
+          body: JSON.stringify({
+            aadhaar_number: aadhaarNumber,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log('Aadhaar OTP response:', data);
+
+      if (response.ok && data.request_id) {
+        setOtpMessage('OTP sent successfully to your registered mobile number');
+        localStorage.setItem('aadhaar_request_id', data.request_id);
+        setIsVerifying(false);
+        return true;
+      } else {
+        setOtpMessage('');
+        toast.error(data.message || 'Failed to send OTP. Please try again.');
+        setIsVerifying(false);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error requesting Aadhaar OTP:', error);
+      toast.error('Failed to send OTP. Please try again.');
+      setIsVerifying(false);
+      return false;
+    }
+  };
+
   const handleOtpVerify = async () => {
     setIsVerifying(true);
-    setTimeout(() => {
-      if (otp === '123456') {
+    try {
+      const requestId = localStorage.getItem('aadhaar_request_id');
+      if (!requestId) {
+        toast.error('OTP request expired. Please try again.');
+        setIsVerifying(false);
+        setShowOtpModal(false);
+        return;
+      }
+
+      if (!otp || otp.length !== 6) {
+        toast.error('Please enter a valid 6-digit OTP');
+        setIsVerifying(false);
+        return;
+      }
+
+      console.log('Verifying Aadhaar OTP:', otp);
+      console.log('Using request ID:', requestId);
+
+      // Direct API call to Cashfree
+      const response = await fetch(
+        'https://cashfree.com/verification/offline-aadhaar/verify',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-client-id': 'CF925547D0LNAJVBL13C73BKMVN0',
+            'x-client-secret':
+              'cfsk_ma_prod_25a9fd685a0a745c9f735c5bf01f1a74_73af97a2',
+          },
+          body: JSON.stringify({
+            request_id: requestId,
+            otp: otp,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      console.log('Aadhaar OTP verification response:', data);
+
+      if (response.ok && data.verification_status === 'SUCCESS') {
         setOtpMessage('OTP Verified Successfully!');
+
+        setAadhaarCareOf(data.care_of || '');
+        setAadhaarDob(data.dob || '');
+
+        setFormData((prev) => ({
+          ...prev,
+          address_line_1: data.address || '',
+          pincode: data.split_address?.pincode
+            ? String(data.split_address.pincode)
+            : '',
+        }));
+
+        toast.success('Address and Pincode auto-filled from Aadhaar');
+
         setTimeout(() => {
           setIsAadhaarVerified(true);
           setShowOtpModal(false);
+          localStorage.removeItem('aadhaar_request_id');
         }, 1000);
       } else {
-        toast.error('Invalid OTP. Please try again.');
+        toast.error(data.message || 'Invalid OTP. Please try again.');
       }
+    } catch (error) {
+      console.error('Error verifying Aadhaar OTP:', error);
+      toast.error('Error verifying OTP. Please try again.');
+    } finally {
       setIsVerifying(false);
-    }, 1000);
+    }
   };
 
   return {
@@ -1030,6 +1142,9 @@ export function useVendorSignupForm(steps, appStore) {
     otp,
     setOtp,
     handleOtpVerify,
+    requestAadhaarOtp,
+    aadhaarCareOf,
+    aadhaarDob,
     otpMessage,
     setOtpMessage,
     isVerifying,

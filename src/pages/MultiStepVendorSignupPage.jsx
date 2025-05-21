@@ -23,7 +23,10 @@ import SupplierDeclarationCard from '../components/onboardingPage/SupplierDeclar
 import LoaderMessage from '../components/commonComponents/LoaderMessage';
 
 import SupplierDeclarationPreview from '../components/onboardingPage/SupplierDeclarationPreview';
-import { vendorBaiscInfoValidation } from '../utils/HelperFunction';
+import {
+  getAgeFromDob,
+  vendorBaiscInfoValidation,
+} from '../utils/HelperFunction';
 import SupplierComDeclarationPreview from '../components/onboardingPage/SupplierComDeclarationPreview';
 import { useVendorSignupForm } from '../hooks/profile/useVendorSignupForm';
 import OTPVerificationModal from '../components/commonComponents/modals/OTPVerificationModal';
@@ -55,6 +58,9 @@ const MultiStepVendorSignupPage = () => {
     disableCountrySelction,
     setDisableCountrySelection,
     isAadhaarVerified,
+    requestAadhaarOtp,
+    aadhaarCareOf,
+    aadhaarDob,
     setIsAadhaarVerified,
     showOtpModal,
     setShowOtpModal,
@@ -272,6 +278,7 @@ const MultiStepVendorSignupPage = () => {
                               isGSTValidated={isGSTValidated}
                               isAadhaarVerified={isAadhaarVerified}
                               setShowOtpModal={setShowOtpModal}
+                              requestAadhaarOtp={requestAadhaarOtp}
                               disableCountrySelction={disableCountrySelction}
                             />
                           )}
@@ -790,6 +797,8 @@ const MultiStepVendorSignupPage = () => {
                             <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-100">
                               <SupplierComDeclarationPreview
                                 formData={formData}
+                                careOf={aadhaarCareOf}
+                                age={getAgeFromDob(aadhaarDob)}
                               />
                             </div>
                           )}
@@ -834,21 +843,21 @@ const MultiStepVendorSignupPage = () => {
                   onClick={clearFormData}
                   className="flex items-center px-6 py-3 border-2 rounded-lg text-red-600 border-red-300 hover:bg-red-50 transition-all duration-300 font-medium"
                 >
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-5 w-5 mr-2" 
-                    viewBox="0 0 20 20" 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    viewBox="0 0 20 20"
                     fill="currentColor"
                   >
-                    <path 
-                      fillRule="evenodd" 
-                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" 
-                      clipRule="evenodd" 
+                    <path
+                      fillRule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clipRule="evenodd"
                     />
                   </svg>
                   Clear
                 </button>
-                
+
                 {/* Next Button */}
                 {currentStep < steps.length - 1 && (
                   <button

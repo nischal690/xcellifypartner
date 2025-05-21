@@ -8,6 +8,8 @@ export default function DocumentPreview({
   onClose,
   onDownload,
   onAttach,
+  careOf,
+  age,
 }) {
   const {
     company_type,
@@ -26,12 +28,14 @@ export default function DocumentPreview({
     return tpl
       .replace(/{contact_person_name}/g, contact_person_name || '')
       .replace(/{company_name}/g, company_name || '')
+      .replace(/{careOf}/g, careOf || '')
+      .replace(/{age}/g, age || '')
       .replace(/{PAN}/g, formData.PAN || '')
       .replace(/{CIN}/g, formData.CIN || '')
       .replace(/{GST}/g, formData.GST || '')
       .replace(/{address_line_1}/g, formData.address_line_1 || '')
       .replace(/{address_line_2}/g, formData.address_line_2 || '');
-  }, [company_type, company_name, contact_person_name, formData]);
+  }, [company_type, company_name, contact_person_name, formData, careOf, age]);
 
   const signatureURL = useMemo(
     () => (signatureFile ? URL.createObjectURL(signatureFile) : null),

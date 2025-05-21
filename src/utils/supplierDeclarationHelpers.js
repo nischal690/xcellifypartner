@@ -242,7 +242,7 @@ export const generateCompanyDoc = (formData, signatureImage, formattedDate) => {
 export const declarationFirstPageCom = {
   Individual: {
     firstParagraph:
-      'Mr./Ms. {contact_person_name}, S/D/o/ of [●], aged about [●], having PAN {PAN} and Aadhaar No. {CIN} and currently residing at {address_line_1},{address_line_2} (hereinafter referred to as the “Partner” which expression shall unless repugnant to the context or meaning thereof be deemed to mean and include his/her legal heirs, representatives and permitted assigns) of the SECOND PART. ',
+      'Mr./Ms. {contact_person_name}, S/D/o/ of {careOf}, aged about {age}, having PAN {PAN} and Aadhaar No. {CIN} and currently residing at {address_line_1},{address_line_2} (hereinafter referred to as the “Partner” which expression shall unless repugnant to the context or meaning thereof be deemed to mean and include his/her legal heirs, representatives and permitted assigns) of the SECOND PART. ',
   },
   privateltd: {
     firstParagraph:
@@ -265,7 +265,9 @@ export const declarationFirstPageCom = {
 export const generateComIndividualDoc = async (
   formData,
   signatureImage,
-  formattedDate
+  formattedDate,
+  careOf,
+  age
 ) => {
   const {
     company_type,
@@ -282,6 +284,8 @@ export const generateComIndividualDoc = async (
   const tpl = declarationFirstPageCom[company_type]?.firstParagraph;
   const paragraphText = tpl
     ?.replace(/{contact_person_name}/g, contact_person_name || '')
+    .replace(/{careOf}/g, careOf || '')
+    .replace(/{age}/g, age || '')
     .replace(/{company_name}/g, formData.company_name || '')
     .replace(/{PAN}/g, PAN || '')
     .replace(/{CIN}/g, CIN || '')

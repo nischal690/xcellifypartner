@@ -105,3 +105,12 @@ export const truncateHTML = (html, maxLength) => {
     ? textContent.slice(0, maxLength) + '...'
     : textContent;
 };
+
+export const getAgeFromDob = (dobStr) => {
+  if (!dobStr) return null;
+  const [day, month, year] = dobStr.split('-').map(Number);
+  const birthDate = new Date(year, month - 1, day);
+  const ageDiff = Date.now() - birthDate.getTime();
+  const ageDate = new Date(ageDiff);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+};

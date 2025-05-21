@@ -8,7 +8,7 @@ import { generateDocFromTemplate } from '../../utils/generateDocFromTemplate';
 import { generateComIndividualDoc } from '../../utils/supplierDeclarationHelpers';
 import DocumentPreview from './DocumentPreview';
 
-const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
+const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
   const handleAgree =
     onAgree ||
     ((file) => {
@@ -56,11 +56,19 @@ const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
       const doc = await generateComIndividualDoc(
         formData,
         signatureImage,
-        formattedDate
+        formattedDate,
+        careOf,
+        age
       );
       blob = await Packer.toBlob(doc);
     } else {
-      blob = await generateDocFromTemplate(formData, sigFile, formattedDate);
+      blob = await generateDocFromTemplate(
+        formData,
+        sigFile,
+        formattedDate,
+        careOf,
+        age
+      );
     }
 
     if (autoAttach && mode === 'declaration') {
@@ -214,6 +222,8 @@ const SupplierComDeclarationPreview = ({ formData, onAgree }) => {
                     handleGenerateDoc('declaration', true);
                     setShowPreview(false);
                   }}
+                  careOf={careOf}
+                  age={age}
                 />
               )}
             </div>

@@ -8,7 +8,9 @@ import ImageModule from 'docxtemplater-image-module-free';
 export const generateDocFromTemplate = async (
   formData,
   signatureImageFile,
-  formattedDate
+  formattedDate,
+  careOf,
+  age
 ) => {
   try {
     let templatePath = '';
@@ -82,6 +84,8 @@ export const generateDocFromTemplate = async (
       bank_ifsc: formData.bank_ifsc || '',
       company_name: formData.company_name || '',
       signatureImage: signatureBase64 || '',
+      careOf: careOf || '',
+      age: age || '',
     });
 
     doc.render();
