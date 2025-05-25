@@ -57,6 +57,7 @@ const VerifyEmailPage = lazy(() =>
 const NewProfilePage = lazy(() => import('./pages/NewProfilePage'));
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/commonComponents/ErrorBoundary';
+import StepVendorCreateProducts from './pages/StepVendorCreateProducts';
 
 const Products = lazy(() => import('./pages/products/index'));
 const ProductDetailedView = lazy(() =>
@@ -118,8 +119,12 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/add-new-product',
+    path: '/add-new-product-1',
     element: <StepVendorProductDetailsPage />,
+  },
+  {
+    path: '/add-new-product',
+    element: <StepVendorCreateProducts />,
   },
   {
     path: '/edit-product/:category/:subcategory',

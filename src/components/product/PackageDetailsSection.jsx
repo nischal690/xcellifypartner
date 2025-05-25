@@ -31,7 +31,7 @@ const tutoringFields = [
   },
   {
     label: 'Study Level',
-    name: 'study_level',
+    name: 'study_levels',
     options: ['6', '7', '8', '9', '10', '11', '12', 'Graduation'],
   },
   {
@@ -56,7 +56,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
 
   const [errors, setErrors] = useState({
     price: '',
-    discount: '',
+    discount_percent: '',
     package_duration_hours: '',
   });
 
@@ -64,7 +64,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
     package_title: '',
     pricing_type: '',
     price: '',
-    discount: '',
+    discount_percent: '',
     final_package_price: '',
     package_details: '',
     currency: 'INR',
@@ -80,7 +80,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      package: packages,
+      packages_details: packages,
     }));
     console.log('🧩 Live package update sent to formData:', packages);
   }, [packages]);
@@ -88,7 +88,9 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (['price', 'discount', 'package_duration_hours'].includes(name)) {
+    if (
+      ['price', 'discount_percent', 'package_duration_hours'].includes(name)
+    ) {
       const numericValue = parseFloat(value);
 
       if (numericValue < 0) {
@@ -96,10 +98,10 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
           ...prev,
           [name]: `${name.replace('_', ' ')} must be positive`,
         }));
-      } else if (name === 'discount' && numericValue > 100) {
+      } else if (name === 'discount_percent' && numericValue > 100) {
         setErrors((prev) => ({
           ...prev,
-          discount: 'Discount must be between 0 and 100%',
+          discount_percent: 'discount_percent must be between 0 and 100%',
         }));
       } else {
         setErrors((prev) => ({ ...prev, [name]: '' }));
@@ -112,16 +114,17 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
     setNewPackage((prev) => ({ ...prev, [field]: selectedOption.value }));
   };
 
-  const calculateFinalPrice = (price, discount) => {
+  const calculateFinalPrice = (price, discount_percent) => {
     const p = parseFloat(price) || 0;
-    const d = parseFloat(discount) || 0;
+    const d = parseFloat(discount_percent) || 0;
 
     const final = p - (p * d) / 100;
     return parseFloat(final.toFixed(2)); // 2 decimal precision
   };
 
   const handleAddPackage = () => {
-    const { pricing_type, package_duration_hours, discount } = newPackage;
+    const { pricing_type, package_duration_hours, discount_percent } =
+      newPackage;
 
     if (!pricing_type || !package_duration_hours) {
       toast.error('Please fill in all package * required fields.');
@@ -130,43 +133,51 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
 
     if (
       errors.price ||
-      errors.discount ||
+      errors.discount_percent ||
       errors.package_duration_hours ||
       parseFloat(newPackage.price) < 0 ||
-      parseFloat(newPackage.discount) < 0 ||
-      parseFloat(newPackage.discount) > 100 ||
+      parseFloat(newPackage.discount_percent) < 0 ||
+      parseFloat(newPackage.discount_percent) > 100 ||
       parseInt(newPackage.package_duration_hours) < 0
     ) {
       toast.error('Please fix all errors in package fields before adding.');
       return;
     }
 
-    const discountVal = parseFloat(discount) || 0;
-    if (discountVal > 100) {
-      toast.error('Discount must be less than or equal to 100%.');
+    const discount_percentVal = parseFloat(discount_percent) || 0;
+    if (discount_percentVal > 100) {
+      toast.error('discount_percent must be less than or equal to 100%.');
       return;
     }
 
     const price = parseFloat(newPackage.price) || 0;
-    const finalPrice = calculateFinalPrice(price, discountVal);
+    const finalPrice = calculateFinalPrice(price, discount_percentVal);
     const duration = parseInt(package_duration_hours) || 0;
 
     const newEntry = {
       package_title: newPackage.package_title || '',
       pricing_type,
       price,
-      discount: discountVal,
+      discount_percent: discount_percentVal,
       final_package_price: finalPrice,
       package_details: newPackage.package_details || '',
       currency: newPackage.currency || '',
       package_duration_hours: duration,
 
-      mode_of_teaching: formData.mode_of_teaching || '',
-      study_level: formData.study_level || '',
-      subjects: formData.subjects || '',
-      language_medium: formData.language_medium || '',
-      materials_provided: formData.materials_provided || '',
-      available_slots: formData.available_slots || '',
+      mode_of_teaching: (formData.mode_of_teaching || '')
+        .split(', ')
+        .filter(Boolean),
+      study_levels: (formData.study_levels || '').split(', ').filter(Boolean),
+      subjects: (formData.subjects || '').split(', ').filter(Boolean),
+      language_medium: (formData.language_medium || '')
+        .split(', ')
+        .filter(Boolean),
+      materials_provided: (formData.materials_provided || '')
+        .split(', ')
+        .filter(Boolean),
+      available_slots: (formData.available_slots || '')
+        .split(', ')
+        .filter(Boolean),
     };
 
     const updatedPackages = [...packages, newEntry].slice(0, 5);
@@ -178,7 +189,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
       package_title: '',
       pricing_type: '',
       price: '',
-      discount: '',
+      discount_percent: '',
       final_package_price: '',
       package_details: '',
       currency: '',
@@ -195,7 +206,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
       setFormData((prev) => ({
         ...prev,
         mode_of_teaching: '',
-        study_level: '',
+        study_levels: '',
         subjects: '',
         language_medium: '',
         materials_provided: '',
@@ -218,12 +229,22 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
 
     setFormData((prev) => ({
       ...prev,
-      mode_of_teaching: pkg.mode_of_teaching || '',
-      study_level: pkg.study_level || '',
-      subjects: pkg.subjects || '',
-      language_medium: pkg.language_medium || '',
-      materials_provided: pkg.materials_provided || '',
-      available_slots: pkg.available_slots || '',
+      mode_of_teaching: Array.isArray(pkg.mode_of_teaching)
+        ? pkg.mode_of_teaching.join(', ')
+        : '',
+      study_levels: Array.isArray(pkg.study_levels)
+        ? pkg.study_levels.join(', ')
+        : '',
+      subjects: Array.isArray(pkg.subjects) ? pkg.subjects.join(', ') : '',
+      language_medium: Array.isArray(pkg.language_medium)
+        ? pkg.language_medium.join(', ')
+        : '',
+      materials_provided: Array.isArray(pkg.materials_provided)
+        ? pkg.materials_provided.join(', ')
+        : '',
+      available_slots: Array.isArray(pkg.available_slots)
+        ? pkg.available_slots.join(', ')
+        : '',
     }));
 
     handleDeletePackage(index);
@@ -501,19 +522,23 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">Discount (%)</label>
+            <label className="block mb-1 font-medium">
+              discount_percent (%)
+            </label>
             <input
-              name="discount"
-              value={newPackage.discount}
+              name="discount_percent"
+              value={newPackage.discount_percent}
               onChange={handleChange}
-              placeholder="Enter discount"
+              placeholder="Enter discount_percent"
               type="number"
               className="p-2 border rounded w-full"
               min={0}
               max={100}
             />
-            {errors.discount && (
-              <p className="text-red-500 text-sm mt-1">{errors.discount}</p>
+            {errors.discount_percent && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.discount_percent}
+              </p>
             )}
           </div>
 
@@ -523,7 +548,7 @@ const PackageDetailsSection = ({ formData, setFormData, category }) => {
               name="final_package_price"
               value={calculateFinalPrice(
                 parseFloat(newPackage.price) || 0,
-                parseFloat(newPackage.discount) || 0
+                parseFloat(newPackage.discount_percent) || 0
               )}
               placeholder="Final price"
               type="number"

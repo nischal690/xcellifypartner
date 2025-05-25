@@ -2,7 +2,18 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FiCheckCircle } from 'react-icons/fi';
 import PrimaryLogo from '../assets/logo-primary.png';
 import useVendorProfile from '../hooks/profile/useVendorProfile';
-import { MdDownload, MdEditNote, MdOutlineModeEdit, MdBusinessCenter, MdLocationOn, MdPerson, MdEmail, MdPhone, MdDescription, MdVerified } from 'react-icons/md';
+import {
+  MdDownload,
+  MdEditNote,
+  MdOutlineModeEdit,
+  MdBusinessCenter,
+  MdLocationOn,
+  MdPerson,
+  MdEmail,
+  MdPhone,
+  MdDescription,
+  MdVerified,
+} from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import steps from '../utils/MultiStepVendorSignupFormData';
 import { TextInput } from '../components/commonComponents';
@@ -22,7 +33,15 @@ import Products from './products';
 import Sidebar from '../components/sidebar';
 import getEssentialDocuments from '../utils/getEssentialDocuments';
 import MSMECertificateIcon from '../assets/svg-icons/MSMECertificateIcon';
-import { FaDownload, FaBuilding, FaIdCard, FaFileAlt, FaGlobe, FaPhoneAlt, FaUser } from 'react-icons/fa';
+import {
+  FaDownload,
+  FaBuilding,
+  FaIdCard,
+  FaFileAlt,
+  FaGlobe,
+  FaPhoneAlt,
+  FaUser,
+} from 'react-icons/fa';
 import EssentialDocuments from '../components/profile/EssentialDocuments';
 import { motion } from 'framer-motion';
 
@@ -141,7 +160,10 @@ export default function ProfilePage() {
           icon: <FaFileAlt />,
           fields: [
             { label: 'MSME Registered', name: 'MSME_registered' },
-            { label: 'MSME Certificate Number', name: 'MSME_certificate_number' },
+            {
+              label: 'MSME Certificate Number',
+              name: 'MSME_certificate_number',
+            },
           ],
         },
       ],
@@ -157,11 +179,20 @@ export default function ProfilePage() {
   }, [profile]);
 
   useEffect(() => {
-    if (!hasFetchedDocuments.current) {
-      getDocuments();
-      hasFetchedDocuments.current = true;
-    }
-  }, []);
+    const getDocuments = async () => {
+      if (profile.partner_id && !hasFetchedDocuments.current) {
+        console.log('Fetching documents...');
+        const docs = await getEssentialDocuments(
+          profile.user_id,
+          profile.partner_id
+        );
+        setEssentialDocs(docs);
+        console.log('Documents fetched:', docs);
+        hasFetchedDocuments.current = true;
+      }
+    };
+    getDocuments();
+  }, [profile.partner_id]);
 
   useEffect(() => {
     const loadGeoData = async () => {
@@ -358,7 +389,7 @@ export default function ProfilePage() {
 
   const GetSection = ({ subSection, index }) => {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: index * 0.1 }}
@@ -367,15 +398,23 @@ export default function ProfilePage() {
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-indigo-50">
             <div className="flex items-center gap-2">
-              {subSection.icon && <span className="text-purple-600 text-xl">{subSection.icon}</span>}
-              <h3 className="text-lg font-semibold text-gray-800">{subSection.subSectionTitle}</h3>
+              {subSection.icon && (
+                <span className="text-purple-600 text-xl">
+                  {subSection.icon}
+                </span>
+              )}
+              <h3 className="text-lg font-semibold text-gray-800">
+                {subSection.subSectionTitle}
+              </h3>
             </div>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {subSection.fields.map((field) => (
                 <div key={field.name} className="flex flex-col">
-                  <span className="text-sm text-gray-500 mb-1">{field.label}</span>
+                  <span className="text-sm text-gray-500 mb-1">
+                    {field.label}
+                  </span>
                   <span className="font-medium text-gray-800 bg-gray-50 p-2 rounded-md">
                     {profile[field.name] || '-'}
                   </span>
@@ -403,63 +442,68 @@ export default function ProfilePage() {
   // Animation variants
   const fadeIn = {
     hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { duration: 0.5 } }
+    visible: { opacity: 1, transition: { duration: 0.5 } },
   };
 
   const slideUp = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial="hidden"
       animate="visible"
       variants={fadeIn}
       className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8"
     >
-      <motion.div 
-        variants={slideUp} 
+      <motion.div
+        variants={slideUp}
         className="flex items-center justify-between mb-8"
       >
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
           Partner Profile
         </h2>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Last updated: {new Date().toLocaleDateString()}</span>
+          <span className="text-sm text-gray-500">
+            Last updated: {new Date().toLocaleDateString()}
+          </span>
         </div>
       </motion.div>
 
       <main className="w-full">
         {!editingCard && (
           <>
-            <motion.div 
-              variants={slideUp}
-              className="mb-10"
-            >
+            <motion.div variants={slideUp} className="mb-10">
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="h-24 bg-gradient-to-r from-purple-500 to-indigo-600 relative">
                   <div className="absolute -bottom-12 left-6 w-24 h-24 rounded-full border-4 border-white bg-white shadow-md flex items-center justify-center overflow-hidden">
                     {profile.company_logo ? (
-                      <img 
-                        src={profile.company_logo} 
-                        alt={profile.company_name} 
+                      <img
+                        src={profile.company_logo}
+                        alt={profile.company_name}
                         className="w-full h-full object-cover"
                       />
                     ) : (
                       <div className="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold">
-                        {profile.company_name?.charAt(0) || "X"}
+                        {profile.company_name?.charAt(0) || 'X'}
                       </div>
                     )}
                   </div>
                 </div>
                 <div className="pt-16 pb-6 px-6">
-                  <h3 className="text-2xl font-bold text-gray-800">{profile.company_name || "Your Company"}</h3>
+                  <h3 className="text-2xl font-bold text-gray-800">
+                    {profile.company_name || 'Your Company'}
+                  </h3>
                   <div className="flex flex-wrap items-center gap-4 mt-2">
                     {profile.website && (
-                      <a 
-                        href={profile.website.startsWith('http') ? profile.website : `https://${profile.website}`} 
-                        target="_blank" 
+                      <a
+                        href={
+                          profile.website.startsWith('http')
+                            ? profile.website
+                            : `https://${profile.website}`
+                        }
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-1 text-purple-600 hover:text-purple-800 transition-colors"
                       >
@@ -476,7 +520,7 @@ export default function ProfilePage() {
               </div>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               variants={slideUp}
               className="flex border-b mb-6 bg-white rounded-t-lg shadow-sm"
             >
@@ -495,8 +539,8 @@ export default function ProfilePage() {
                 </button>
               ))}
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               variants={slideUp}
               className="flex flex-col justify-between"
             >
@@ -514,14 +558,16 @@ export default function ProfilePage() {
               <motion.div variants={slideUp}>
                 <EssentialDocuments
                   essentialDocs={essentialDocs}
+                  setEssentialDocs={setEssentialDocs} // ✅ Add this
                   activeTab={activeTab}
+                  userId={profile.user_id} // ✅ Add this if needed
                 />
               </motion.div>
             </motion.div>
           </>
         )}
         {editingCard && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="w-full flex flex-col items-center bg-white rounded-xl shadow-sm p-8"
@@ -530,7 +576,8 @@ export default function ProfilePage() {
               <span className="text-purple-600">
                 {sections[activeTab].icon}
               </span>
-              {sections[activeTab].title} - {sections[activeTab].subSections[editSubSection].subSectionTitle}
+              {sections[activeTab].title} -{' '}
+              {sections[activeTab].subSections[editSubSection].subSectionTitle}
             </h2>
             <div className="w-full sm:grid sm:grid-cols-2 sm:gap-x-10 gap-y-10 grid-cols-1 items-center">
               {editSubSection != 2 && (

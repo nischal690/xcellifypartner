@@ -58,9 +58,15 @@ class AppStore {
       case 'Study India':
         return 'mic-study';
       case 'Tutoring':
-      case 'Career counselling':
-      case 'Summer courses':
         return '/mic-counselling/v2/tutoring';
+      case 'Career counselling':
+        return '/mic-counselling/v2/career-counselling';
+      case 'Summer courses':
+        return '/mic-counselling/v2/summer-courses';
+      case 'Mentoring':
+        return '/mic-counselling/v2/mentoring';
+      case 'Competitative exam':
+        return '/mic-counselling/v2/competitive-exam';
       case 'Study Finance':
       case 'Loans and scholarships':
         return 'mic-finance';

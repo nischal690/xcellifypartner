@@ -106,36 +106,6 @@ const EvaluationSection = ({ formData, setFormData }) => {
                   <AiOutlineDelete size={20} />
                 </button>
               </div>
-
-              <div>
-                <label className="block text-sm mb-1 font-medium text-gray-700">
-                  Enter your answer
-                </label>
-                <input
-                  type="text"
-                  value={item.answer}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (item.type === 'Short Paragraph' && val.length <= 50) {
-                      handleChange(idx, 'answer', val);
-                    } else if (item.type === 'Paragraph') {
-                      if (val.length <= 1000) {
-                        handleChange(idx, 'answer', val);
-                      }
-                    }
-                  }}
-                  className="w-full border p-2 rounded"
-                  placeholder={
-                    item.type === 'Short Paragraph'
-                      ? 'Max 50 characters'
-                      : '50 to 1000 characters'
-                  }
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  {item.answer.length}/
-                  {item.type === 'Short Paragraph' ? 50 : 1000} characters
-                </p>
-              </div>
             </div>
           ))}
 
