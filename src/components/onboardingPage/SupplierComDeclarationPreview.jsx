@@ -123,7 +123,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
                 className="font-medium text-sm"
                 style={{ color: '#18064A' }}
               >
-                Preview Declaration
+                Preview Agreement
               </span>
               <span className="text-xs text-gray-500">
                 View before download
@@ -159,7 +159,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
                 className="font-medium text-sm"
                 style={{ color: '#18064A' }}
               >
-                Declaration (DOCX)
+                 Agreement (DOCX)
               </span>
               <span className="text-xs text-gray-500">Microsoft Word</span>
             </div>

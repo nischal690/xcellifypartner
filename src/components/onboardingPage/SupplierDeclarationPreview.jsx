@@ -157,7 +157,7 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-purple-900">Declaration Preview</h2>
+                <h2 className="text-xl font-bold text-purple-900">Agreement Preview</h2>
                 <button 
                   onClick={() => setShowPreview(false)}
                   className="text-gray-500 hover:text-gray-700"

@@ -265,7 +265,7 @@ const steps = [
             required: false,
           },
           {
-            label: 'Upload Supplier Declaration Form',
+            label: 'Upload Declaration Form',
             name: 'supplier_declaration',
             type: 'file',
             required: true,
@@ -316,7 +316,7 @@ const steps = [
             required: true,
           },
           {
-            label: 'Upload Supplier Declaration Form',
+            label: 'Upload Service Agreement',
             name: 'supplier_declaration_com',
             type: 'file',
             required: true,
