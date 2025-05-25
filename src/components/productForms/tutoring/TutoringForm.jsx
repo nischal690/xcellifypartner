@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { useAppInfo } from '../../../hooks/appStore/useAppInfo';
@@ -6,18 +6,12 @@ import PackageForm from '../../commonComponents/products/packages/PackageForm';
 import { TutoringPackageSchema } from '../../commonComponents/products/packages/packageSchema';
 import { toast } from 'react-toastify';
 import RichTextEditor from '../../commonComponents/RichTextEditor';
+import { loadAllIndianCities } from '../../../utils/geocoding';
 
 const travelOptions = [5, 10, 20, 50].map((km) => ({
   value: km,
   label: `${km} km`,
 }));
-
-const cityOptions = [
-  { value: 'Mumbai', label: 'Mumbai' },
-  { value: 'Pune', label: 'Pune' },
-  { value: 'Bangalore', label: 'Bangalore' },
-  { value: 'Delhi', label: 'Delhi' },
-];
 
 const TutoringForm = () => {
   const navigate = useNavigate();
@@ -39,6 +33,16 @@ const TutoringForm = () => {
     youtube_video_url: '',
     refund_policy: false,
   });
+
+  const [cities, setCities] = useState([]);
+
+  const fetchCities = () => {
+    const indianCities = loadAllIndianCities();
+    setCities(indianCities);
+  };
+  useEffect(() => {
+    fetchCities();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -230,7 +234,7 @@ const TutoringForm = () => {
           </label>
           <Select
             isMulti
-            options={cityOptions}
+            options={cities}
             onChange={(selected) =>
               handleSelectChange(selected, 'service_cities')
             }
