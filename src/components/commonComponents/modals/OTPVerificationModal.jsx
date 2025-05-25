@@ -7,8 +7,17 @@ const OTPVerificationModal = ({
   setOtp,
   onVerifyOtp,
   message,
+  isVerifying,
 }) => {
-  if (!isOpen) return null;
+  console.log('OTPVerificationModal rendered with isOpen:', isOpen);
+  console.log('OTP value:', otp);
+  console.log('Message:', message);
+  console.log('isVerifying:', isVerifying);
+  
+  if (!isOpen) {
+    console.log('OTPVerificationModal not showing because isOpen is false');
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

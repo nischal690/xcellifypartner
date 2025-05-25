@@ -130,10 +130,11 @@ const TextFieldWithVerification = ({
               <button
                 type="button"
                 onClick={async () => {
-                  const success = await requestAadhaarOtp();
-                  if (success) {
-                    setShowOtpModal(true);
-                  }
+                  console.log('Verify OTP button clicked');
+                  // Just call requestAadhaarOtp - it will handle showing the modal directly
+                  await requestAadhaarOtp();
+                  // Note: We don't need to call setShowOtpModal here anymore
+                  // as it's now handled directly in the requestAadhaarOtp function
                 }}
                 disabled={formData[field.name]?.length !== 12}
                 className={`absolute top-1/2 right-3 transform -translate-y-1/2 px-3 py-1 rounded-md text-xs transition-all duration-300 ${

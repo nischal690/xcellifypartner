@@ -914,6 +914,7 @@ const MultiStepVendorSignupPage = () => {
       <OTPVerificationModal
         isOpen={showOtpModal}
         onClose={() => {
+          console.log('Closing OTP modal');
           setShowOtpModal(false);
           setOtp('');
           setOtpMessage('');
