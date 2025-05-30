@@ -83,10 +83,10 @@ export function useVendorSignupForm(steps, appStore) {
 
   const [isAadhaarVerified, setIsAadhaarVerified] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
-  
+
   // Debug effect to track showOtpModal changes
   useEffect(() => {
-    console.log('showOtpModal state changed to:', showOtpModal);
+    // console.log('showOtpModal state changed to:', showOtpModal);
   }, [showOtpModal]);
   const [otp, setOtp] = useState('');
   const [otpMessage, setOtpMessage] = useState('');
@@ -604,7 +604,9 @@ export function useVendorSignupForm(steps, appStore) {
   // Update your handleChange function
   const handleChange = async (e) => {
     console.log('handleChange triggered. Event target:', e.target); // Log 1
-    const { name, value, files } = e.target;
+    const name = e.target.name;
+    const value = e.target.value;
+    const files = e.target.files || (value instanceof File ? [value] : null);
 
     // Handle hasGSTnumber change to reset GST field when changed to "No"
     if (name === 'hasGSTnumber') {
@@ -728,45 +730,36 @@ export function useVendorSignupForm(steps, appStore) {
 
       // Special logic only for signature field
       if (name === 'signature') {
-        console.log(`Entering signature handling block for field '${name}'. Original file name: ${originalFileNameForLog}, file object:`, file); // Log 2 (enhanced)
         try {
-          console.log('Attempting background removal (inside try block)...'); // Log 3
           setIsRemovingBG(true);
-          setRemovalMessage('Removing background...');
+          setRemovalMessage('Removing background please wait a moment...');
 
           const arrayBuffer = await file.arrayBuffer();
           const imageBlob = new Blob([arrayBuffer], { type: file.type });
 
-          // Configuration for removeBackground
-          const removeBgConfig = {
-            publicPath: '/imgly-assets/', // Path to your self-hosted assets in the public folder
+          const outputBlob = await removeBackground(imageBlob, {
             output: { format: 'image/png' },
-            progress: (key, current, total) => { // Adjusted progress callback signature
-              console.log(`BG removal asset ${key}: ${current} of ${total} bytes loaded`);
-            },
-            debug: true, // Enable for more detailed console logs during troubleshooting
-          };
+            progress: (p) => console.log('BG removal progress:', p),
+          });
 
-          console.log('Calling removeBackground with config:', removeBgConfig, 'and blob:', imageBlob); // Log 4
-          const outputBlob = await removeBackground(imageBlob, removeBgConfig); // Pass the config
-
-          // CRITICAL REASSIGNMENT
-          file = new File([outputBlob], 'signature_processed.png', { type: 'image/png' }); // Changed name for clarity
-          console.log('Background removal successful. New file object created:', file); // Log 5 (NEW)
-          toast.success('Background removed from signature!');
+          file = new File([outputBlob], 'signature.png', { type: 'image/png' });
+          // toast.success('Background removed from signature!');
         } catch (err) {
-          console.error('Background removal failed (inside catch block):', err); // Enhanced log
+          console.error('Background removal failed:', err);
           toast.error('Failed to remove background from signature.');
-          // If an error occurs here, 'file' will remain the original uploaded file.
         } finally {
           setIsRemovingBG(false);
-          setRemovalMessage(''); // Clear message
+          setRemovalMessage('');
         }
       }
 
       // If the file is valid and (optionally) processed, update the form data
       // Log the file object that will be set in the form data
-      console.log(`Before setFormData for field '${name}'. File to be set (name: ${file.name}):`, file, `Original file was: ${originalFileNameForLog}`); // Log 6 (NEW)
+      console.log(
+        `Before setFormData for field '${name}'. File to be set (name: ${file.name}):`,
+        file,
+        `Original file was: ${originalFileNameForLog}`
+      ); // Log 6 (NEW)
       setFormData((prev) => ({ ...prev, [name]: file }));
 
       // Auto-upload for specific fields if needed
@@ -1014,55 +1007,61 @@ export function useVendorSignupForm(steps, appStore) {
       console.log('Requesting Aadhaar OTP for:', aadhaarNumber);
 
       // API call to the new endpoint using apiRequest
-      const response = await apiRequest.post(
-        '/mic-login/aadhaar/otp',
-        {
-          aadhaar_number: aadhaarNumber,
-        }
-      );
+      const response = await apiRequest.post('/mic-login/aadhaar/otp', {
+        aadhaar_number: aadhaarNumber,
+      });
 
       const data = response.data;
       console.log('Aadhaar OTP response:', data);
-      
+
       // Check if the API call was successful based on verification_id or status
       if (data.verification_id || (data.status && data.status === 'SUCCESS')) {
         console.log('OTP request successful');
         setOtpMessage('OTP sent successfully to your registered mobile number');
-        
+
         // Store the verification_id and any other relevant IDs
         if (data.verification_id) {
           console.log('Storing verification_id:', data.verification_id);
           localStorage.setItem('aadhaar_verification_id', data.verification_id);
         }
-        
+
         // Check for cashfreeResponse.ref_id and store it (new response structure)
         if (data.cashfreeResponse && data.cashfreeResponse.ref_id) {
-          console.log('Storing cashfreeResponse.ref_id:', data.cashfreeResponse.ref_id);
-          localStorage.setItem('aadhaar_otp_reference_id_for_verify', data.cashfreeResponse.ref_id);
+          console.log(
+            'Storing cashfreeResponse.ref_id:',
+            data.cashfreeResponse.ref_id
+          );
+          localStorage.setItem(
+            'aadhaar_otp_reference_id_for_verify',
+            data.cashfreeResponse.ref_id
+          );
         }
         // Fallback to top-level ref_id if cashfreeResponse is not present (old structure)
         else if (data.ref_id) {
           console.log('Storing ref_id:', data.ref_id);
-          localStorage.setItem('aadhaar_otp_reference_id_for_verify', data.ref_id);
+          localStorage.setItem(
+            'aadhaar_otp_reference_id_for_verify',
+            data.ref_id
+          );
           // Keep the old storage for backward compatibility
           localStorage.setItem('aadhaar_ref_id', data.ref_id);
         }
-        
+
         if (data.request_id) {
           console.log('Storing request_id:', data.request_id);
           localStorage.setItem('aadhaar_request_id', data.request_id);
         }
-        
+
         // Force the OTP modal to show
         console.log('Forcing OTP modal to show');
         setIsVerifying(false);
-        
+
         // Use a timeout to ensure state updates have completed
         setTimeout(() => {
           setShowOtpModal(true);
-          console.log('OTP modal should now be visible');
+          // console.log('OTP modal should now be visible');
         }, 500);
-        
+
         return true;
       } else {
         setOtpMessage('');
@@ -1082,10 +1081,14 @@ export function useVendorSignupForm(steps, appStore) {
     setIsVerifying(true);
     try {
       // Get the ref_id that was stored from cashfreeResponse.ref_id
-      const idForVerification = localStorage.getItem('aadhaar_otp_reference_id_for_verify'); 
-    
-      if (!idForVerification) { 
-        toast.error('OTP reference ID not found. Please initiate Aadhaar verification again.');
+      const idForVerification = localStorage.getItem(
+        'aadhaar_otp_reference_id_for_verify'
+      );
+
+      if (!idForVerification) {
+        toast.error(
+          'OTP reference ID not found. Please initiate Aadhaar verification again.'
+        );
         setIsVerifying(false);
         setShowOtpModal(false);
         localStorage.removeItem('aadhaar_verification_id'); // Old key
@@ -1101,16 +1104,19 @@ export function useVendorSignupForm(steps, appStore) {
       }
 
       console.log('Verifying Aadhaar OTP:', otp);
-      console.log('Using ID for verification (originally cashfreeResponse.ref_id):', idForVerification);
+      console.log(
+        'Using ID for verification (originally cashfreeResponse.ref_id):',
+        idForVerification
+      );
 
       // Payload key is 'verification_id', value is the stored ref_id from cashfreeResponse
       const payload = {
-        verification_id: idForVerification, 
-        otp: otp 
+        verification_id: idForVerification,
+        otp: otp,
       };
-    
+
       console.log('Verification payload:', payload);
-    
+
       const response = await apiRequest.post(
         '/mic-login/aadhaar/otp/verify', // Assuming this is the correct verification endpoint
         payload
@@ -1118,8 +1124,12 @@ export function useVendorSignupForm(steps, appStore) {
 
       const data = response.data;
       console.log('Aadhaar OTP verification response:', data);
-    
-      if (data.status === 'SUCCESS' || data.verification_status === 'SUCCESS' || data.success === true) {
+
+      if (
+        data.status === 'SUCCESS' ||
+        data.verification_status === 'SUCCESS' ||
+        data.success === true
+      ) {
         setOtpMessage('OTP Verified Successfully!');
 
         setAadhaarCareOf(data.care_of || '');
@@ -1135,7 +1145,6 @@ export function useVendorSignupForm(steps, appStore) {
 
         toast.success('Address and Pincode auto-filled from Aadhaar');
 
-      
         setTimeout(() => {
           setIsAadhaarVerified(true);
           setShowOtpModal(false);

@@ -9,13 +9,13 @@ const OTPVerificationModal = ({
   message,
   isVerifying,
 }) => {
-  console.log('OTPVerificationModal rendered with isOpen:', isOpen);
-  console.log('OTP value:', otp);
-  console.log('Message:', message);
-  console.log('isVerifying:', isVerifying);
-  
+  // console.log('OTPVerificationModal rendered with isOpen:', isOpen);
+  // console.log('OTP value:', otp);
+  // console.log('Message:', message);
+  // console.log('isVerifying:', isVerifying);
+
   if (!isOpen) {
-    console.log('OTPVerificationModal not showing because isOpen is false');
+    // console.log('OTPVerificationModal not showing because isOpen is false');
     return null;
   }
 
