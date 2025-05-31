@@ -371,9 +371,13 @@ const MultiStepVendorSignupPage = () => {
                             </div>
                           )}
                           {field.name === 'signature' && (
-                            <p className="text-sm text-gray-500 mt-1 italic">
-                              Accepted file formats images: .jpg, .jpeg, .png
-                            </p>
+                            <>
+                              {isRemovingBG && (
+                                <LoaderMessage
+                                  message={removalMessage || 'Processing...'}
+                                />
+                              )}
+                            </>
                           )}
                         </div>
                       );
@@ -905,11 +909,6 @@ const MultiStepVendorSignupPage = () => {
           )}
         </form>
       </div>
-
-      {/* Loading Overlay */}
-      {isRemovingBG && (
-        <LoaderMessage message={removalMessage || 'Processing...'} />
-      )}
 
       <OTPVerificationModal
         isOpen={showOtpModal}
