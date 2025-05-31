@@ -1110,15 +1110,16 @@ export function useVendorSignupForm(steps, appStore) {
       );
 
       // Payload key is 'verification_id', value is the stored ref_id from cashfreeResponse
+      // New payload with 'ref_id' key
       const payload = {
-        verification_id: idForVerification,
         otp: otp,
+        ref_id: idForVerification,
       };
 
       console.log('Verification payload:', payload);
 
       const response = await apiRequest.post(
-        '/mic-login/aadhaar/otp/verify', // Assuming this is the correct verification endpoint
+        '/mic-login/aadhaar/verify', // Assuming this is the correct verification endpoint
         payload
       );
 
@@ -1128,18 +1129,19 @@ export function useVendorSignupForm(steps, appStore) {
       if (
         data.status === 'SUCCESS' ||
         data.verification_status === 'SUCCESS' ||
-        data.success === true
+        data.success === true ||
+        data.cashfreeResponse?.status === 'VALID'
       ) {
         setOtpMessage('OTP Verified Successfully!');
 
-        setAadhaarCareOf(data.care_of || '');
-        setAadhaarDob(data.dob || '');
+        setAadhaarCareOf(data.cashfreeResponse?.care_of || '');
+        setAadhaarDob(data.cashfreeResponse?.dob || '');
 
         setFormData((prev) => ({
           ...prev,
-          address_line_1: data.address || '',
-          pincode: data.split_address?.pincode
-            ? String(data.split_address.pincode)
+          address_line_1: data.cashfreeResponse?.address || '',
+          pincode: data.cashfreeResponse?.split_address?.pincode
+            ? String(data.cashfreeResponse.split_address.pincode)
             : '',
         }));
 

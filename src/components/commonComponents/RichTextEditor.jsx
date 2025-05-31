@@ -28,6 +28,7 @@ const RichTextEditor = ({
 }) => {
   const [editorHeight, setEditorHeight] = useState(600);
   const [refinedText, setRefinedText] = useState('');
+  const [originalText, setOriginalText] = useState('');
   const [loading, setLoading] = useState(false);
   const quillRef = useRef(null);
 
@@ -36,6 +37,7 @@ const RichTextEditor = ({
 
   const handleRefineClick = async () => {
     setLoading(true);
+    setOriginalText(value);
     const aiText = await onAIRefine(value, fieldName);
     setRefinedText(aiText);
     setLoading(false);
@@ -44,11 +46,18 @@ const RichTextEditor = ({
   const handleApplyRefined = () => {
     onChange(refinedText);
     setRefinedText('');
+    setOriginalText('');
+  };
+
+  const handleCancelRefined = () => {
+    setRefinedText('');
+    onChange(originalText);
+    setOriginalText('');
   };
 
   return (
     <div className="w-full border rounded-md relative bg-white">
-      {/*  Toolbar with Refine Button */}
+      {/* Toolbar */}
       <div className="sticky top-0 bg-white z-1 border-b shadow-sm p-2 flex justify-between items-center">
         <span className="font-medium">Text Editor</span>
         <div className="flex gap-2 items-center">
@@ -57,19 +66,26 @@ const RichTextEditor = ({
             loading={loading}
             onClick={handleRefineClick}
           />
-
           {refinedText && (
-            <button
-              onClick={handleApplyRefined}
-              className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
-            >
-              Apply
-            </button>
+            <>
+              <button
+                onClick={handleApplyRefined}
+                className="px-3 py-1 text-sm rounded bg-green-600 text-white hover:bg-green-700"
+              >
+                Apply
+              </button>
+              <button
+                onClick={handleCancelRefined}
+                className="px-3 py-1 text-sm rounded bg-gray-400 text-white hover:bg-gray-500"
+              >
+                Cancel
+              </button>
+            </>
           )}
         </div>
       </div>
 
-      {/*  Resizable Editor */}
+      {/* Editor */}
       <ResizableBox
         height={editorHeight}
         width="100%"
