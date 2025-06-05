@@ -350,7 +350,7 @@ export default function DocumentPreview({
             onClick={onDownload}
             className="px-4 py-2 rounded-lg text-white hover:opacity-90"
             style={{
-              background: 'linear-gradient(to right, #18064A, #866EFC)',
+              background: 'linear-gradient(to right, #19074A, #876FFD)',
             }}
           >
             Download Document

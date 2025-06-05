@@ -15,7 +15,7 @@ const FooterSection = () => {
   return (
     <footer
       style={{
-        background: 'linear-gradient(to right, #876FFD, #6C59CA)',
+        background: 'linear-gradient(to right, #876FFD, #19074A)',
       }}
       className="text-white py-12"
     >
