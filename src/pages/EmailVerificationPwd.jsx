@@ -34,8 +34,8 @@ export default function EmailVerificationPwd({ closeDialog }) {
 
   return (
     <div className="flex flex-col p-5 bg-white rounded-lg shadow-md dark:border max-w-xl w-full sm:p-20">
-      <h3 className="text-[#212121] text-3xl font-bold ">Forgot password</h3>
-      <p className="text-[#848484] text-base p-1">
+      <h3 className="text-[#19074A] text-3xl font-bold ">Forgot password</h3>
+      <p className="text-[#19074A] text-base p-1">
         Enter your email to receive a password reset link
       </p>
       <input

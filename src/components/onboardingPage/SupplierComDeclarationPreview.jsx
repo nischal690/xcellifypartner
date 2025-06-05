@@ -124,7 +124,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
             <div className="flex flex-col text-left">
               <span
                 className="font-medium text-sm"
-                style={{ color: '#18064A' }}
+                style={{ color: '#19074A' }}
               >
                 Preview Agreement
               </span>
@@ -136,7 +136,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
           <div
             className="text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
             style={{
-              background: 'linear-gradient(to right, #18064A, #866EFC)',
+              background: 'linear-gradient(to right, #19074A, #876FFD)',
             }}
           >
             <FaEye size={16} />
@@ -160,7 +160,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
             <div className="flex flex-col text-left">
               <span
                 className="font-medium text-sm"
-                style={{ color: '#18064A' }}
+                style={{ color: '#19074A' }}
               >
                 Agreement (DOCX)
               </span>
@@ -170,7 +170,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
           <div
             className="text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
             style={{
-              background: 'linear-gradient(to right, #18064A, #866EFC)',
+              background: 'linear-gradient(to right, #19074A, #876FFD)',
             }}
           >
             <FaDownload size={16} />

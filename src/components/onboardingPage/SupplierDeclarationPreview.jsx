@@ -111,14 +111,14 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
               <FaEye className="w-6 h-6 text-purple-500" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-medium text-sm" style={{ color: '#18064A' }}>
+              <span className="font-medium text-sm" style={{ color: '#19074A' }}>
                 Preview Declaration
               </span>
               <span className="text-xs text-gray-500">View before download</span>
             </div>
           </div>
           <div className="text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
-               style={{ background: 'linear-gradient(to right, #18064A, #866EFC)' }}>
+               style={{ background: 'linear-gradient(to right, #19074A, #876FFD)' }}>
             <FaEye size={16} />
           </div>
         </button>
@@ -134,14 +134,14 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
               <img src={wordDocIcon} alt="Word Document" className="w-6 h-6" />
             </div>
             <div className="flex flex-col text-left">
-              <span className="font-medium text-sm" style={{ color: '#18064A' }}>
+              <span className="font-medium text-sm" style={{ color: '#19074A' }}>
                 Declaration (DOCX)
               </span>
               <span className="text-xs text-gray-500">Microsoft Word</span>
             </div>
           </div>
           <div className="text-white p-2 rounded-lg opacity-90 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105"
-               style={{ background: 'linear-gradient(to right, #18064A, #866EFC)' }}>
+               style={{ background: 'linear-gradient(to right, #19074A, #876FFD)' }}>
             <FaDownload size={16} />
           </div>
         </button>
@@ -202,7 +202,7 @@ const SupplierDeclarationPreview = ({ formData, onAgree }) => {
                     setShowPreview(false);
                   }}
                   className="px-4 py-2 rounded-lg text-white hover:opacity-90"
-                  style={{ background: 'linear-gradient(to right, #18064A, #866EFC)' }}
+                  style={{ background: 'linear-gradient(to right, #19074A, #876FFD)' }}
                 >
                   Download Document
                 </button>

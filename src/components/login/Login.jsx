@@ -301,7 +301,7 @@ export default function Login() {
       </div>
 
       {/* Login Right Container */}
-      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 px-8 md:px-4 bg-gradient-to-b from-purple-primary to-[#6C59CA]">
+      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 px-8 md:px-4 bg-gradient-to-b from-purple-primary to-[#19074A]">
         <div className="block md:hidden w-full mb-10">
           <img
             src={WhiteIcon}
@@ -366,7 +366,7 @@ export default function Login() {
             disabled={!isButtonEnabled}
             className={`w-full text-white py-3 rounded-xl mt-10 transition-all ${
               isButtonEnabled
-                ? 'bg-[#6A3CB3] hover:bg-[#57359E]'
+                ? 'bg-[#876FFD] hover:bg-[#19074A]'
                 : 'bg-gray-400 cursor-not-allowed'
             }`}
             type="button"
@@ -415,14 +415,14 @@ export default function Login() {
         </div>
         {/* <div className="w-full max-w-md mt-6 space-y-3">
 					<button
-						className="flex items-center justify-center w-full  py-2 rounded-xl transition-all bg-white text-[#6A3CB3] hover:bg-slate-100"
+						className="flex items-center justify-center w-full  py-2 rounded-xl transition-all bg-white text-[#876FFD] hover:bg-slate-100"
 						onClick={continueWithGoogle}
 					>
 						<img src={GoogleAuthIcon} alt="Google" className="w-5 mr-2" />
 						Continue with Google
 					</button>
 					<button
-						className="flex items-center justify-center w-full py-2 rounded-xl transition-all bg-white text-[#6A3CB3] hover:bg-slate-100"
+						className="flex items-center justify-center w-full py-2 rounded-xl transition-all bg-white text-[#876FFD] hover:bg-slate-100"
 						onClick={continueWithFacebook}
 					>
 						<img src={FacebookAuthIcon} alt="Facebook" className="w-5 mr-2" />

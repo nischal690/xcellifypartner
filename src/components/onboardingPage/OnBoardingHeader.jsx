@@ -29,7 +29,7 @@ const OnBoardingHeader = ({ partnerInfo, handleLogout }) => {
             onClick={() => navigate('/home/profile')}
           >
             {/* Profile Icon - Modern Avatar */}
-            <div className="p-1.5 rounded-full mr-3" style={{ background: 'linear-gradient(to right, #18064A, #866EFC)' }}>
+            <div className="p-1.5 rounded-full mr-3" style={{ background: 'linear-gradient(to right, #19074A, #876FFD)' }}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 text-white"
@@ -48,7 +48,7 @@ const OnBoardingHeader = ({ partnerInfo, handleLogout }) => {
             {/* Welcome Message */}
             <div className="flex flex-col">
               <span className="text-gray-500 text-xs">Welcome</span>
-              <span className="text-sm truncate font-semibold" style={{ color: '#18064A' }}>
+              <span className="text-sm truncate font-semibold" style={{ color: '#19074A' }}>
                 {partnerInfo?.first_name || 'Partner'}
               </span>
             </div>
@@ -59,7 +59,7 @@ const OnBoardingHeader = ({ partnerInfo, handleLogout }) => {
             onClick={handleLogout}
             className="text-white px-4 py-2.5 rounded-lg shadow-lg transition duration-300 transform hover:-translate-y-0.5"
             style={{ 
-              background: 'linear-gradient(to right, #18064A, #866EFC)',
+              background: 'linear-gradient(to right, #19074A, #876FFD)',
               boxShadow: '0 4px 6px rgba(134, 110, 252, 0.25)'
             }}
           >
