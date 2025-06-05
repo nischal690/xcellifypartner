@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { useAppInfo } from '../../../hooks/appStore/useAppInfo';
@@ -289,7 +290,19 @@ const TutoringForm = () => {
           />
         </div>
 
-        <div className="md:col-span-2">
+        <PackageForm
+          category="Tutoring"
+          schema={TutoringPackageSchema}
+          onPackagesChange={(updatedPackages) =>
+            setFormData((prev) => ({
+              ...prev,
+              packages_details: updatedPackages,
+            }))
+          }
+          onCurrentPackageChange={setCurrentPackage}
+        />
+
+        <div className="md:col-span-2 mt-6">
           <label className="block font-medium text-gray-700 mb-2">
             Refund Policy
           </label>
@@ -314,18 +327,6 @@ const TutoringForm = () => {
             </label>
           </div>
         </div>
-
-        <PackageForm
-          category="Tutoring"
-          schema={TutoringPackageSchema}
-          onPackagesChange={(updatedPackages) =>
-            setFormData((prev) => ({
-              ...prev,
-              packages_details: updatedPackages,
-            }))
-          }
-          onCurrentPackageChange={setCurrentPackage}
-        />
       </div>
 
       <div className="flex flex-col sm:flex-row justify-center sm:justify-end gap-4 sm:gap-6 md:gap-10 m-4 sm:m-6">

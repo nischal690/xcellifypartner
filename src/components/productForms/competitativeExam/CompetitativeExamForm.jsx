@@ -6,6 +6,8 @@ import PackageForm from '../../commonComponents/products/packages/PackageForm';
 import { competitativeExamSchema } from '../../commonComponents/products/packages/packageSchema';
 import { toast } from 'react-toastify';
 import RichTextEditor from '../../commonComponents/RichTextEditor';
+import SearchableExamDropdown from '../../commonComponents/SearchableExamDropdown';
+import { getAllExams } from '../../../data/competitiveExams';
 
 const durationOptions = [
   { value: '1 Month', label: '1 Month' },
@@ -13,11 +15,7 @@ const durationOptions = [
   { value: '6 Months', label: '6 Months' },
 ];
 
-const examLevelOptions = [
-  { value: 'Beginner', label: 'Beginner' },
-  { value: 'Intermediate', label: 'Intermediate' },
-  { value: 'Advanced', label: 'Advanced' },
-];
+// Exam Level options removed as requested
 
 const serviceModeOptions = [
   { value: 'Online', label: 'Online' },
@@ -36,7 +34,31 @@ const classFormatOptions = [
 
 const multiOptions = (values) => values.map((v) => ({ label: v, value: v }));
 
-const courseMediumOptions = multiOptions(['English', 'Hindi']);
+const courseMediumOptions = multiOptions([
+  'Assamese',
+  'Bengali',
+  'Bodo',
+  'Dogri',
+  'Gujarati',
+  'Hindi',
+  'Kannada',
+  'Kashmiri',
+  'Konkani',
+  'Maithili',
+  'Malayalam',
+  'Manipuri',
+  'Marathi',
+  'Nepali',
+  'Odia',
+  'Punjabi',
+  'Sanskrit',
+  'Santali',
+  'Sindhi',
+  'Tamil',
+  'Telugu',
+  'Urdu',
+  'English'
+]);
 const targetGradesOptions = multiOptions([
   'Grade 1',
   'Grade 2',
@@ -50,13 +72,39 @@ const targetGradesOptions = multiOptions([
   'Grade 10',
   'Grade 11',
   'Grade 12',
+  'Graduation',
+  'Post Graduation'
 ]);
 const subjectsCoveredOptions = multiOptions([
   'Mathematics',
   'Physics',
   'Chemistry',
 ]);
-const languageOptions = multiOptions(['English', 'Hindi']);
+const languageOptions = multiOptions([
+  'Assamese',
+  'Bengali',
+  'Bodo',
+  'Dogri',
+  'Gujarati',
+  'Hindi',
+  'Kannada',
+  'Kashmiri',
+  'Konkani',
+  'Maithili',
+  'Malayalam',
+  'Manipuri',
+  'Marathi',
+  'Nepali',
+  'Odia',
+  'Punjabi',
+  'Sanskrit',
+  'Santali',
+  'Sindhi',
+  'Tamil',
+  'Telugu',
+  'Urdu',
+  'English'
+]);
 
 const CompetitativeExamForm = () => {
   const navigate = useNavigate();
@@ -66,7 +114,6 @@ const CompetitativeExamForm = () => {
   const [formData, setFormData] = useState({
     exam_name: '',
     product_title: '',
-    exam_level: '',
     target_grades: [],
     subjects_covered: [],
     course_medium: [],
@@ -168,17 +215,22 @@ const CompetitativeExamForm = () => {
         Competitative exam Product Details
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 sm:p-6">
         <div>
           <label className="block font-medium text-gray-700 mb-1">
             Exam Name
           </label>
-          <input
-            name="exam_name"
+          <SearchableExamDropdown
+            options={getAllExams()}
             value={formData.exam_name}
-            onChange={handleChange}
-            placeholder="Enter exam name"
-            className="w-full p-2 border rounded-md"
+            onChange={(value) => {
+              setFormData((prev) => ({
+                ...prev,
+                exam_name: value
+              }));
+            }}
+            showDetails={true}
+            className="w-full"
           />
         </div>
         <div>
@@ -191,17 +243,6 @@ const CompetitativeExamForm = () => {
             onChange={handleChange}
             placeholder="Enter product title"
             className="w-full p-2 border rounded-md"
-          />
-        </div>
-
-        <div className="md:col-span-2">
-          <label className="block font-medium text-gray-700 mb-1">
-            Exam Level
-          </label>
-          <Select
-            options={examLevelOptions}
-            onChange={(selected) => handleSingleSelect(selected, 'exam_level')}
-            placeholder="Select exam level"
           />
         </div>
 
