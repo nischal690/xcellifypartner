@@ -20,7 +20,7 @@ function TermsCheckbox({
       <span className="text-white text-sm">
         I agree to{' '}
         <span
-          style={{ color: '#2F2759' }}
+          style={{ color: '#19074A' }}
           className="font-medium cursor-pointer hover:underline"
           onClick={onTermsClick}
         >
@@ -28,7 +28,7 @@ function TermsCheckbox({
         </span>{' '}
         and{' '}
         <span
-          style={{ color: '#2F2759' }}
+          style={{ color: '#19074A' }}
           className="font-medium cursor-pointer hover:underline"
           onClick={onPrivacyClick}
         >

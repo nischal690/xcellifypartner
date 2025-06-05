@@ -114,9 +114,9 @@ const FAQSection = () => {
           </p>
           <button
             style={{
-              background: 'linear-gradient(to right, #876FFD, #6C59CA)',
+              background: 'linear-gradient(to right, #876FFD, #19074A)',
             }}
-            className="text-[#F3F1FF] px-8 py-4 rounded-lg font-semibold text-lg font-dmsans hover:bg-[#957EE0] transition-all duration-300"
+            className="text-[#F3F1FF] px-8 py-4 rounded-lg font-semibold text-lg font-dmsans hover:bg-[#876FFD] transition-all duration-300"
             onClick={() => navigate('/login')}
           >
             Earn with Xcellify Now

@@ -75,7 +75,7 @@ export default function SignUp() {
       </div>
 
       {/* Sign Right Container */}
-      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 px-8 md:px-4 bg-gradient-to-b from-purple-primary to-[#6C59CA]">
+      <div className="w-full min-h-screen md:w-1/2 flex flex-col items-center max-md:justify-center lg:pt-16 md:pt-12 px-8 md:px-4 bg-gradient-to-b from-purple-primary to-[#19074A]">
         <div className="w-full justify-center max-w-md pt-10">
           <div className="block md:hidden w-full mb-10">
             <img

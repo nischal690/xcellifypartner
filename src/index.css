@@ -8,7 +8,7 @@
     @apply border-[1.5px] border-slate-700;
   }
   .button-gradient1{
-    @apply bg-gradient-to-b from-purple-primary to-[#6C59CA];
+    @apply bg-gradient-to-b from-purple-primary to-[#19074A];
   }
 }
 

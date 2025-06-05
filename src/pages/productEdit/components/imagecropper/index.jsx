@@ -74,7 +74,7 @@ const ImageCropper = ({ image, aspect = 16 / 9, onCropComplete, onCancel }) => {
               cropping ? 'cursor-not-allowed opacity-75' : ''
             }`}
             style={{
-              background: 'linear-gradient(to right, #876FFD, #6C59CA)',
+              background: 'linear-gradient(to right, #876FFD, #19074A)',
             }}
             disabled={cropping}
           >

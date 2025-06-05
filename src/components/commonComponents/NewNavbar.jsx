@@ -111,7 +111,7 @@ const NewNavbar = () => {
           {/* Buttons */}
           <div className="hidden sm:flex space-x-4">
             <button
-              className="bg-[#E7E2FF] text-[#000000] font-dmsans px-4 py-1.5 rounded-lg hover:bg-gray-200"
+              className="bg-purple-primary text-white font-dmsans px-4 py-1.5 rounded-lg hover:bg-purple-disabled"
               onClick={handleSignupClick}
             >
               Sign up
@@ -160,7 +160,7 @@ const NewNavbar = () => {
             FAQs
           </a>
           <button
-            className="bg-[#E7E2FF] text-[#000000] font-dmsans px-4 py-2 rounded-lg hover:bg-gray-200"
+            className="bg-purple-primary text-white font-dmsans px-4 py-2 rounded-lg hover:bg-purple-disabled"
             onClick={handleSignupClick}
           >
             Sign up

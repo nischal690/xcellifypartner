@@ -66,8 +66,8 @@ export default function ResetPassword() {
   return (
     <div className="flex items-center justify-center h-screen font-dmsans">
       <div className="flex flex-col p-5 bg-white rounded-lg shadow-md dark:border max-w-xl w-full sm:p-20">
-        <h3 className="text-[#212121] text-3xl font-bold ">Set new password</h3>
-        {/* <p className='text-[#848484] text-base p-1'>Enter a new password for userxyz@email.com</p> */}
+        <h3 className="text-[#19074A] text-3xl font-bold ">Set new password</h3>
+        {/* <p className='text-[#19074A] text-base p-1'>Enter a new password for userxyz@email.com</p> */}
         <div className="w-full flex justify-between items-center bg-[#E5E5E5] text-l px-2 font-normal outline-0 py-3 rounded-lg mt-4 sm:pl-7 sm:pr-5">
           <PasswordStrengthPopover password={formData.newPassword}>
             <div className="flex w-full items-center">

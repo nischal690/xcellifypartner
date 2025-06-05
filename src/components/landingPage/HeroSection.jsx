@@ -23,7 +23,7 @@ const HeroSection = () => {
 
           <button
             style={{
-              background: 'linear-gradient(to right, #876FFD, #6C59CA)',
+              background: 'linear-gradient(to right, #876FFD, #19074A)',
             }}
             className="
               text-[#F3F1FF] 
@@ -33,7 +33,7 @@ const HeroSection = () => {
               font-semibold 
               text-sm sm:text-base md:text-lg 
               font-dmsans 
-              hover:bg-[#957EE0] 
+              hover:bg-[#876FFD] 
               transition-all duration-300 
               whitespace-nowrap
             "
