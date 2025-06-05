@@ -13,6 +13,9 @@ import { FacebookProvider } from 'react-facebook';
 
 import { registerSW } from 'virtual:pwa-register';
 
+// Import stagewise toolbar for React (only in development mode)
+import { StagewiseToolbar } from '@stagewise/toolbar-react';
+
 registerSW({
   // onNeedRefresh() {
   //   if (confirm('New update available. Reload now?')) {
@@ -41,3 +44,24 @@ createRoot(document.getElementById('root')).render(
     </FacebookProvider>
   </Provider>
 );
+
+// Initialize stagewise toolbar only in development mode
+if (import.meta.env.MODE === 'development') {
+  // Create a separate container for the stagewise toolbar
+  const stagewiseContainer = document.createElement('div');
+  stagewiseContainer.id = 'stagewise-toolbar-container';
+  document.body.appendChild(stagewiseContainer);
+  
+  // Create a separate React root for the stagewise toolbar
+  const stagewiseRoot = createRoot(stagewiseContainer);
+  
+  // Configure stagewise toolbar
+  const stagewiseConfig = {
+    plugins: []
+  };
+  
+  // Render the stagewise toolbar
+  stagewiseRoot.render(
+    <StagewiseToolbar config={stagewiseConfig} />
+  );
+}

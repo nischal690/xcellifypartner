@@ -9,6 +9,9 @@ import { generateComIndividualDoc } from '../../utils/supplierDeclarationHelpers
 import DocumentPreview from './DocumentPreview';
 
 const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
+  // console.log('careOf =', careOf);
+  // console.log('age =', age);
+
   const handleAgree =
     onAgree ||
     ((file) => {
@@ -159,7 +162,7 @@ const SupplierComDeclarationPreview = ({ formData, onAgree, careOf, age }) => {
                 className="font-medium text-sm"
                 style={{ color: '#18064A' }}
               >
-                 Agreement (DOCX)
+                Agreement (DOCX)
               </span>
               <span className="text-xs text-gray-500">Microsoft Word</span>
             </div>

@@ -83,6 +83,11 @@ export function useVendorSignupForm(steps, appStore) {
 
   const [isAadhaarVerified, setIsAadhaarVerified] = useState(false);
   const [showOtpModal, setShowOtpModal] = useState(false);
+
+  // Debug effect to track showOtpModal changes
+  useEffect(() => {
+    // console.log('showOtpModal state changed to:', showOtpModal);
+  }, [showOtpModal]);
   const [otp, setOtp] = useState('');
   const [otpMessage, setOtpMessage] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
@@ -598,7 +603,10 @@ export function useVendorSignupForm(steps, appStore) {
 
   // Update your handleChange function
   const handleChange = async (e) => {
-    const { name, value, files } = e.target;
+    console.log('handleChange triggered. Event target:', e.target); // Log 1
+    const name = e.target.name;
+    const value = e.target.value;
+    const files = e.target.files || (value instanceof File ? [value] : null);
 
     // Handle hasGSTnumber change to reset GST field when changed to "No"
     if (name === 'hasGSTnumber') {
@@ -706,15 +714,8 @@ export function useVendorSignupForm(steps, appStore) {
     }
 
     if (files && files[0]) {
-      let file = files[0];
-
-      try {
-        const schema = getFieldValidationSchema(name);
-        await schema.validate(file);
-      } catch (error) {
-        toast.error(error.message);
-        return; // Don't upload if validation fails
-      }
+      let file = files[0]; // Original file
+      let originalFileNameForLog = file.name; // For logging comparison
 
       // File validation
       const { maxSize, acceptedTypes } = fileUploadInfo[name] || {};
@@ -731,7 +732,7 @@ export function useVendorSignupForm(steps, appStore) {
       if (name === 'signature') {
         try {
           setIsRemovingBG(true);
-          setRemovalMessage('Removing background...');
+          setRemovalMessage('Removing background please wait a moment...');
 
           const arrayBuffer = await file.arrayBuffer();
           const imageBlob = new Blob([arrayBuffer], { type: file.type });
@@ -742,7 +743,7 @@ export function useVendorSignupForm(steps, appStore) {
           });
 
           file = new File([outputBlob], 'signature.png', { type: 'image/png' });
-          toast.success('Background removed from signature!');
+          // toast.success('Background removed from signature!');
         } catch (err) {
           console.error('Background removal failed:', err);
           toast.error('Failed to remove background from signature.');
@@ -752,14 +753,24 @@ export function useVendorSignupForm(steps, appStore) {
         }
       }
 
-      // Upload file
-      uploadFile(name, userInfo?.id, file);
-
-      // Update form data with the final (processed) file
+      // If the file is valid and (optionally) processed, update the form data
+      // Log the file object that will be set in the form data
+      console.log(
+        `Before setFormData for field '${name}'. File to be set (name: ${file.name}):`,
+        file,
+        `Original file was: ${originalFileNameForLog}`
+      ); // Log 6 (NEW)
       setFormData((prev) => ({ ...prev, [name]: file }));
+
+      // Auto-upload for specific fields if needed
+      uploadFile(name, userInfo?.id, file);
     } else {
+      // Logic for non-file inputs
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
+
+    // Save to localStorage after every change
+    localStorage.setItem('vendorSignupFormData', JSON.stringify(formData));
   };
 
   const handleSubmit = async (e) => {
@@ -995,30 +1006,62 @@ export function useVendorSignupForm(steps, appStore) {
 
       console.log('Requesting Aadhaar OTP for:', aadhaarNumber);
 
-      // Direct API call to Cashfree
-      const response = await fetch(
-        'https://cashfree.com/verification/offline-aadhaar/otp',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-client-id': 'CF925547D0LNAJVBL13C73BKMVN0',
-            'x-client-secret':
-              'cfsk_ma_prod_25a9fd685a0a745c9f735c5bf01f1a74_73af97a2',
-          },
-          body: JSON.stringify({
-            aadhaar_number: aadhaarNumber,
-          }),
-        }
-      );
+      // API call to the new endpoint using apiRequest
+      const response = await apiRequest.post('/mic-login/aadhaar/otp', {
+        aadhaar_number: aadhaarNumber,
+      });
 
-      const data = await response.json();
+      const data = response.data;
       console.log('Aadhaar OTP response:', data);
 
-      if (response.ok && data.request_id) {
+      // Check if the API call was successful based on verification_id or status
+      if (data.verification_id || (data.status && data.status === 'SUCCESS')) {
+        console.log('OTP request successful');
         setOtpMessage('OTP sent successfully to your registered mobile number');
-        localStorage.setItem('aadhaar_request_id', data.request_id);
+
+        // Store the verification_id and any other relevant IDs
+        if (data.verification_id) {
+          console.log('Storing verification_id:', data.verification_id);
+          localStorage.setItem('aadhaar_verification_id', data.verification_id);
+        }
+
+        // Check for cashfreeResponse.ref_id and store it (new response structure)
+        if (data.cashfreeResponse && data.cashfreeResponse.ref_id) {
+          console.log(
+            'Storing cashfreeResponse.ref_id:',
+            data.cashfreeResponse.ref_id
+          );
+          localStorage.setItem(
+            'aadhaar_otp_reference_id_for_verify',
+            data.cashfreeResponse.ref_id
+          );
+        }
+        // Fallback to top-level ref_id if cashfreeResponse is not present (old structure)
+        else if (data.ref_id) {
+          console.log('Storing ref_id:', data.ref_id);
+          localStorage.setItem(
+            'aadhaar_otp_reference_id_for_verify',
+            data.ref_id
+          );
+          // Keep the old storage for backward compatibility
+          localStorage.setItem('aadhaar_ref_id', data.ref_id);
+        }
+
+        if (data.request_id) {
+          console.log('Storing request_id:', data.request_id);
+          localStorage.setItem('aadhaar_request_id', data.request_id);
+        }
+
+        // Force the OTP modal to show
+        console.log('Forcing OTP modal to show');
         setIsVerifying(false);
+
+        // Use a timeout to ensure state updates have completed
+        setTimeout(() => {
+          setShowOtpModal(true);
+          // console.log('OTP modal should now be visible');
+        }, 500);
+
         return true;
       } else {
         setOtpMessage('');
@@ -1037,11 +1080,20 @@ export function useVendorSignupForm(steps, appStore) {
   const handleOtpVerify = async () => {
     setIsVerifying(true);
     try {
-      const requestId = localStorage.getItem('aadhaar_request_id');
-      if (!requestId) {
-        toast.error('OTP request expired. Please try again.');
+      // Get the ref_id that was stored from cashfreeResponse.ref_id
+      const idForVerification = localStorage.getItem(
+        'aadhaar_otp_reference_id_for_verify'
+      );
+
+      if (!idForVerification) {
+        toast.error(
+          'OTP reference ID not found. Please initiate Aadhaar verification again.'
+        );
         setIsVerifying(false);
         setShowOtpModal(false);
+        localStorage.removeItem('aadhaar_verification_id'); // Old key
+        localStorage.removeItem('aadhaar_ref_id'); // Old key
+        localStorage.removeItem('aadhaar_request_id'); // Old key
         return;
       }
 
@@ -1052,40 +1104,44 @@ export function useVendorSignupForm(steps, appStore) {
       }
 
       console.log('Verifying Aadhaar OTP:', otp);
-      console.log('Using request ID:', requestId);
-
-      // Direct API call to Cashfree
-      const response = await fetch(
-        'https://cashfree.com/verification/offline-aadhaar/verify',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-client-id': 'CF925547D0LNAJVBL13C73BKMVN0',
-            'x-client-secret':
-              'cfsk_ma_prod_25a9fd685a0a745c9f735c5bf01f1a74_73af97a2',
-          },
-          body: JSON.stringify({
-            request_id: requestId,
-            otp: otp,
-          }),
-        }
+      console.log(
+        'Using ID for verification (originally cashfreeResponse.ref_id):',
+        idForVerification
       );
 
-      const data = await response.json();
+      // Payload key is 'verification_id', value is the stored ref_id from cashfreeResponse
+      // New payload with 'ref_id' key
+      const payload = {
+        otp: otp,
+        ref_id: idForVerification,
+      };
+
+      console.log('Verification payload:', payload);
+
+      const response = await apiRequest.post(
+        '/mic-login/aadhaar/verify', // Assuming this is the correct verification endpoint
+        payload
+      );
+
+      const data = response.data;
       console.log('Aadhaar OTP verification response:', data);
 
-      if (response.ok && data.verification_status === 'SUCCESS') {
+      if (
+        data.status === 'SUCCESS' ||
+        data.verification_status === 'SUCCESS' ||
+        data.success === true ||
+        data.cashfreeResponse?.status === 'VALID'
+      ) {
         setOtpMessage('OTP Verified Successfully!');
 
-        setAadhaarCareOf(data.care_of || '');
-        setAadhaarDob(data.dob || '');
+        setAadhaarCareOf(data.cashfreeResponse?.care_of || '');
+        setAadhaarDob(data.cashfreeResponse?.dob || '');
 
         setFormData((prev) => ({
           ...prev,
-          address_line_1: data.address || '',
-          pincode: data.split_address?.pincode
-            ? String(data.split_address.pincode)
+          address_line_1: data.cashfreeResponse?.address || '',
+          pincode: data.cashfreeResponse?.split_address?.pincode
+            ? String(data.cashfreeResponse.split_address.pincode)
             : '',
         }));
 
@@ -1094,7 +1150,12 @@ export function useVendorSignupForm(steps, appStore) {
         setTimeout(() => {
           setIsAadhaarVerified(true);
           setShowOtpModal(false);
+          localStorage.removeItem('aadhaar_otp_reference_id_for_verify'); // Clean up the used ID
+          // Clean up any other potentially old/stale keys
+          localStorage.removeItem('aadhaar_verification_id');
+          localStorage.removeItem('aadhaar_ref_id');
           localStorage.removeItem('aadhaar_request_id');
+          console.log('OTP modal should now be closed and Aadhaar verified');
         }, 1000);
       } else {
         toast.error(data.message || 'Invalid OTP. Please try again.');
