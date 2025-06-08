@@ -141,6 +141,131 @@ export default function DocumentPreview({
         {/* Page 2 */}
         <div className="page-break" />
         <Page>
+          <p className="leading-relaxed">
+            NOW THEREFORE, in consideration of the mutual covenants, undertakings
+            and conditions set forth below, and for other valid consideration, the
+            acceptability and sufficiency of which are hereby acknowledged, the
+            Parties hereby agree to the following terms and conditions hereinafter
+            contained:
+          </p>
+
+          <h3 className="font-bold mt-4">1. DEFINITIONS</h3>
+          <p className="ml-6 leading-relaxed">
+            Unless otherwise defined in the Agreement, terms when capitalized
+            shall have the meaning set out as per <strong>Annexure A</strong> of
+            the Agreement.
+          </p>
+
+          <h3 className="font-bold mt-4">2. SCOPE OF ENGAGEMENT</h3>
+          <p className="ml-6 leading-relaxed">
+            2.1 Subject and in accordance to the terms of this Agreement, the
+            Company shall provide the following services to the Partner:
+          </p>
+          <ul className="list-disc ml-12">
+            <li>
+              2.1.1 list the Partner’s Products and/or Partner’s Services on the
+              Platform of the Company;
+            </li>
+            <li>
+              2.1.2 facilitate the sale of Partner’s Products and/or Partner’s
+              Services on and through the Company’s Platform;
+            </li>
+            <li>
+              2.1.3 provide the Partner with access to a dedicated Partner
+              dashboard on its Platform (“Dashboard”); and
+            </li>
+            <li>
+              2.1.4 based on payment of required fees, market the sale of
+              Partner’s Products and/or Partner’s Services by way of banners and/or
+              priority ranking on the Company’s Platform.
+            </li>
+          </ul>
+          <p className="ml-6 leading-relaxed">
+            hereinafter collectively referred to as the <strong>Services</strong>.
+          </p>
+          <p className="ml-6 leading-relaxed">
+            2.2 The Parties agree that the Agreement is non-exclusive in nature
+            and the Company reserves the right to enter into similar transactions
+            with any entity or individual, whether or not they are the Partner’s
+            competitors.
+          </p>
+          <p className="ml-6 leading-relaxed">
+            2.3 The Parties further agree that once the Partner’s
+            Products/Services are listed and exhibited on the Platform, the
+            Partner shall be deemed to have made an “offer to sell” the
+            Partner’s Products/Services to the Customer, and when any Customer of
+            the Platform places an Order, it shall be considered acceptance by
+            the Customer of the offer and the Products shall be considered sold
+            to the Customer, and the same shall be final and binding upon the
+            Partner under the Applicable Law.
+          </p>
+          <Footer />
+        </Page>
+
+        {/* Page 3 */}
+        <div className="page-break" />
+        <Page>
+          <p className="ml-6 leading-relaxed">
+            2.4 The Partner agrees that once it has listed and exhibited the
+            Partner’s Products or Services on the Platform, the Company’s terms
+            and commercials for sale shall be binding on it. Any proposed
+            changes to the terms, commercials of the listed Partner’s Products or
+            Services, or requests for delisting must be communicated to the
+            Company within five (5) working days through the Platform or by
+            writing to
+            <a href="mailto:partnercare@xcellify.com" className="text-blue-600 underline">
+              partnercare@xcellify.com
+            </a>
+            . However, in case any Customer has already made payment for such
+            product or service at the existing terms, then the Partner has to
+            honour such purchase.
+          </p>
+
+          <h3 className="font-bold mt-4">3. CONSIDERATION</h3>
+          <p className="ml-6 leading-relaxed">
+            In consideration of the Services provided by the Company, the
+            Partner shall be liable to pay to the Company, such
+            fees/amount/commission/service fees and in such manner, as detailed
+            in <strong>Annexure B</strong> of this Agreement
+            (“Consideration”).
+          </p>
+
+          <h3 className="font-bold mt-4">4. DUTIES AND OBLIGATIONS</h3>
+          <h4 className="font-bold ml-6 mt-2">Partner’s Duties and Obligations</h4>
+          <p className="ml-6 leading-relaxed">
+            4.1 The Partner shall be liable to comply with the duties and
+            obligations as listed in <strong>Annexure C</strong> of this
+            Agreement. The Company is entitled to immediately suspend
+            Partner’s account on the Platform, restrict access to the Platform
+            and/or suspend provision of the Services herein, without any prior
+            written notice to the Partner, in case the Company believes that
+            there is any alleged, threatened or actual breach of the covenants,
+            duties and obligations of the Partner, by the Partner and/or its
+            representatives. In such events, the Company may permanently or
+            temporarily blacklist the Partner, at its sole discretion.
+          </p>
+          <p className="ml-6 leading-relaxed">
+            4.2 The Partner hereby consents to be bound by the policies issued
+            by the Company, any and all terms and conditions published on the
+            Platform including but not limited to terms of use, privacy policy,
+            refund and cancellation policy or any other policy and all terms and
+            conditions shared with Partner and any modification/s thereof
+            (“Company Policies”). Partner shall ensure strict compliance with the
+            Company Policies while using, and accessing the Services or the
+            Platform of the Company.
+          </p>
+          <h4 className="font-bold ml-6 mt-2">Company’ Duties and Obligations</h4>
+          <p className="ml-6 leading-relaxed">
+            4.3 The Company will be responsible for hosting, maintaining, and
+            ensuring the availability of the Platform, subject to periodic
+            maintenance and unforeseen downtimes.
+          </p>
+          <Footer />
+        </Page>
+
+        {/* Page 4 */}
+        <div className="page-break" />
+        <Page>
           <h3 className="font-bold">11.4 No Waiver:</h3>
           <p className="ml-6 leading-relaxed">
             The failure of either Party at any time to require performance by
@@ -225,7 +350,7 @@ export default function DocumentPreview({
           <Footer />
         </Page>
 
-        {/* Page 3 */}
+        {/* Page 5 */}
         <div className="page-break" />
         <Page>
           <h2 className="font-bold text-xl">IN WITNESS WHEREOF,</h2>
@@ -276,7 +401,7 @@ export default function DocumentPreview({
           <Footer />
         </Page>
 
-        {/* Page 4 */}
+        {/* Page 6 */}
         <div className="page-break" />
         <Page>
           <p>
