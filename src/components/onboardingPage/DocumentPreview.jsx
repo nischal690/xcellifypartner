@@ -141,6 +141,70 @@ export default function DocumentPreview({
         {/* Page 2 */}
         <div className="page-break" />
         <Page>
+          <p className="leading-relaxed">
+            NOW THEREFORE, in consideration of the mutual covenants, undertakings
+            and conditions set forth below, and for other valid consideration, the
+            acceptability and sufficiency of which are hereby acknowledged, the
+            Parties hereby agree to the following terms and conditions hereinafter
+            contained:
+          </p>
+
+          <h3 className="font-bold mt-4">1. DEFINITIONS</h3>
+          <p className="ml-6 leading-relaxed">
+            Unless otherwise defined in the Agreement, terms when capitalized
+            shall have the meaning set out as per <strong>Annexure A</strong> of
+            the Agreement.
+          </p>
+
+          <h3 className="font-bold mt-4">2. SCOPE OF ENGAGEMENT</h3>
+          <p className="ml-6 leading-relaxed">
+            2.1 Subject and in accordance to the terms of this Agreement, the
+            Company shall provide the following services to the Partner:
+          </p>
+          <ul className="list-disc ml-12">
+            <li>
+              2.1.1 list the Partner’s Products and/or Partner’s Services on the
+              Platform of the Company;
+            </li>
+            <li>
+              2.1.2 facilitate the sale of Partner’s Products and/or Partner’s
+              Services on and through the Company’s Platform;
+            </li>
+            <li>
+              2.1.3 provide the Partner with access to a dedicated Partner
+              dashboard on its Platform (“Dashboard”); and
+            </li>
+            <li>
+              2.1.4 based on payment of required fees, market the sale of
+              Partner’s Products and/or Partner’s Services by way of banners and/or
+              priority ranking on the Company’s Platform.
+            </li>
+          </ul>
+          <p className="ml-6 leading-relaxed">
+            hereinafter collectively referred to as the <strong>Services</strong>.
+          </p>
+          <p className="ml-6 leading-relaxed">
+            2.2 The Parties agree that the Agreement is non-exclusive in nature
+            and the Company reserves the right to enter into similar transactions
+            with any entity or individual, whether or not they are the Partner’s
+            competitors.
+          </p>
+          <p className="ml-6 leading-relaxed">
+            2.3 The Parties further agree that once the Partner’s
+            Products/Services are listed and exhibited on the Platform, the
+            Partner shall be deemed to have made an “offer to sell” the
+            Partner’s Products/Services to the Customer, and when any Customer of
+            the Platform places an Order, it shall be considered acceptance by
+            the Customer of the offer and the Products shall be considered sold
+            to the Customer, and the same shall be final and binding upon the
+            Partner under the Applicable Law.
+          </p>
+          <Footer />
+        </Page>
+
+        {/* Page 3 */}
+        <div className="page-break" />
+        <Page>
           <h3 className="font-bold">11.4 No Waiver:</h3>
           <p className="ml-6 leading-relaxed">
             The failure of either Party at any time to require performance by
@@ -225,7 +289,7 @@ export default function DocumentPreview({
           <Footer />
         </Page>
 
-        {/* Page 3 */}
+        {/* Page 4 */}
         <div className="page-break" />
         <Page>
           <h2 className="font-bold text-xl">IN WITNESS WHEREOF,</h2>
@@ -276,7 +340,7 @@ export default function DocumentPreview({
           <Footer />
         </Page>
 
-        {/* Page 4 */}
+        {/* Page 5 */}
         <div className="page-break" />
         <Page>
           <p>
